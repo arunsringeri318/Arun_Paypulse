@@ -1,14 +1,12 @@
 <!DOCTYPE html>
-<html lang="en" data-theme="sapphire" class="dark">
+<html lang="en" data-theme="platinum">
 <head>
   <meta charset="UTF-8">
   <meta name="viewport" content="width=device-width, initial-scale=1.0">
-  <title>PayPulse | UPI QR Generator & POS Terminal v7.6</title>
+  <title>Paypulse v7.6</title>
   
-  <!-- PWA Web App Manifest & Favicons -->
-  <link rel="icon" type="image/png" href="https://cdn-icons-png.flaticon.com/512/9493/9493583.png">
-  <link rel="apple-touch-icon" href="https://cdn-icons-png.flaticon.com/512/9493/9493583.png">
-  <link rel="manifest" href='data:application/manifest+json;utf8,{"name":"PayPulse for AT v7.6","short_name":"PayPulse","start_url":".","display":"standalone","background_color":"#0f172a","theme_color":"#4f46e5","icons":[{"src":"https://cdn-icons-png.flaticon.com/512/9493/9493583.png","sizes":"512x512","type":"image/png","purpose":"any maskable"},{"src":"https://cdn-icons-png.flaticon.com/192/9493/9493583.png","sizes":"192x192","type":"image/png","purpose":"any maskable"}]}'>
+  <!-- PWA Web App Manifest -->
+  <link rel="manifest" href='data:application/manifest+json;utf8,{"name":"Paypulse v7.6","short_name":"Paypulse","start_url":".","display":"standalone","background_color":"#0f172a","theme_color":"#4f46e5","icons":[{"src":"https://cdn-icons-png.flaticon.com/512/9493/9493583.png","sizes":"512x512","type":"image/png","purpose":"any maskable"}]}'>
   <meta name="theme-color" content="#4f46e5">
 
   <!-- Tailwind CSS -->
@@ -201,7 +199,7 @@
         </div>
         <div>
           <div class="flex items-center gap-2">
-            <h1 class="text-[15px] font-bold tracking-tight">PayPulse for AT <span class="text-xs font-semibold text-red-600 dark:text-red-400 ml-1">POS v7.6</span></h1>
+            <h1 class="text-[15px] font-bold tracking-tight">Paypulse <span class="text-xs font-semibold text-red-600 dark:text-red-400 ml-1">v7.6</span></h1>
           </div>
           <p class="text-[8px] opacity-75">Instant UPI Payment QR Terminal</p>
         </div>
@@ -288,7 +286,7 @@
           </button>
 
           <!-- 3-Dots Menu Dropdown Card -->
-          <div id="systemMenuDropdown" class="hidden absolute right-0 mt-2 w-52 theme-card-bg backdrop-blur-xl border rounded-2xl shadow-2xl z-50 py-1.5 transition-all duration-150 transform opacity-0 scale-95" style="background-color: var(--bg-card); border-color: var(--border-color);">
+          <div id="systemMenuDropdown" class="hidden absolute right-0 mt-2 w-56 theme-card-bg backdrop-blur-xl border rounded-2xl shadow-2xl z-50 py-1.5 transition-all duration-150 transform opacity-0 scale-95" style="background-color: var(--bg-card); border-color: var(--border-color);">
             <button onclick="triggerPwaInstall()" class="w-full px-3.5 py-2.5 text-xs font-semibold hover:bg-black/5 dark:hover:bg-white/5 transition flex items-center gap-2.5 text-left">
               <div class="w-6 h-6 rounded-lg p-1 flex items-center justify-center shrink-0" style="background-color: var(--badge-bg);">
                 <svg class="w-3.5 h-3.5 theme-accent-text" fill="none" stroke="currentColor" viewBox="0 0 24 24">
@@ -299,6 +297,24 @@
                 <span class="block leading-tight">Install App</span>
                 <span class="text-[9px] opacity-60 font-normal">Add to Home Screen</span>
               </div>
+            </button>
+
+            <div class="my-1 border-t opacity-20" style="border-color: var(--border-color);"></div>
+
+            <!-- Bulk Add UPI IDs Option -->
+            <button onclick="openBulkAddModal(); closeSystemMenu();" class="w-full px-3.5 py-2 text-xs font-semibold hover:bg-black/5 dark:hover:bg-white/5 transition flex items-center gap-2.5 text-left">
+              <svg class="w-4 h-4 theme-accent-text" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M12 9v3m0 0v3m0-3h3m-3 0H9m12 0a9 9 0 11-18 0 9 9 0 0118 0z"/>
+              </svg>
+              <span>Bulk Add UPI IDs</span>
+            </button>
+
+            <!-- Reset UPI IDs Option -->
+            <button onclick="openResetUpiModal(); closeSystemMenu();" class="w-full px-3.5 py-2 text-xs font-semibold hover:bg-black/5 dark:hover:bg-white/5 text-red-500 transition flex items-center gap-2.5 text-left">
+              <svg class="w-4 h-4 text-red-500" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M19 7l-.867 12.142A2 2 0 0116.138 21H7.862a2 2 0 01-1.995-1.858L5 7m5 4v6m4-6v6m1-10V4a1 1 0 00-1-1h-4a1 1 0 00-1 1v3M4 7h16"/>
+              </svg>
+              <span>Reset All UPI IDs</span>
             </button>
 
             <div class="my-1 border-t opacity-20" style="border-color: var(--border-color);"></div>
@@ -318,7 +334,7 @@
             </button>
 
             <div class="px-3.5 py-1.5 text-[10px] opacity-50 border-t mt-1" style="border-color: var(--border-color);">
-              PayPulse POS Terminal v7.6
+              Paypulse v7.6
             </div>
           </div>
         </div>
@@ -389,9 +405,27 @@
           </div>
         </div>
 
+        <div class="flex items-center bg-slate-900/40 dark:bg-black/40 p-1 rounded-xl border mb-4" style="border-color: var(--border-color);">
+          <button id="tabQuickMode" onclick="setTerminalMode('quick')" class="flex-1 py-1.5 rounded-lg text-xs font-bold transition-all flex items-center justify-center gap-1.5 theme-accent-btn text-white shadow-sm">
+            <svg class="w-3.5 h-3.5" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+              <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M12 4v16m8-8H4"></path>
+            </svg>
+            Quick Entry
+          </button>
+          <button id="tabCalcMode" onclick="setTerminalMode('calc')" class="flex-1 py-1.5 rounded-lg text-xs font-bold transition-all flex items-center justify-center gap-1.5 text-slate-400 hover:text-white">
+            <svg class="w-3.5 h-3.5" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+              <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M9 7h6m0 10v-3m-3 3h.01M9 17h.01M9 14h.01M12 14h.01M15 11h.01M12 11h.01M9 11h.01M7 21h10a2 2 0 002-2V5a2 2 0 00-2-2H7a2 2 0 00-2 2v14a2 2 0 002 2z"></path>
+            </svg>
+            Calculator Mode
+          </button>
+        </div>
+
         <!-- Amount Display Card -->
         <div class="theme-sub-bg border rounded-xl p-4 mb-4 text-center relative overflow-hidden" style="border-color: var(--border-color);">
-          <label class="block text-[11px] font-semibold opacity-70 uppercase tracking-wider mb-1">Enter Amount</label>
+          <!-- Expression Display Line for Calculator Mode -->
+          <div id="calcExpressionDisplay" class="text-xs font-mono opacity-60 h-4 mb-1 truncate hidden text-right pr-2"></div>
+          
+          <label id="amountLabel" class="block text-[11px] font-semibold opacity-70 uppercase tracking-wider mb-1">Enter Amount</label>
           <div class="flex items-center justify-center gap-1">
             <span class="text-2xl sm:text-3xl font-extrabold opacity-50">₹</span>
             <input type="text" id="amount" readonly placeholder="0" class="w-full bg-transparent text-center font-mono text-3xl sm:text-4xl font-black theme-accent-text focus:outline-none tracking-tight">
@@ -401,8 +435,8 @@
           </div>
         </div>
 
-        <!-- Quick Amount Increments -->
-        <div class="grid grid-cols-5 gap-2 mb-4">
+        <!-- Quick Amount Increments (Quick Mode) -->
+        <div id="quickPresetRow" class="grid grid-cols-5 gap-2 mb-4">
           <button onclick="addPresetAmount(10)" class="py-1.5 rounded-lg theme-keypad text-xs font-semibold border transition">+₹10</button>
           <button onclick="addPresetAmount(50)" class="py-1.5 rounded-lg theme-keypad text-xs font-semibold border transition">+₹50</button>
           <button onclick="addPresetAmount(100)" class="py-1.5 rounded-lg theme-keypad text-xs font-semibold border transition">+₹100</button>
@@ -410,8 +444,8 @@
           <button onclick="addPresetAmount(1000)" class="py-1.5 rounded-lg theme-keypad text-xs font-semibold border transition">+₹1k</button>
         </div>
 
-        <!-- Numpad Grid -->
-        <div class="grid grid-cols-3 gap-2 sm:gap-2.5 mb-5">
+        <!-- Quick Entry Numpad Grid -->
+        <div id="quickNumpad" class="grid grid-cols-3 gap-2 sm:gap-2.5 mb-5">
           <button onclick="numpadPress('1')" class="keypad-btn py-3.5 rounded-xl theme-keypad text-lg font-bold border transition">1</button>
           <button onclick="numpadPress('2')" class="keypad-btn py-3.5 rounded-xl theme-keypad text-lg font-bold border transition">2</button>
           <button onclick="numpadPress('3')" class="keypad-btn py-3.5 rounded-xl theme-keypad text-lg font-bold border transition">3</button>
@@ -426,11 +460,47 @@
 
           <button onclick="numpadPress('.')" class="keypad-btn py-3.5 rounded-xl theme-keypad text-lg font-bold border transition">.</button>
           <button onclick="numpadPress('0')" class="keypad-btn py-3.5 rounded-xl theme-keypad text-lg font-bold border transition">0</button>
-          <button onclick="clearAmount()" class="keypad-btn py-3.5 rounded-xl bg-red-500/10 hover:bg-red-500/20 text-lg font-bold text-red-500 border border-red-500/20 transition flex items-center justify-center">
+          <button onclick="clearAmount()" class="keypad-btn py-3.5 rounded-xl bg-red-500/10 hover:bg-red-500/20 text-lg font-bold text-red-500 border border-red-500/20 transition flex items-center justify-center" title="Backspace">
             <svg class="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24">
               <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M12 14l2-2m0 0l2-2m-2 2l-2-2m2 2l2 2M3 12l6.414 6.414a2 2 0 001.414.586H19a2 2 0 002-2V7a2 2 0 00-2-2H10.828a2 2 0 00-1.414.586L3 12z"></path>
             </svg>
           </button>
+        </div>
+
+        <div id="calcNumpad" class="grid grid-cols-4 gap-2 mb-5 hidden">
+          <!-- Row 1: Utility & Basic Ops -->
+          <button onclick="calcClear()" class="keypad-btn py-3 rounded-xl bg-red-500/10 hover:bg-red-500/20 text-red-500 border border-red-500/20 text-base font-extrabold transition">C</button>
+          <button onclick="calcPress('(')" class="keypad-btn py-3 rounded-xl theme-keypad text-base font-bold theme-accent-text border transition">(</button>
+          <button onclick="calcPress(')')" class="keypad-btn py-3 rounded-xl theme-keypad text-base font-bold theme-accent-text border transition">)</button>
+          <button onclick="calcPress('÷')" class="keypad-btn py-3 rounded-xl theme-keypad text-base font-bold theme-accent-text border transition">÷</button>
+
+          <!-- Row 2 -->
+          <button onclick="calcPress('7')" class="keypad-btn py-3 rounded-xl theme-keypad text-base font-bold border transition">7</button>
+          <button onclick="calcPress('8')" class="keypad-btn py-3 rounded-xl theme-keypad text-base font-bold border transition">8</button>
+          <button onclick="calcPress('9')" class="keypad-btn py-3 rounded-xl theme-keypad text-base font-bold border transition">9</button>
+          <button onclick="calcPress('×')" class="keypad-btn py-3 rounded-xl theme-keypad text-base font-bold theme-accent-text border transition">×</button>
+
+          <!-- Row 3 -->
+          <button onclick="calcPress('4')" class="keypad-btn py-3 rounded-xl theme-keypad text-base font-bold border transition">4</button>
+          <button onclick="calcPress('5')" class="keypad-btn py-3 rounded-xl theme-keypad text-base font-bold border transition">5</button>
+          <button onclick="calcPress('6')" class="keypad-btn py-3 rounded-xl theme-keypad text-base font-bold border transition">6</button>
+          <button onclick="calcPress('-')" class="keypad-btn py-3 rounded-xl theme-keypad text-base font-bold theme-accent-text border transition">-</button>
+
+          <!-- Row 4 -->
+          <button onclick="calcPress('1')" class="keypad-btn py-3 rounded-xl theme-keypad text-base font-bold border transition">1</button>
+          <button onclick="calcPress('2')" class="keypad-btn py-3 rounded-xl theme-keypad text-base font-bold border transition">2</button>
+          <button onclick="calcPress('3')" class="keypad-btn py-3 rounded-xl theme-keypad text-base font-bold border transition">3</button>
+          <button onclick="calcPress('+')" class="keypad-btn py-3 rounded-xl theme-keypad text-base font-bold theme-accent-text border transition">+</button>
+
+          <!-- Row 5 -->
+          <button onclick="calcPress('.')" class="keypad-btn py-3 rounded-xl theme-keypad text-base font-bold border transition">.</button>
+          <button onclick="calcPress('0')" class="keypad-btn py-3 rounded-xl theme-keypad text-base font-bold border transition">0</button>
+          <button onclick="calcBackspace()" class="keypad-btn py-3 rounded-xl theme-keypad text-base font-bold border transition flex items-center justify-center text-amber-500" title="Backspace">
+            <svg class="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+              <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M12 14l2-2m0 0l2-2m-2 2l-2-2m2 2l2 2M3 12l6.414 6.414a2 2 0 001.414.586H19a2 2 0 002-2V7a2 2 0 00-2-2H10.828a2 2 0 00-1.414.586L3 12z"></path>
+            </svg>
+          </button>
+          <button onclick="calcEquals()" class="keypad-btn py-3 rounded-xl theme-accent-btn text-white text-lg font-black border border-indigo-400/30 shadow-md transition">=</button>
         </div>
 
         <!-- Primary CTA Generate QR Button -->
@@ -677,32 +747,43 @@
           <span id="modalAmount" class="text-3xl font-extrabold font-mono theme-accent-text">₹0.00</span>
         </div>
 
-        <div class="grid grid-cols-2 gap-2">
-          <a id="modalWaBtn" target="_blank" href="#" class="py-2.5 rounded-xl bg-emerald-600 hover:bg-emerald-500 text-white font-semibold text-xs transition flex items-center justify-center gap-1.5">
-            <svg class="w-4 h-4" fill="currentColor" viewBox="0 0 24 24"><path d="M17.472 14.382c-.297-.149-1.758-.867-2.03-.967-.273-.099-.471-.148-.67.15-.197.297-.767.966-.94 1.164-.173.199-.347.223-.644.075-.297-.15-1.255-.463-2.39-1.475-.883-.788-1.48-1.761-1.653-2.059-.173-.297-.018-.458.13-.606.134-.133.298-.347.446-.52.149-.174.198-.298.298-.497.099-.198.05-.371-.025-.52-.075-.149-.669-1.612-.916-2.207-.242-.579-.487-.5-.669-.51-.173-.008-.371-.01-.57-.01-.198 0-.52.074-.792.372-.272.297-1.04 1.016-1.04 2.479 0 1.462 1.065 2.875 1.213 3.074.149.198 2.096 3.2 5.077 4.487.709.306 1.262.489 1.694.625.712.227 1.36.195 1.872.118.571-.085 1.758-.719 2.006-1.413.248-.694.248-1.29.173-1.414-.074-.124-.272-.198-.57-.347z"/></svg>
-            WhatsApp
-          </a>
-
-          <button onclick="downloadQRImage()" class="py-2.5 rounded-xl theme-keypad text-xs font-semibold border transition flex items-center justify-center gap-1.5">
-            <svg class="w-4 h-4 theme-accent-text" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-              <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M4 16v1a3 3 0 003 3h10a3 3 0 003-3v-1m-4-4l-4 4m0 0l-4-4m4 4V4"></path>
-            </svg>
-            Save Image
-          </button>
-
-          <button onclick="copyUpiPayLink()" class="py-2.5 rounded-xl theme-keypad text-xs font-semibold border transition flex items-center justify-center gap-1.5">
-            <svg class="w-4 h-4 theme-accent-text" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-              <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M8 16H6a2 2 0 01-2-2V6a2 2 0 012-2h8a2 2 0 012 2v2m-6 12h8a2 2 0 002-2v-8a2 2 0 00-2-h-8a2 2 0 00-2 2v8a2 2 0 002 2z"></path>
-            </svg>
-            Copy Link
-          </button>
-
-          <button onclick="printReceipt()" class="py-2.5 rounded-xl theme-sub-bg theme-accent-text text-xs font-semibold border border-indigo-500/30 transition flex items-center justify-center gap-1.5">
+        <!-- Action Buttons Container -->
+        <div class="space-y-2">
+          <!-- Primary Share QR Payment Card Button -->
+          <button onclick="shareQRImage()" class="w-full py-3 rounded-xl theme-accent-btn text-white font-bold text-xs shadow-lg active:scale-[0.99] transition flex items-center justify-center gap-2">
             <svg class="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-              <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M17 17h2a2 2 0 002-2v-4a2 2 0 00-2-2H5a2 2 0 00-2 2v4a2 2 0 002 2h2m2 4h6a2 2 0 002-2v-4a2 2 0 00-2-2H9a2 2 0 00-2 2v4a2 2 0 002 2zm8-12V5a2 2 0 00-2-2H9a2 2 0 00-2 2v4h10z"></path>
+              <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M8.684 13.342C8.886 12.938 9 12.482 9 12c0-.482-.114-.938-.316-1.342m0 2.684a3 3 0 110-2.684m0 2.684l6.632 3.316m-6.632-6l6.632-3.316m0 0a3 3 0 105.367-2.684 3 3 0 00-5.367 2.684zm0 9.316a3 3 0 105.368 2.684 3 3 0 00-5.368-2.684z"/>
             </svg>
-            Print Receipt
+            Share QR Payment Card
           </button>
+
+          <div class="grid grid-cols-2 gap-2">
+            <a id="modalWaBtn" target="_blank" href="#" class="py-2.5 rounded-xl bg-emerald-600 hover:bg-emerald-500 text-white font-semibold text-xs transition flex items-center justify-center gap-1.5">
+              <svg class="w-4 h-4" fill="currentColor" viewBox="0 0 24 24"><path d="M17.472 14.382c-.297-.149-1.758-.867-2.03-.967-.273-.099-.471-.148-.67.15-.197.297-.767.966-.94 1.164-.173.199-.347.223-.644.075-.297-.15-1.255-.463-2.39-1.475-.883-.788-1.48-1.761-1.653-2.059-.173-.297-.018-.458.13-.606.134-.133.298-.347.446-.52.149-.174.198-.298.298-.497.099-.198.05-.371-.025-.52-.075-.149-.669-1.612-.916-2.207-.242-.579-.487-.5-.669-.51-.173-.008-.371-.01-.57-.01-.198 0-.52.074-.792.372-.272.297-1.04 1.016-1.04 2.479 0 1.462 1.065 2.875 1.213 3.074.149.198 2.096 3.2 5.077 4.487.709.306 1.262.489 1.694.625.712.227 1.36.195 1.872.118.571-.085 1.758-.719 2.006-1.413.248-.694.248-1.29.173-1.414-.074-.124-.272-.198-.57-.347z"/></svg>
+              WhatsApp
+            </a>
+
+            <button onclick="downloadQRImage()" class="py-2.5 rounded-xl theme-keypad text-xs font-semibold border transition flex items-center justify-center gap-1.5">
+              <svg class="w-4 h-4 theme-accent-text" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M4 16v1a3 3 0 003 3h10a3 3 0 003-3v-1m-4-4l-4 4m0 0l-4-4m4 4V4"></path>
+              </svg>
+              Save Image
+            </button>
+
+            <button onclick="copyUpiPayLink()" class="py-2.5 rounded-xl theme-keypad text-xs font-semibold border transition flex items-center justify-center gap-1.5">
+              <svg class="w-4 h-4 theme-accent-text" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M8 16H6a2 2 0 01-2-2V6a2 2 0 012-2h8a2 2 0 012 2v2m-6 12h8a2 2 0 002-2v-8a2 2 0 00-2-h-8a2 2 0 00-2 2v8a2 2 0 002 2z"></path>
+              </svg>
+              Copy Link
+            </button>
+
+            <button onclick="printReceipt()" class="py-2.5 rounded-xl theme-sub-bg theme-accent-text text-xs font-semibold border border-indigo-500/30 transition flex items-center justify-center gap-1.5">
+              <svg class="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M17 17h2a2 2 0 002-2v-4a2 2 0 00-2-2H5a2 2 0 00-2 2v4a2 2 0 002 2h2m2 4h6a2 2 0 002-2v-4a2 2 0 00-2-2H9a2 2 0 00-2 2v4a2 2 0 002 2zm8-12V5a2 2 0 00-2-2H9a2 2 0 00-2 2v4h10z"></path>
+              </svg>
+              Print Receipt
+            </button>
+          </div>
         </div>
 
       </div>
@@ -769,11 +850,188 @@
     </div>
   </div>
 
+  <!-- MODAL 4: Bulk Add Merchants Modal -->
+  <div id="bulkAddModal" class="fixed inset-0 z-50 bg-slate-950/80 backdrop-blur-md flex items-center justify-center p-4 hidden opacity-0 transition-opacity duration-200">
+    <div class="theme-card-bg border rounded-3xl p-6 max-w-md w-full shadow-2xl relative transform scale-95 transition-transform duration-200" id="bulkAddModalCard" style="border-color: var(--border-color);">
+      
+      <div class="flex items-center justify-between mb-3">
+        <h3 class="text-base font-bold flex items-center gap-2">
+          <svg class="w-4 h-4 theme-accent-text" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+            <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M12 9v3m0 0v3m0-3h3m-3 0H9m12 0a9 9 0 11-18 0 9 9 0 0118 0z"></path>
+          </svg>
+          Bulk Add UPI Accounts
+        </h3>
+        <button onclick="closeBulkAddModal()" class="opacity-60 hover:opacity-100">✕</button>
+      </div>
+
+      <p class="text-xs opacity-70 mb-2">Paste one payee per line in format:<br><code class="font-mono text-[10px] theme-accent-text bg-black/10 dark:bg-white/10 px-1 py-0.5 rounded">UPI_ID, Merchant Name, Mobile Number</code></p>
+
+      <textarea id="bulkUpiInput" rows="6" placeholder="merchant1@ybl, Arun Traders, 8105104599&#10;merchant2@paytm, Vijay Store&#10;9876543210@kotak" class="w-full theme-sub-bg border rounded-xl p-3 text-xs font-mono focus:outline-none mb-4" style="border-color: var(--border-color);"></textarea>
+
+      <div class="flex gap-2">
+        <button onclick="closeBulkAddModal()" class="flex-1 py-2.5 rounded-xl theme-keypad text-xs font-semibold transition">Cancel</button>
+        <button onclick="processBulkAddMerchants()" class="flex-1 py-2.5 rounded-xl theme-accent-btn text-white text-xs font-bold transition shadow-md">Add Accounts</button>
+      </div>
+
+    </div>
+  </div>
+
+  <!-- MODAL 5: Reset All UPI Confirmation Modal -->
+  <div id="resetUpiModal" class="fixed inset-0 z-50 bg-slate-950/80 backdrop-blur-md flex items-center justify-center p-4 hidden opacity-0 transition-opacity duration-200">
+    <div class="theme-card-bg border rounded-3xl p-6 max-w-sm w-full shadow-2xl relative transform scale-95 transition-transform duration-200" id="resetUpiModalCard" style="border-color: var(--border-color);">
+      <div class="text-center">
+        <div class="w-12 h-12 rounded-2xl bg-red-500/10 text-red-500 p-3 border border-red-500/30 mx-auto mb-3 flex items-center justify-center">
+          <svg class="w-6 h-6" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+            <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M12 9v2m0 4h.01m-6.938 4h13.856c1.54 0 2.502-1.667 1.732-3L13.732 4c-.77-1.333-2.694-1.333-3.464 0L3.34 16c-.77 1.333.192 3 1.732 3z"/>
+          </svg>
+        </div>
+        <h3 class="text-base font-bold mb-1">Reset All UPI Accounts?</h3>
+        <p class="text-xs opacity-70 mb-4">Are you sure you want to delete <strong class="text-red-500">ALL merchant UPI accounts</strong>? This action will clear all saved payee profiles and cannot be undone.</p>
+
+        <div class="flex gap-2">
+          <button onclick="closeResetUpiModal()" class="flex-1 py-2.5 rounded-xl theme-keypad font-semibold text-xs transition">Cancel</button>
+          <button onclick="confirmResetAllMerchants()" class="flex-1 py-2.5 rounded-xl bg-red-600 hover:bg-red-500 text-white font-semibold text-xs transition">Delete All</button>
+        </div>
+      </div>
+    </div>
+  </div>
+
   <!-- Main Application Logic Script -->
   <script>
+    function openBulkAddModal() {
+      playBeep('click');
+      const modal = document.getElementById('bulkAddModal');
+      const card = document.getElementById('bulkAddModalCard');
+      if (!modal || !card) return;
+      modal.classList.remove('hidden');
+      requestAnimationFrame(() => {
+        modal.classList.remove('opacity-0');
+        card.classList.remove('scale-95');
+      });
+      setTimeout(() => document.getElementById('bulkUpiInput')?.focus(), 150);
+    }
+
+    function closeBulkAddModal() {
+      const modal = document.getElementById('bulkAddModal');
+      const card = document.getElementById('bulkAddModalCard');
+      if (!modal || !card) return;
+      modal.classList.add('opacity-0');
+      card.classList.add('scale-95');
+      setTimeout(() => modal.classList.add('hidden'), 200);
+    }
+
+    function processBulkAddMerchants() {
+      const input = document.getElementById('bulkUpiInput')?.value || '';
+      const lines = input.split('\n');
+      let addedCount = 0;
+
+      const list = loadMerchants();
+
+      lines.forEach(line => {
+        const trimmed = line.trim();
+        if (!trimmed) return;
+
+        const parts = trimmed.split(',').map(p => p.trim());
+        const upi = parts[0];
+        if (!upi || !upi.includes('@')) return;
+
+        const name = parts[1] || upi.split('@')[0].toUpperCase();
+        const mobile = parts[2] || '';
+
+        const existingIdx = list.findIndex(m => m.upi.toLowerCase() === upi.toLowerCase());
+        const newMerchant = { upi, name, mobile };
+
+        if (existingIdx >= 0) {
+          list[existingIdx] = newMerchant;
+        } else {
+          list.push(newMerchant);
+        }
+        addedCount++;
+      });
+
+      if (addedCount === 0) {
+        showToast('No valid UPI handles found in input', 'error');
+        return;
+      }
+
+      saveMerchants(list);
+      document.getElementById('bulkUpiInput').value = '';
+      closeBulkAddModal();
+
+      renderMerchantList();
+      if (list.length > 0) {
+        selectMerchant(list[list.length - 1], true);
+      }
+
+      populateHistoryUpiFilter();
+      showToast(`Successfully processed ${addedCount} merchant account(s)`);
+    }
+
+    function openResetUpiModal() {
+      playBeep('click');
+      const modal = document.getElementById('resetUpiModal');
+      const card = document.getElementById('resetUpiModalCard');
+      if (!modal || !card) return;
+      modal.classList.remove('hidden');
+      requestAnimationFrame(() => {
+        modal.classList.remove('opacity-0');
+        card.classList.remove('scale-95');
+      });
+    }
+
+    function closeResetUpiModal() {
+      const modal = document.getElementById('resetUpiModal');
+      const card = document.getElementById('resetUpiModalCard');
+      if (!modal || !card) return;
+      modal.classList.add('opacity-0');
+      card.classList.add('scale-95');
+      setTimeout(() => modal.classList.add('hidden'), 200);
+    }
+
+    function confirmResetAllMerchants() {
+      saveMerchants([]);
+
+      selectedMerchant = null;
+      renderMerchantList();
+
+      const avatar = document.getElementById('activeAvatar');
+      const name = document.getElementById('activeName');
+      const upi = document.getElementById('activeUpi');
+      if (avatar && name && upi) {
+        avatar.textContent = '--';
+        name.textContent = 'Select a merchant';
+        upi.textContent = '--';
+      }
+
+      closeResetUpiModal();
+      populateHistoryUpiFilter();
+      showToast('All UPI payee accounts reset successfully');
+    }
+
     // System Settings & Audio Context Initialization
     let soundEnabled = true;
     let sharedAudioCtx = null;
+
+    // Indian Number Formatting Helpers
+    function formatIndianCurrency(num, decimals = 2) {
+      const val = Number(num);
+      if (isNaN(val)) return '0.00';
+      return val.toLocaleString('en-IN', {
+        minimumFractionDigits: decimals,
+        maximumFractionDigits: decimals
+      });
+    }
+
+    function formatInputValue(valStr) {
+      if (!valStr) return '';
+      const parts = valStr.split('.');
+      const integerPartStr = parts[0];
+      const formattedInteger = integerPartStr ? Number(integerPartStr).toLocaleString('en-IN') : '0';
+      if (parts.length > 1) {
+        return formattedInteger + '.' + parts[1];
+      }
+      return formattedInteger;
+    }
 
     function getAudioContext() {
       if (!sharedAudioCtx) {
@@ -820,7 +1078,7 @@
 
     /* Royal Theme System Control */
     const THEMES = ['platinum', 'sapphire', 'gold', 'emerald', 'burgundy'];
-    let currentTheme = 'sapphire';
+    let currentTheme = 'platinum';
 
     function setTheme(themeKey) {
       if (!THEMES.includes(themeKey)) return;
@@ -995,9 +1253,9 @@
     function loadMerchants() {
       try {
         const stored = localStorage.getItem('paypulse_merchants');
-        if (stored) {
+        if (stored !== null) {
           const parsed = JSON.parse(stored);
-          if (Array.isArray(parsed) && parsed.length > 0) {
+          if (Array.isArray(parsed)) {
             return parsed;
           }
         }
@@ -1230,27 +1488,172 @@
     function numpadPress(val) {
       playBeep('click');
       const input = document.getElementById('amount');
-      let current = input.value || '';
+      let currentRaw = (input.value || '').replace(/,/g, '');
       
-      if (val === '.' && current.includes('.')) return;
-      if (val === '.' && current === '') current = '0';
+      if (val === '.' && currentRaw.includes('.')) return;
+      if (val === '.' && currentRaw === '') currentRaw = '0';
       
-      input.value = current + val;
+      currentRaw += val;
+      input.value = formatInputValue(currentRaw);
       document.getElementById('amountError').classList.add('hidden');
     }
 
     function addPresetAmount(val) {
       playBeep('click');
       const input = document.getElementById('amount');
-      const curr = parseFloat(input.value) || 0;
-      input.value = (curr + val).toString();
+      const rawCurr = parseFloat((input.value || '0').replace(/,/g, '')) || 0;
+      const newTotal = rawCurr + val;
+      input.value = formatInputValue(newTotal.toString());
       document.getElementById('amountError').classList.add('hidden');
     }
 
     function clearAmount() {
       playBeep('click');
-      document.getElementById('amount').value = '';
+      if (terminalMode === 'calc') {
+        calcBackspace();
+        return;
+      }
+      const input = document.getElementById('amount');
+      let currentRaw = (input.value || '').replace(/,/g, '');
+      if (currentRaw.length > 0) {
+        currentRaw = currentRaw.slice(0, -1);
+        input.value = formatInputValue(currentRaw);
+      }
       document.getElementById('amountError').classList.add('hidden');
+    }
+
+    let terminalMode = 'quick'; // 'quick' | 'calc'
+    let calcExpression = '';
+
+    function setTerminalMode(mode) {
+      playBeep('click');
+      terminalMode = mode;
+      
+      const quickBtn = document.getElementById('tabQuickMode');
+      const calcBtn = document.getElementById('tabCalcMode');
+      const quickPresets = document.getElementById('quickPresetRow');
+      const quickNumpad = document.getElementById('quickNumpad');
+      const calcNumpad = document.getElementById('calcNumpad');
+      const exprDisplay = document.getElementById('calcExpressionDisplay');
+      const amountLabel = document.getElementById('amountLabel');
+
+      if (mode === 'calc') {
+        quickBtn.className = "flex-1 py-1.5 rounded-lg text-xs font-bold transition-all flex items-center justify-center gap-1.5 text-slate-400 hover:text-white";
+        calcBtn.className = "flex-1 py-1.5 rounded-lg text-xs font-bold transition-all flex items-center justify-center gap-1.5 theme-accent-btn text-white shadow-sm";
+        
+        quickPresets.classList.add('hidden');
+        quickNumpad.classList.add('hidden');
+        calcNumpad.classList.remove('hidden');
+        exprDisplay.classList.remove('hidden');
+        amountLabel.textContent = "Calculated Total";
+
+        // Seed calculator with current amount if exists
+        const currentVal = (document.getElementById('amount').value || '').replace(/,/g, '');
+        if (!calcExpression && currentVal && !isNaN(parseFloat(currentVal))) {
+          calcExpression = currentVal;
+        }
+        updateCalcUI();
+      } else {
+        quickBtn.className = "flex-1 py-1.5 rounded-lg text-xs font-bold transition-all flex items-center justify-center gap-1.5 theme-accent-btn text-white shadow-sm";
+        calcBtn.className = "flex-1 py-1.5 rounded-lg text-xs font-bold transition-all flex items-center justify-center gap-1.5 text-slate-400 hover:text-white";
+        
+        quickPresets.classList.remove('hidden');
+        quickNumpad.classList.remove('hidden');
+        calcNumpad.classList.add('hidden');
+        exprDisplay.classList.add('hidden');
+        amountLabel.textContent = "Enter Amount";
+      }
+    }
+
+    function calcPress(val) {
+      playBeep('click');
+      calcExpression += val;
+      updateCalcUI();
+    }
+
+    function calcClear() {
+      playBeep('click');
+      calcExpression = '';
+      document.getElementById('amount').value = '';
+      document.getElementById('calcExpressionDisplay').textContent = '';
+      document.getElementById('amountError').classList.add('hidden');
+    }
+
+    function calcBackspace() {
+      playBeep('click');
+      if (calcExpression.length > 0) {
+        calcExpression = calcExpression.slice(0, -1);
+        updateCalcUI();
+      }
+    }
+
+    function applyCalcPreset(preset) {
+      playBeep('click');
+      if (!calcExpression) {
+        const currentVal = (document.getElementById('amount').value || '').replace(/,/g, '');
+        if (currentVal) calcExpression = currentVal;
+      }
+      if (calcExpression) {
+        calcExpression += ' ' + preset;
+        updateCalcUI();
+      }
+    }
+
+    function safeEvalCalc(expr) {
+      if (!expr || !expr.trim()) return 0;
+      
+      let sanitized = expr
+        .replace(/×/g, '*')
+        .replace(/÷/g, '/');
+
+      // Handle A + B% => A + (A * B / 100) and A - B% => A - (A * B / 100)
+      sanitized = sanitized.replace(/(\d+(?:\.\d+)?)\s*([\+\-])\s*(\d+(?:\.\d+)?)\%/g, (match, a, op, b) => {
+        return `${a} ${op} (${a} * ${b} / 100)`;
+      });
+
+      // Handle standalone B% => (B / 100)
+      sanitized = sanitized.replace(/(\d+(?:\.\d+)?)\%/g, '($1 / 100)');
+
+      // Security Guardrail: Only allow math characters
+      if (/[^0-9\+\-\*\/\.\(\)\s]/.test(sanitized)) {
+        return NaN;
+      }
+
+      try {
+        const res = new Function(`return (${sanitized})`)();
+        if (typeof res === 'number' && !isNaN(res) && isFinite(res)) {
+          return res;
+        }
+        return NaN;
+      } catch (e) {
+        return NaN;
+      }
+    }
+
+    function updateCalcUI() {
+      const exprDisplay = document.getElementById('calcExpressionDisplay');
+      const amountInput = document.getElementById('amount');
+      
+      if (exprDisplay) {
+        exprDisplay.textContent = calcExpression || '0';
+      }
+
+      const evalResult = safeEvalCalc(calcExpression);
+      if (!isNaN(evalResult) && evalResult >= 0) {
+        amountInput.value = formatInputValue(evalResult.toFixed(2));
+        document.getElementById('amountError').classList.add('hidden');
+      } else if (!calcExpression) {
+        amountInput.value = '';
+      }
+    }
+
+    function calcEquals() {
+      playBeep('click');
+      const evalResult = safeEvalCalc(calcExpression);
+      if (!isNaN(evalResult) && evalResult > 0) {
+        calcExpression = evalResult.toString();
+        updateCalcUI();
+      }
     }
 
     // QR Generation & Modal Output
@@ -1263,8 +1666,13 @@
         return;
       }
 
+      if (terminalMode === 'calc') {
+        calcEquals();
+      }
+
       const amountInput = document.getElementById('amount');
-      const amountVal = parseFloat(amountInput.value);
+      const rawAmount = (amountInput.value || '').replace(/,/g, '');
+      const amountVal = parseFloat(rawAmount);
 
       if (isNaN(amountVal) || amountVal <= 0) {
         document.getElementById('amountError').classList.remove('hidden');
@@ -1291,7 +1699,7 @@
       // Update Modal Display
       document.getElementById('modalPayeeName').textContent = selectedMerchant.name;
       document.getElementById('modalUpiId').textContent = selectedMerchant.upi;
-      document.getElementById('modalAmount').textContent = '₹' + amountVal.toFixed(2);
+      document.getElementById('modalAmount').textContent = '₹' + formatIndianCurrency(amountVal);
 
       // Setup WhatsApp button link
       const cleanPhone = (selectedMerchant.mobile || '').replace(/[^0-9]/g, '');
@@ -1344,26 +1752,205 @@
       }, 200);
     }
 
+    function getQrImageElement() {
+      return new Promise((resolve) => {
+        const qrCanvas = document.querySelector('#qrcode canvas');
+        if (qrCanvas) {
+          resolve(qrCanvas);
+          return;
+        }
+        const qrImg = document.querySelector('#qrcode img');
+        if (qrImg) {
+          if (qrImg.complete) {
+            resolve(qrImg);
+          } else {
+            qrImg.onload = () => resolve(qrImg);
+            qrImg.onerror = () => resolve(null);
+          }
+          return;
+        }
+        resolve(null);
+      });
+    }
+
+    async function generateCardCanvas() {
+      if (!currentQrData) return null;
+
+      const canvas = document.createElement('canvas');
+      const ctx = canvas.getContext('2d');
+
+      // High-resolution canvas dimensions
+      canvas.width = 640;
+      canvas.height = 840;
+
+      // Card Background Gradient
+      const bgGradient = ctx.createLinearGradient(0, 0, 0, canvas.height);
+      bgGradient.addColorStop(0, '#0f172a');
+      bgGradient.addColorStop(1, '#1e1b4b');
+      ctx.fillStyle = bgGradient;
+      ctx.fillRect(0, 0, canvas.width, canvas.height);
+
+      // Card Border & Glow Frame
+      ctx.strokeStyle = 'rgba(99, 102, 241, 0.4)';
+      ctx.lineWidth = 6;
+      if (ctx.roundRect) {
+        ctx.beginPath();
+        ctx.roundRect(20, 20, canvas.width - 40, canvas.height - 40, 28);
+        ctx.stroke();
+      } else {
+        ctx.strokeRect(20, 20, canvas.width - 40, canvas.height - 40);
+      }
+
+      // App Header Badge
+      ctx.fillStyle = '#818cf8';
+      ctx.font = 'bold 20px Inter, sans-serif';
+      ctx.textAlign = 'center';
+      ctx.fillText('PayPulse POS • Instant Payment Request', 320, 65);
+
+      // Header Separator Line
+      ctx.strokeStyle = 'rgba(255, 255, 255, 0.12)';
+      ctx.lineWidth = 2;
+      ctx.beginPath();
+      ctx.moveTo(50, 85);
+      ctx.lineTo(590, 85);
+      ctx.stroke();
+
+      // Payee Name
+      ctx.fillStyle = '#ffffff';
+      ctx.font = 'bold 30px Inter, sans-serif';
+      ctx.fillText(currentQrData.name, 320, 135);
+
+      // Payee UPI ID
+      ctx.fillStyle = '#94a3b8';
+      ctx.font = '600 20px "JetBrains Mono", monospace';
+      ctx.fillText(currentQrData.upi, 320, 170);
+
+      // Render QR Code Box
+      const qrElement = await getQrImageElement();
+      if (qrElement) {
+        // White rounded box background for QR code
+        ctx.fillStyle = '#ffffff';
+        if (ctx.roundRect) {
+          ctx.beginPath();
+          ctx.roundRect(150, 200, 340, 340, 24);
+          ctx.fill();
+        } else {
+          ctx.fillRect(150, 200, 340, 340);
+        }
+
+        // Draw QR Image inside white box
+        ctx.drawImage(qrElement, 170, 220, 300, 300);
+      }
+
+      // Amount Container Card
+      ctx.fillStyle = 'rgba(2, 6, 23, 0.7)';
+      if (ctx.roundRect) {
+        ctx.beginPath();
+        ctx.roundRect(90, 570, 460, 120, 20);
+        ctx.fill();
+      } else {
+        ctx.fillRect(90, 570, 460, 120);
+      }
+
+      ctx.strokeStyle = 'rgba(99, 102, 241, 0.35)';
+      ctx.lineWidth = 2;
+      if (ctx.roundRect) {
+        ctx.beginPath();
+        ctx.roundRect(90, 570, 460, 120, 20);
+        ctx.stroke();
+      }
+
+      ctx.fillStyle = '#94a3b8';
+      ctx.font = 'bold 15px Inter, sans-serif';
+      ctx.fillText('PAYABLE AMOUNT', 320, 605);
+
+      ctx.fillStyle = '#34d399';
+      ctx.font = 'bold 44px "JetBrains Mono", monospace';
+      ctx.fillText('₹' + formatIndianCurrency(currentQrData.amount), 320, 660);
+
+      // Footer Instructions
+      ctx.fillStyle = '#cbd5e1';
+      ctx.font = '600 16px Inter, sans-serif';
+      ctx.fillText('Scan & Pay using any UPI Application', 320, 735);
+
+      ctx.fillStyle = '#64748b';
+      ctx.font = '500 13px Inter, sans-serif';
+      ctx.fillText('Google Pay • PhonePe • Paytm • BHIM • Cred • Bank Apps', 320, 770);
+
+      return canvas;
+    }
+
+    async function shareQRImage() {
+      if (!currentQrData) return;
+
+      playBeep('click');
+      showToast('Generating payment card...');
+
+      try {
+        const canvas = await generateCardCanvas();
+        if (!canvas) {
+          showToast('Could not generate card image', 'error');
+          return;
+        }
+
+        canvas.toBlob(async (blob) => {
+          if (!blob) {
+            showToast('Failed to create image file', 'error');
+            return;
+          }
+
+          const fileName = `PayPulse-QR-${currentQrData.name.replace(/\s+/g, '_')}-₹${currentQrData.amount}.png`;
+          const file = new File([blob], fileName, { type: 'image/png' });
+
+          if (navigator.canShare && navigator.canShare({ files: [file] })) {
+            try {
+              await navigator.share({
+                title: `Payment QR for ${currentQrData.name}`,
+                text: `Payment Request: ₹${formatIndianCurrency(currentQrData.amount)} to ${currentQrData.name} (${currentQrData.upi})`,
+                files: [file]
+              });
+              showToast('Shared successfully!');
+            } catch (err) {
+              if (err.name !== 'AbortError') {
+                console.error('Share error:', err);
+                downloadCardBlob(blob, fileName);
+              }
+            }
+          } else if (navigator.share) {
+            try {
+              await navigator.share({
+                title: `Payment QR for ${currentQrData.name}`,
+                text: `Pay ₹${formatIndianCurrency(currentQrData.amount)} to ${currentQrData.name} (${currentQrData.upi})\n\nPayment Link: ${currentQrData.upiUrl}`
+              });
+            } catch (err) {
+              if (err.name !== 'AbortError') {
+                downloadCardBlob(blob, fileName);
+              }
+            }
+          } else {
+            downloadCardBlob(blob, fileName);
+            showToast('Image card downloaded!');
+          }
+        }, 'image/png');
+      } catch (e) {
+        console.error('Share canvas error:', e);
+        showToast('Failed to generate share image', 'error');
+      }
+    }
+
+    function downloadCardBlob(blob, fileName) {
+      const url = URL.createObjectURL(blob);
+      const a = document.createElement('a');
+      a.href = url;
+      a.download = fileName;
+      document.body.appendChild(a);
+      a.click();
+      document.body.removeChild(a);
+      URL.revokeObjectURL(url);
+    }
+
     function downloadQRImage() {
-      const qrCanvas = document.querySelector('#qrcode canvas');
-      const qrImg = document.querySelector('#qrcode img');
-      let dataUrl = '';
-
-      if (qrCanvas) {
-        dataUrl = qrCanvas.toDataURL('image/png');
-      } else if (qrImg && qrImg.src) {
-        dataUrl = qrImg.src;
-      }
-
-      if (!dataUrl) {
-        showToast('QR code image not ready', 'error');
-        return;
-      }
-      const link = document.createElement('a');
-      link.download = `UPI-QR-${currentQrData.name.replace(/\s+/g, '_')}-₹${currentQrData.amount}.png`;
-      link.href = dataUrl;
-      link.click();
-      showToast('QR Image saved');
+      shareQRImage();
     }
 
     function copyUpiPayLink() {
@@ -1443,7 +2030,7 @@
       const list = loadHistory();
       const total = list.filter(r => isToday(r.timestamp)).reduce((sum, r) => sum + r.amount, 0);
       const elem = document.getElementById('headerTodayTotal');
-      if (elem) elem.textContent = '₹' + total.toFixed(2);
+      if (elem) elem.textContent = '₹' + formatIndianCurrency(total);
     }
 
     function renderHistory() {
@@ -1470,7 +2057,7 @@
           <div>
             <div class="flex items-center justify-between gap-2 mb-1">
               <span class="text-xs font-bold truncate">${r.payeeName}</span>
-              <span class="text-[20px] font-mono font-extrabold text-emerald-500">₹${r.amount.toFixed(2)}</span>
+              <span class="text-[20px] font-mono font-extrabold text-emerald-500">₹${formatIndianCurrency(r.amount)}</span>
             </div>
             <div class="text-[10px] font-mono opacity-70 truncate">${r.upiId}</div>
             <div class="text-[10px] opacity-50 mt-1">${formatTime(r.timestamp)}</div>
@@ -1489,14 +2076,14 @@
       const record = loadHistory().find(r => r.id === id);
       if (!record) return;
       selectMerchantByUpi(record.upiId, true);
-      document.getElementById('amount').value = record.amount.toString();
+      document.getElementById('amount').value = formatInputValue(record.amount.toString());
       showToast('Loaded transaction settings');
     }
 
     function copyHistoryItem(id) {
       const record = loadHistory().find(r => r.id === id);
       if (!record) return;
-      const text = `${record.payeeName}\nUPI: ${record.upiId}\nAmount: ₹${record.amount.toFixed(2)}`;
+      const text = `${record.payeeName}\nUPI: ${record.upiId}\nAmount: ₹${formatIndianCurrency(record.amount)}`;
       if (navigator.clipboard) {
         navigator.clipboard.writeText(text);
       } else {
@@ -1663,7 +2250,7 @@
       initPWAInfrastructure();
 
       // Restore saved theme
-      const savedTheme = localStorage.getItem('paypulse_royal_theme') || 'sapphire';
+      const savedTheme = localStorage.getItem('paypulse_royal_theme') || 'platinum';
       setTheme(savedTheme);
 
       const merchants = loadMerchants();
