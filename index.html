@@ -5,6 +5,10 @@
   <meta name="viewport" content="width=device-width, initial-scale=1.0">
   <title>Paypulse v7.6</title>
   
+  <!-- Favicon & Touch Icon Config -->
+  <link rel="icon" type="image/png" href="https://cdn-icons-png.flaticon.com/512/9493/9493583.png">
+  <link rel="apple-touch-icon" href="https://cdn-icons-png.flaticon.com/512/9493/9493583.png">
+
   <!-- PWA Web App Manifest -->
   <link rel="manifest" href='data:application/manifest+json;utf8,{"name":"Paypulse v7.6","short_name":"Paypulse","start_url":".","display":"standalone","background_color":"#0f172a","theme_color":"#4f46e5","icons":[{"src":"https://cdn-icons-png.flaticon.com/512/9493/9493583.png","sizes":"512x512","type":"image/png","purpose":"any maskable"}]}'>
   <meta name="theme-color" content="#4f46e5">
@@ -220,6 +224,17 @@
           <div id="themeMenuDropdown" class="hidden absolute right-0 mt-2 w-60 theme-card-bg backdrop-blur-xl border rounded-2xl shadow-2xl z-50 p-2 space-y-1.5 transition-all duration-150 transform opacity-0 scale-95" style="background-color: var(--bg-card); border-color: var(--border-color);">
             <div class="px-2 py-1 text-[10px] font-bold uppercase tracking-wider opacity-60">Royal Themes</div>
             
+            <button onclick="setTheme('platinum'); closeThemeMenu();" class="w-full p-2 rounded-xl border text-left transition flex items-center justify-between bg-slate-100 border-slate-300 hover:scale-[1.01]">
+              <div class="flex items-center gap-2.5">
+                <span class="text-xs">🛡️</span>
+                <div>
+                  <div class="text-xs font-bold text-slate-900">Platinum Executive</div>
+                  <div class="text-[9px] text-slate-600">Light Slate</div>
+                </div>
+              </div>
+              <span class="text-[10px] font-bold text-blue-600 theme-indicator" id="theme-indicator-platinum"></span>
+            </button>
+
             <button onclick="setTheme('sapphire'); closeThemeMenu();" class="w-full p-2 rounded-xl border text-left transition flex items-center justify-between bg-slate-900 border-indigo-500/40 hover:scale-[1.01]">
               <div class="flex items-center gap-2.5">
                 <span class="text-xs">💎</span>
@@ -262,17 +277,6 @@
                 </div>
               </div>
               <span class="text-[10px] font-bold text-rose-400 theme-indicator" id="theme-indicator-burgundy"></span>
-            </button>
-
-            <button onclick="setTheme('platinum'); closeThemeMenu();" class="w-full p-2 rounded-xl border text-left transition flex items-center justify-between bg-slate-100 border-slate-300 hover:scale-[1.01]">
-              <div class="flex items-center gap-2.5">
-                <span class="text-xs">🛡️</span>
-                <div>
-                  <div class="text-xs font-bold text-slate-900">Platinum Executive</div>
-                  <div class="text-[9px] text-slate-600">Light Slate</div>
-                </div>
-              </div>
-              <span class="text-[10px] font-bold text-blue-600 theme-indicator" id="theme-indicator-platinum"></span>
             </button>
           </div>
         </div>
@@ -405,14 +409,15 @@
           </div>
         </div>
 
-        <div class="flex items-center bg-slate-900/40 dark:bg-black/40 p-1 rounded-xl border mb-4" style="border-color: var(--border-color);">
+        <!-- Terminal Mode Switcher -->
+        <div class="flex items-center theme-sub-bg p-1 rounded-xl border mb-4" style="border-color: var(--border-color);">
           <button id="tabQuickMode" onclick="setTerminalMode('quick')" class="flex-1 py-1.5 rounded-lg text-xs font-bold transition-all flex items-center justify-center gap-1.5 theme-accent-btn text-white shadow-sm">
             <svg class="w-3.5 h-3.5" fill="none" stroke="currentColor" viewBox="0 0 24 24">
               <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M12 4v16m8-8H4"></path>
             </svg>
             Quick Entry
           </button>
-          <button id="tabCalcMode" onclick="setTerminalMode('calc')" class="flex-1 py-1.5 rounded-lg text-xs font-bold transition-all flex items-center justify-center gap-1.5 text-slate-400 hover:text-white">
+          <button id="tabCalcMode" onclick="setTerminalMode('calc')" class="flex-1 py-1.5 rounded-lg text-xs font-bold transition-all flex items-center justify-center gap-1.5 opacity-60 hover:opacity-100 transition-opacity">
             <svg class="w-3.5 h-3.5" fill="none" stroke="currentColor" viewBox="0 0 24 24">
               <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M9 7h6m0 10v-3m-3 3h.01M9 17h.01M9 14h.01M12 14h.01M15 11h.01M12 11h.01M9 11h.01M7 21h10a2 2 0 002-2V5a2 2 0 00-2-2H7a2 2 0 00-2 2v14a2 2 0 002 2z"></path>
             </svg>
@@ -522,7 +527,7 @@
         </div>
         <div>
           <span class="block text-[10px] uppercase font-bold opacity-70 tracking-wider">Today's Earnings</span>
-          <span id="headerTodayTotal" class="text-xl sm:text-2xl font-extrabold font-mono text-emerald-500">₹0.00</span>
+          <span id="headerTodayTotal" class="text-xl sm:text-2xl font-extrabold font-mono text-emerald-500">₹0</span>
         </div>
       </div>
       <div class="flex items-center gap-2">
@@ -644,7 +649,7 @@
             </svg>
           </div>
           <div>
-            <h3 class="text-base font-bold leading-tight">PayPulse for AT</h3>
+            <h3 class="text-base font-bold leading-tight">Paypulse v7.6</h3>
             <p class="text-[10px] opacity-70">POS Terminal Edition</p>
           </div>
         </div>
@@ -679,7 +684,7 @@
             </li>
             <li class="flex items-start gap-2">
               <span class="w-4 h-4 rounded-full theme-accent-btn text-white text-[9px] font-bold flex items-center justify-center shrink-0 mt-0.5">2</span>
-              <span><strong>Enter Amount:</strong> Tap quick preset buttons (+₹10 to +₹1k) or use numpad.</span>
+              <span><strong>Enter Amount:</strong> Tap quick preset buttons (+₹10 to +₹1k) or use numpad/calculator.</span>
             </li>
             <li class="flex items-start gap-2">
               <span class="w-4 h-4 rounded-full theme-accent-btn text-white text-[9px] font-bold flex items-center justify-center shrink-0 mt-0.5">3</span>
@@ -687,7 +692,7 @@
             </li>
             <li class="flex items-start gap-2">
               <span class="w-4 h-4 rounded-full theme-accent-btn text-white text-[9px] font-bold flex items-center justify-center shrink-0 mt-0.5">4</span>
-              <span><strong>Receipt & Share:</strong> Share on WhatsApp, save image, copy link, or print.</span>
+              <span><strong>Receipt & Share:</strong> Share HD Payment Card on WhatsApp, save image, or print.</span>
             </li>
             <li class="flex items-start gap-2">
               <span class="w-4 h-4 rounded-full theme-accent-btn text-white text-[9px] font-bold flex items-center justify-center shrink-0 mt-0.5">5</span>
@@ -700,11 +705,11 @@
         <div class="grid grid-cols-2 gap-2">
           <div class="theme-sub-bg p-2.5 rounded-xl border" style="border-color: var(--border-color);">
             <div class="text-[9px] uppercase font-bold opacity-60">App Version</div>
-            <div class="text-xs font-bold font-mono theme-accent-text mt-0.5">POS Terminal v7.6</div>
+            <div class="text-xs font-bold font-mono theme-accent-text mt-0.5">Paypulse v7.6</div>
           </div>
           <div class="theme-sub-bg p-2.5 rounded-xl border" style="border-color: var(--border-color);">
             <div class="text-[9px] uppercase font-bold opacity-60">Build ID</div>
-            <div class="text-xs font-bold font-mono opacity-80 mt-0.5">2026.08.06-v7.6</div>
+            <div class="text-xs font-bold font-mono opacity-80 mt-0.5">2026.08.11-v7.6</div>
           </div>
         </div>
 
@@ -744,7 +749,7 @@
 
         <div class="mt-4 mb-5">
           <span class="text-xs opacity-70 uppercase font-semibold block">Payable Amount</span>
-          <span id="modalAmount" class="text-3xl font-extrabold font-mono theme-accent-text">₹0.00</span>
+          <span id="modalAmount" class="text-3xl font-extrabold font-mono theme-accent-text">₹0</span>
         </div>
 
         <!-- Action Buttons Container -->
@@ -816,7 +821,7 @@
         </div>
 
         <div>
-          <label class="block text-[11px] font-semibold opacity-70 uppercase tracking-wider mb-1">Mobile Number (WhatsApp) *</label>
+          <label class="block text-[11px] font-semibold opacity-70 uppercase tracking-wider mb-1">Mobile Number (WhatsApp)</label>
           <input type="tel" id="newUpiMobile" onkeydown="if(event.key==='Enter') saveNewMerchant()" placeholder="e.g. 9876543210" maxlength="13" class="w-full theme-sub-bg border rounded-xl px-3 py-2 text-xs focus:outline-none" style="border-color: var(--border-color);">
         </div>
       </div>
@@ -898,140 +903,9 @@
 
   <!-- Main Application Logic Script -->
   <script>
-    function openBulkAddModal() {
-      playBeep('click');
-      const modal = document.getElementById('bulkAddModal');
-      const card = document.getElementById('bulkAddModalCard');
-      if (!modal || !card) return;
-      modal.classList.remove('hidden');
-      requestAnimationFrame(() => {
-        modal.classList.remove('opacity-0');
-        card.classList.remove('scale-95');
-      });
-      setTimeout(() => document.getElementById('bulkUpiInput')?.focus(), 150);
-    }
-
-    function closeBulkAddModal() {
-      const modal = document.getElementById('bulkAddModal');
-      const card = document.getElementById('bulkAddModalCard');
-      if (!modal || !card) return;
-      modal.classList.add('opacity-0');
-      card.classList.add('scale-95');
-      setTimeout(() => modal.classList.add('hidden'), 200);
-    }
-
-    function processBulkAddMerchants() {
-      const input = document.getElementById('bulkUpiInput')?.value || '';
-      const lines = input.split('\n');
-      let addedCount = 0;
-
-      const list = loadMerchants();
-
-      lines.forEach(line => {
-        const trimmed = line.trim();
-        if (!trimmed) return;
-
-        const parts = trimmed.split(',').map(p => p.trim());
-        const upi = parts[0];
-        if (!upi || !upi.includes('@')) return;
-
-        const name = parts[1] || upi.split('@')[0].toUpperCase();
-        const mobile = parts[2] || '';
-
-        const existingIdx = list.findIndex(m => m.upi.toLowerCase() === upi.toLowerCase());
-        const newMerchant = { upi, name, mobile };
-
-        if (existingIdx >= 0) {
-          list[existingIdx] = newMerchant;
-        } else {
-          list.push(newMerchant);
-        }
-        addedCount++;
-      });
-
-      if (addedCount === 0) {
-        showToast('No valid UPI handles found in input', 'error');
-        return;
-      }
-
-      saveMerchants(list);
-      document.getElementById('bulkUpiInput').value = '';
-      closeBulkAddModal();
-
-      renderMerchantList();
-      if (list.length > 0) {
-        selectMerchant(list[list.length - 1], true);
-      }
-
-      populateHistoryUpiFilter();
-      showToast(`Successfully processed ${addedCount} merchant account(s)`);
-    }
-
-    function openResetUpiModal() {
-      playBeep('click');
-      const modal = document.getElementById('resetUpiModal');
-      const card = document.getElementById('resetUpiModalCard');
-      if (!modal || !card) return;
-      modal.classList.remove('hidden');
-      requestAnimationFrame(() => {
-        modal.classList.remove('opacity-0');
-        card.classList.remove('scale-95');
-      });
-    }
-
-    function closeResetUpiModal() {
-      const modal = document.getElementById('resetUpiModal');
-      const card = document.getElementById('resetUpiModalCard');
-      if (!modal || !card) return;
-      modal.classList.add('opacity-0');
-      card.classList.add('scale-95');
-      setTimeout(() => modal.classList.add('hidden'), 200);
-    }
-
-    function confirmResetAllMerchants() {
-      saveMerchants([]);
-
-      selectedMerchant = null;
-      renderMerchantList();
-
-      const avatar = document.getElementById('activeAvatar');
-      const name = document.getElementById('activeName');
-      const upi = document.getElementById('activeUpi');
-      if (avatar && name && upi) {
-        avatar.textContent = '--';
-        name.textContent = 'Select a merchant';
-        upi.textContent = '--';
-      }
-
-      closeResetUpiModal();
-      populateHistoryUpiFilter();
-      showToast('All UPI payee accounts reset successfully');
-    }
-
-    // System Settings & Audio Context Initialization
+    /* System Audio Feedback Setup */
     let soundEnabled = true;
     let sharedAudioCtx = null;
-
-    // Indian Number Formatting Helpers
-    function formatIndianCurrency(num, decimals = 2) {
-      const val = Number(num);
-      if (isNaN(val)) return '0.00';
-      return val.toLocaleString('en-IN', {
-        minimumFractionDigits: decimals,
-        maximumFractionDigits: decimals
-      });
-    }
-
-    function formatInputValue(valStr) {
-      if (!valStr) return '';
-      const parts = valStr.split('.');
-      const integerPartStr = parts[0];
-      const formattedInteger = integerPartStr ? Number(integerPartStr).toLocaleString('en-IN') : '0';
-      if (parts.length > 1) {
-        return formattedInteger + '.' + parts[1];
-      }
-      return formattedInteger;
-    }
 
     function getAudioContext() {
       if (!sharedAudioCtx) {
@@ -1067,7 +941,7 @@
           osc.stop(ctx.currentTime + 0.25);
         }
       } catch (e) {
-        console.warn('Audio feedback failed:', e);
+        console.warn('Audio feedback error:', e);
       }
     }
 
@@ -1132,56 +1006,29 @@
       });
     }
 
-    /* PWA Direct Install Prompt & Blob Handler */
+    /* PWA Prompt Handling */
     let deferredPwaPrompt = null;
-
-    // Immediately register SW and Manifest for early PWA detection
-    initPWAInfrastructure();
-
-    // Capture native browser install prompt
     window.addEventListener('beforeinstallprompt', (e) => {
       e.preventDefault();
       deferredPwaPrompt = e;
-      console.log('[PWA] Native install prompt captured for direct installation');
-    });
-
-    window.addEventListener('appinstalled', () => {
-      deferredPwaPrompt = null;
-      showToast('PayPulse POS installed successfully as standalone app!');
     });
 
     function triggerPwaInstall() {
       closeSystemMenu();
-      playBeep('click');
-
-      const isStandalone = window.matchMedia('(display-mode: standalone)').matches || 
-                           window.navigator.standalone || 
-                           document.referrer.includes('android-app://');
-
-      if (isStandalone) {
-        showToast('PayPulse is already running as an installed app!');
-        return;
-      }
-
       if (deferredPwaPrompt) {
         deferredPwaPrompt.prompt();
         deferredPwaPrompt.userChoice.then((choice) => {
           if (choice.outcome === 'accepted') {
-            showToast('Direct install accepted!');
-          } else {
-            showToast('Install prompt dismissed');
+            showToast('Paypulse installed successfully!');
           }
           deferredPwaPrompt = null;
-        }).catch((err) => {
-          console.warn('PWA Direct install prompt error:', err);
-          showToast('Installation failed or cancelled', 'error');
         });
       } else {
-        showToast('Tap browser menu (⋮ or Share) -> "Add to Home Screen"');
+        showToast('To install: Tap browser menu (⋮ or Share) -> "Add to Home Screen"');
       }
     }
 
-    /* About App Modal Control */
+    /* Modals Control */
     function openAboutModal() {
       playBeep('click');
       const modal = document.getElementById('aboutModal');
@@ -1203,7 +1050,6 @@
       setTimeout(() => modal.classList.add('hidden'), 200);
     }
 
-    /* 3-Dots System Menu Control */
     function toggleSystemMenu() {
       closeThemeMenu();
       const menu = document.getElementById('systemMenuDropdown');
@@ -1227,7 +1073,7 @@
       }
     }
 
-    // Default Merchant Database
+    /* Merchant Database Management */
     const DEFAULT_MERCHANTS = [
       { upi: '8105104599@ybl', name: 'S C ARUN KUMAR', mobile: '8105104599' },
       { upi: 'Q065025025@ybl', name: 'ARUN TRADERS', mobile: '8105104599' },
@@ -1361,16 +1207,7 @@
       renderMerchantList(document.getElementById('merchantSearch')?.value || '');
 
       if (shouldScroll && card) {
-        // Scroll page up to bring active selected payee card directly into focus
-        const yOffset = -16;
-        const y = card.getBoundingClientRect().top + window.pageYOffset + yOffset;
-        window.scrollTo({ top: Math.max(0, y), behavior: 'smooth' });
-
-        // Apply temporary ring highlight to focus the selected payee card
-        card.classList.add('ring-2', 'ring-indigo-500', 'scale-[1.01]');
-        setTimeout(() => {
-          card.classList.remove('ring-2', 'ring-indigo-500', 'scale-[1.01]');
-        }, 800);
+        card.scrollIntoView({ behavior: 'smooth', block: 'center' });
       }
     }
 
@@ -1379,7 +1216,7 @@
       renderMerchantList(query);
     }
 
-    // Add & Delete Merchant Modal Control
+    /* Add, Bulk Add, Delete & Reset Merchants */
     function openAddModal() {
       playBeep('click');
       const modal = document.getElementById('addModal');
@@ -1475,7 +1312,13 @@
 
       if (selectedMerchant && selectedMerchant.upi === merchantToDelete.upi) {
         selectedMerchant = list.length > 0 ? list[0] : null;
-        if (selectedMerchant) selectMerchant(selectedMerchant, false);
+        if (selectedMerchant) {
+          selectMerchant(selectedMerchant, false);
+        } else {
+          document.getElementById('activeAvatar').textContent = '--';
+          document.getElementById('activeName').textContent = 'Select a merchant';
+          document.getElementById('activeUpi').textContent = '--';
+        }
       }
 
       closeDeleteMerchantModal();
@@ -1484,44 +1327,137 @@
       showToast('Merchant account deleted');
     }
 
-    // Terminal Amount Inputs
-    function numpadPress(val) {
+    function openBulkAddModal() {
       playBeep('click');
-      const input = document.getElementById('amount');
-      let currentRaw = (input.value || '').replace(/,/g, '');
-      
-      if (val === '.' && currentRaw.includes('.')) return;
-      if (val === '.' && currentRaw === '') currentRaw = '0';
-      
-      currentRaw += val;
-      input.value = formatInputValue(currentRaw);
-      document.getElementById('amountError').classList.add('hidden');
+      const modal = document.getElementById('bulkAddModal');
+      const card = document.getElementById('bulkAddModalCard');
+      if (!modal || !card) return;
+      modal.classList.remove('hidden');
+      requestAnimationFrame(() => {
+        modal.classList.remove('opacity-0');
+        card.classList.remove('scale-95');
+      });
     }
 
-    function addPresetAmount(val) {
-      playBeep('click');
-      const input = document.getElementById('amount');
-      const rawCurr = parseFloat((input.value || '0').replace(/,/g, '')) || 0;
-      const newTotal = rawCurr + val;
-      input.value = formatInputValue(newTotal.toString());
-      document.getElementById('amountError').classList.add('hidden');
+    function closeBulkAddModal() {
+      const modal = document.getElementById('bulkAddModal');
+      const card = document.getElementById('bulkAddModalCard');
+      if (!modal || !card) return;
+      modal.classList.add('opacity-0');
+      card.classList.add('scale-95');
+      setTimeout(() => modal.classList.add('hidden'), 200);
     }
 
-    function clearAmount() {
-      playBeep('click');
-      if (terminalMode === 'calc') {
-        calcBackspace();
-        return;
+    function processBulkAddMerchants() {
+      const input = document.getElementById('bulkUpiInput')?.value || '';
+      const lines = input.split('\n');
+      let addedCount = 0;
+      const list = loadMerchants();
+
+      lines.forEach(line => {
+        const trimmed = line.trim();
+        if (!trimmed) return;
+        const parts = trimmed.split(',').map(p => p.trim());
+        const upi = parts[0];
+        if (!upi || !upi.includes('@')) return;
+        const name = parts[1] || upi.split('@')[0].toUpperCase();
+        const mobile = parts[2] || '';
+
+        const existingIdx = list.findIndex(m => m.upi.toLowerCase() === upi.toLowerCase());
+        const merchantObj = { upi, name, mobile };
+        if (existingIdx >= 0) {
+          list[existingIdx] = merchantObj;
+        } else {
+          list.unshift(merchantObj);
+        }
+        addedCount++;
+      });
+
+      if (addedCount > 0) {
+        saveMerchants(list);
+        closeBulkAddModal();
+        document.getElementById('bulkUpiInput').value = '';
+        renderMerchantList('');
+        populateHistoryUpiFilter();
+        if (list.length > 0) selectMerchant(list[0], true);
+        showToast(`Added ${addedCount} merchant account(s)`);
+      } else {
+        showToast('No valid UPI IDs found in input', 'error');
       }
-      const input = document.getElementById('amount');
-      let currentRaw = (input.value || '').replace(/,/g, '');
-      if (currentRaw.length > 0) {
-        currentRaw = currentRaw.slice(0, -1);
-        input.value = formatInputValue(currentRaw);
-      }
-      document.getElementById('amountError').classList.add('hidden');
     }
 
+    function openResetUpiModal() {
+      playBeep('click');
+      const modal = document.getElementById('resetUpiModal');
+      const card = document.getElementById('resetUpiModalCard');
+      if (!modal || !card) return;
+      modal.classList.remove('hidden');
+      requestAnimationFrame(() => {
+        modal.classList.remove('opacity-0');
+        card.classList.remove('scale-95');
+      });
+    }
+
+    function closeResetUpiModal() {
+      const modal = document.getElementById('resetUpiModal');
+      const card = document.getElementById('resetUpiModalCard');
+      if (!modal || !card) return;
+      modal.classList.add('opacity-0');
+      card.classList.add('scale-95');
+      setTimeout(() => modal.classList.add('hidden'), 200);
+    }
+
+    function confirmResetAllMerchants() {
+      saveMerchants([]);
+      selectedMerchant = null;
+      document.getElementById('activeAvatar').textContent = '--';
+      document.getElementById('activeName').textContent = 'Select a merchant';
+      document.getElementById('activeUpi').textContent = '--';
+
+      closeResetUpiModal();
+      renderMerchantList('');
+      populateHistoryUpiFilter();
+      showToast('All merchant accounts reset successfully');
+    }
+
+    /* Indian Currency & Input Formatting Helpers */
+    function formatIndianCurrency(num) {
+      if (num === null || num === undefined || isNaN(num)) return '0';
+      const numVal = typeof num === 'string' ? parseFloat(num.replace(/,/g, '')) : num;
+      if (isNaN(numVal)) return '0';
+      
+      const parts = numVal.toFixed(2).split('.');
+      let integerPart = parts[0];
+      const decimalPart = parts[1];
+      
+      let lastThree = integerPart.substring(integerPart.length - 3);
+      let otherNumbers = integerPart.substring(0, integerPart.length - 3);
+      if (otherNumbers !== '') {
+        lastThree = ',' + lastThree;
+      }
+      let formattedInteger = otherNumbers.replace(/\B(?=(\d{2})+(?!\d))/g, ",") + lastThree;
+      
+      return decimalPart !== undefined && parseInt(decimalPart, 10) > 0 ? `${formattedInteger}.${decimalPart}` : formattedInteger;
+    }
+
+    function formatInputValue(valStr) {
+      if (!valStr) return '';
+      let raw = valStr.toString().replace(/,/g, '');
+      let parts = raw.split('.');
+      let integerPart = parts[0];
+      let decimalPart = parts.length > 1 ? '.' + parts[1] : '';
+      if (integerPart) {
+        let lastThree = integerPart.substring(integerPart.length - 3);
+        let otherNumbers = integerPart.substring(0, integerPart.length - 3);
+        if (otherNumbers !== '') {
+          lastThree = ',' + lastThree;
+        }
+        integerPart = otherNumbers.replace(/\B(?=(\d{2})+(?!\d))/g, ",") + lastThree;
+      }
+      return integerPart + decimalPart;
+    }
+
+    /* Calculator Mode Engine */
     let terminalMode = 'quick'; // 'quick' | 'calc'
     let calcExpression = '';
 
@@ -1538,7 +1474,7 @@
       const amountLabel = document.getElementById('amountLabel');
 
       if (mode === 'calc') {
-        quickBtn.className = "flex-1 py-1.5 rounded-lg text-xs font-bold transition-all flex items-center justify-center gap-1.5 text-slate-400 hover:text-white";
+        quickBtn.className = "flex-1 py-1.5 rounded-lg text-xs font-bold transition-all flex items-center justify-center gap-1.5 opacity-60 hover:opacity-100 transition-opacity";
         calcBtn.className = "flex-1 py-1.5 rounded-lg text-xs font-bold transition-all flex items-center justify-center gap-1.5 theme-accent-btn text-white shadow-sm";
         
         quickPresets.classList.add('hidden');
@@ -1547,7 +1483,6 @@
         exprDisplay.classList.remove('hidden');
         amountLabel.textContent = "Calculated Total";
 
-        // Seed calculator with current amount if exists
         const currentVal = (document.getElementById('amount').value || '').replace(/,/g, '');
         if (!calcExpression && currentVal && !isNaN(parseFloat(currentVal))) {
           calcExpression = currentVal;
@@ -1555,7 +1490,7 @@
         updateCalcUI();
       } else {
         quickBtn.className = "flex-1 py-1.5 rounded-lg text-xs font-bold transition-all flex items-center justify-center gap-1.5 theme-accent-btn text-white shadow-sm";
-        calcBtn.className = "flex-1 py-1.5 rounded-lg text-xs font-bold transition-all flex items-center justify-center gap-1.5 text-slate-400 hover:text-white";
+        calcBtn.className = "flex-1 py-1.5 rounded-lg text-xs font-bold transition-all flex items-center justify-center gap-1.5 opacity-60 hover:opacity-100 transition-opacity";
         
         quickPresets.classList.remove('hidden');
         quickNumpad.classList.remove('hidden');
@@ -1565,66 +1500,12 @@
       }
     }
 
-    function calcPress(val) {
-      playBeep('click');
-      calcExpression += val;
-      updateCalcUI();
-    }
-
-    function calcClear() {
-      playBeep('click');
-      calcExpression = '';
-      document.getElementById('amount').value = '';
-      document.getElementById('calcExpressionDisplay').textContent = '';
-      document.getElementById('amountError').classList.add('hidden');
-    }
-
-    function calcBackspace() {
-      playBeep('click');
-      if (calcExpression.length > 0) {
-        calcExpression = calcExpression.slice(0, -1);
-        updateCalcUI();
-      }
-    }
-
-    function applyCalcPreset(preset) {
-      playBeep('click');
-      if (!calcExpression) {
-        const currentVal = (document.getElementById('amount').value || '').replace(/,/g, '');
-        if (currentVal) calcExpression = currentVal;
-      }
-      if (calcExpression) {
-        calcExpression += ' ' + preset;
-        updateCalcUI();
-      }
-    }
-
     function safeEvalCalc(expr) {
-      if (!expr || !expr.trim()) return 0;
-      
-      let sanitized = expr
-        .replace(/×/g, '*')
-        .replace(/÷/g, '/');
-
-      // Handle A + B% => A + (A * B / 100) and A - B% => A - (A * B / 100)
-      sanitized = sanitized.replace(/(\d+(?:\.\d+)?)\s*([\+\-])\s*(\d+(?:\.\d+)?)\%/g, (match, a, op, b) => {
-        return `${a} ${op} (${a} * ${b} / 100)`;
-      });
-
-      // Handle standalone B% => (B / 100)
-      sanitized = sanitized.replace(/(\d+(?:\.\d+)?)\%/g, '($1 / 100)');
-
-      // Security Guardrail: Only allow math characters
-      if (/[^0-9\+\-\*\/\.\(\)\s]/.test(sanitized)) {
-        return NaN;
-      }
-
+      if (!expr) return 0;
       try {
-        const res = new Function(`return (${sanitized})`)();
-        if (typeof res === 'number' && !isNaN(res) && isFinite(res)) {
-          return res;
-        }
-        return NaN;
+        let sanitized = expr.replace(/×/g, '*').replace(/÷/g, '/');
+        if (!/^[0-9+\-*/.() ]+$/.test(sanitized)) return NaN;
+        return Function('"use strict"; return (' + sanitized + ')')();
       } catch (e) {
         return NaN;
       }
@@ -1640,11 +1521,30 @@
 
       const evalResult = safeEvalCalc(calcExpression);
       if (!isNaN(evalResult) && evalResult >= 0) {
-        amountInput.value = formatInputValue(evalResult.toFixed(2));
+        const valStr = Number.isInteger(evalResult) ? evalResult.toString() : parseFloat(evalResult.toFixed(2)).toString();
+        amountInput.value = formatInputValue(valStr);
         document.getElementById('amountError').classList.add('hidden');
       } else if (!calcExpression) {
         amountInput.value = '';
       }
+    }
+
+    function calcPress(val) {
+      playBeep('click');
+      calcExpression += val;
+      updateCalcUI();
+    }
+
+    function calcClear() {
+      playBeep('click');
+      calcExpression = '';
+      updateCalcUI();
+    }
+
+    function calcBackspace() {
+      playBeep('click');
+      calcExpression = calcExpression.slice(0, -1);
+      updateCalcUI();
     }
 
     function calcEquals() {
@@ -1656,7 +1556,41 @@
       }
     }
 
-    // QR Generation & Modal Output
+    /* Terminal Quick Inputs */
+    function numpadPress(val) {
+      playBeep('click');
+      const input = document.getElementById('amount');
+      let currentRaw = (input.value || '').replace(/,/g, '');
+      
+      if (val === '.' && currentRaw.includes('.')) return;
+      if (val === '.' && currentRaw === '') currentRaw = '0';
+      
+      currentRaw += val;
+      input.value = formatInputValue(currentRaw);
+      document.getElementById('amountError').classList.add('hidden');
+    }
+
+    function addPresetAmount(val) {
+      playBeep('click');
+      const input = document.getElementById('amount');
+      const curr = parseFloat((input.value || '').replace(/,/g, '')) || 0;
+      const total = curr + val;
+      input.value = formatInputValue(total.toString());
+      document.getElementById('amountError').classList.add('hidden');
+    }
+
+    function clearAmount() {
+      playBeep('click');
+      const input = document.getElementById('amount');
+      let currentRaw = (input.value || '').replace(/,/g, '');
+      if (currentRaw.length > 0) {
+        currentRaw = currentRaw.slice(0, -1);
+      }
+      input.value = currentRaw ? formatInputValue(currentRaw) : '';
+      document.getElementById('amountError').classList.add('hidden');
+    }
+
+    /* QR Generation & Output Modal */
     let qrCodeInstance = null;
     let currentQrData = null;
 
@@ -1683,7 +1617,6 @@
 
       const upiUrl = `upi://pay?pa=${encodeURIComponent(selectedMerchant.upi)}&pn=${encodeURIComponent(selectedMerchant.name)}&am=${amountVal.toFixed(2)}&cu=INR`;
 
-      // Clear previous QR
       const qrContainer = document.getElementById('qrcode');
       qrContainer.innerHTML = '';
 
@@ -1696,12 +1629,10 @@
         correctLevel: QRCode.CorrectLevel.H
       });
 
-      // Update Modal Display
       document.getElementById('modalPayeeName').textContent = selectedMerchant.name;
       document.getElementById('modalUpiId').textContent = selectedMerchant.upi;
       document.getElementById('modalAmount').textContent = '₹' + formatIndianCurrency(amountVal);
 
-      // Setup WhatsApp button link
       const cleanPhone = (selectedMerchant.mobile || '').replace(/[^0-9]/g, '');
       const waBtn = document.getElementById('modalWaBtn');
       if (cleanPhone.length >= 10) {
@@ -1719,13 +1650,11 @@
         upiUrl
       };
 
-      // Reset input box after QR generation
       amountInput.value = '';
+      calcExpression = '';
 
-      // Record transaction history
       saveHistoryRecord(selectedMerchant.upi, selectedMerchant.name, amountVal);
 
-      // Open Modal
       const modal = document.getElementById('qrModal');
       const card = document.getElementById('qrModalCard');
       modal.classList.remove('hidden');
@@ -1743,7 +1672,6 @@
       modal.classList.add('opacity-0');
       card.classList.add('scale-95');
       
-      // Smoothly scroll page to top when closing QR modal
       window.scrollTo({ top: 0, behavior: 'smooth' });
 
       setTimeout(() => {
@@ -1779,18 +1707,15 @@
       const canvas = document.createElement('canvas');
       const ctx = canvas.getContext('2d');
 
-      // High-resolution canvas dimensions
       canvas.width = 640;
       canvas.height = 840;
 
-      // Card Background Gradient
       const bgGradient = ctx.createLinearGradient(0, 0, 0, canvas.height);
       bgGradient.addColorStop(0, '#0f172a');
       bgGradient.addColorStop(1, '#1e1b4b');
       ctx.fillStyle = bgGradient;
       ctx.fillRect(0, 0, canvas.width, canvas.height);
 
-      // Card Border & Glow Frame
       ctx.strokeStyle = 'rgba(99, 102, 241, 0.4)';
       ctx.lineWidth = 6;
       if (ctx.roundRect) {
@@ -1801,13 +1726,11 @@
         ctx.strokeRect(20, 20, canvas.width - 40, canvas.height - 40);
       }
 
-      // App Header Badge
       ctx.fillStyle = '#818cf8';
       ctx.font = 'bold 20px Inter, sans-serif';
       ctx.textAlign = 'center';
-      ctx.fillText('PayPulse POS • Instant Payment Request', 320, 65);
+      ctx.fillText('Paypulse POS • Dynamic Payment Request', 320, 65);
 
-      // Header Separator Line
       ctx.strokeStyle = 'rgba(255, 255, 255, 0.12)';
       ctx.lineWidth = 2;
       ctx.beginPath();
@@ -1815,20 +1738,16 @@
       ctx.lineTo(590, 85);
       ctx.stroke();
 
-      // Payee Name
       ctx.fillStyle = '#ffffff';
       ctx.font = 'bold 30px Inter, sans-serif';
       ctx.fillText(currentQrData.name, 320, 135);
 
-      // Payee UPI ID
       ctx.fillStyle = '#94a3b8';
       ctx.font = '600 20px "JetBrains Mono", monospace';
       ctx.fillText(currentQrData.upi, 320, 170);
 
-      // Render QR Code Box
       const qrElement = await getQrImageElement();
       if (qrElement) {
-        // White rounded box background for QR code
         ctx.fillStyle = '#ffffff';
         if (ctx.roundRect) {
           ctx.beginPath();
@@ -1838,11 +1757,9 @@
           ctx.fillRect(150, 200, 340, 340);
         }
 
-        // Draw QR Image inside white box
         ctx.drawImage(qrElement, 170, 220, 300, 300);
       }
 
-      // Amount Container Card
       ctx.fillStyle = 'rgba(2, 6, 23, 0.7)';
       if (ctx.roundRect) {
         ctx.beginPath();
@@ -1868,7 +1785,6 @@
       ctx.font = 'bold 44px "JetBrains Mono", monospace';
       ctx.fillText('₹' + formatIndianCurrency(currentQrData.amount), 320, 660);
 
-      // Footer Instructions
       ctx.fillStyle = '#cbd5e1';
       ctx.font = '600 16px Inter, sans-serif';
       ctx.fillText('Scan & Pay using any UPI Application', 320, 735);
@@ -1899,7 +1815,7 @@
             return;
           }
 
-          const fileName = `PayPulse-QR-${currentQrData.name.replace(/\s+/g, '_')}-₹${currentQrData.amount}.png`;
+          const fileName = `Paypulse-QR-${currentQrData.name.replace(/\s+/g, '_')}-₹${currentQrData.amount}.png`;
           const file = new File([blob], fileName, { type: 'image/png' });
 
           if (navigator.canShare && navigator.canShare({ files: [file] })) {
@@ -1912,7 +1828,6 @@
               showToast('Shared successfully!');
             } catch (err) {
               if (err.name !== 'AbortError') {
-                console.error('Share error:', err);
                 downloadCardBlob(blob, fileName);
               }
             }
@@ -1973,7 +1888,7 @@
       window.print();
     }
 
-    // History & Analytics Data Layer
+    /* History & Analytics Data Layer */
     const HISTORY_KEY = 'paypulse_history_v7.6';
 
     function loadHistory() {
@@ -2137,7 +2052,7 @@
       }
     }
 
-    // Custom High-Fidelity Dropdowns
+    /* Custom Dropdowns Control */
     function toggleCustomDropdown(id) {
       const menu = document.getElementById(id + 'Menu');
       if (!menu) return;
@@ -2202,7 +2117,7 @@
       select.innerHTML = selectHtml;
     }
 
-    // Toast Notification Banner
+    /* Toast Notification Banner */
     function showToast(msg, type = 'success') {
       const container = document.getElementById('toastContainer');
       if (!container) return;
@@ -2227,7 +2142,7 @@
       }, 2500);
     }
 
-    // Dismiss custom dropdowns when clicking outside
+    /* Global Click Outside Handler */
     document.addEventListener('click', function(e) {
       if (!e.target.closest('#themeMenuWrapper')) {
         closeThemeMenu();
@@ -2240,16 +2155,15 @@
       }
     });
 
+    /* Application Entry Point */
     window.onload = function() {
       if ('scrollRestoration' in history) {
         history.scrollRestoration = 'manual';
       }
       window.scrollTo(0, 0);
 
-      // Re-verify PWA infrastructure on load
       initPWAInfrastructure();
 
-      // Restore saved theme
       const savedTheme = localStorage.getItem('paypulse_royal_theme') || 'platinum';
       setTheme(savedTheme);
 
@@ -2266,13 +2180,12 @@
       document.getElementById('filterUpi')?.addEventListener('change', renderHistory);
     };
 
-    /* Dynamic PWA Infrastructure via Blob URLs */
+    /* Dynamic Inline PWA Registration */
     function initPWAInfrastructure() {
-      // 1. Dynamic Web App Manifest Injection with Full Offline & Icon Configuration
       let manifestLink = document.querySelector('link[rel="manifest"]');
       const manifestData = {
-        name: "PayPulse for AT POS v7.6",
-        short_name: "PayPulse",
+        name: "Paypulse v7.6",
+        short_name: "Paypulse",
         description: "Instant UPI Payment QR Terminal and POS Analytics",
         start_url: ".",
         scope: ".",
@@ -2289,20 +2202,6 @@
             sizes: "512x512",
             type: "image/png",
             purpose: "any maskable"
-          },
-          {
-            src: "https://cdn-icons-png.flaticon.com/192/9493/9493583.png",
-            sizes: "192x192",
-            type: "image/png",
-            purpose: "any maskable"
-          }
-        ],
-        shortcuts: [
-          {
-            name: "New Payment QR",
-            short_name: "New QR",
-            url: ".",
-            icons: [{ src: "https://cdn-icons-png.flaticon.com/192/9493/9493583.png", sizes: "192x192" }]
           }
         ]
       };
@@ -2317,7 +2216,6 @@
         document.head.appendChild(manifestLink);
       }
 
-      // 2. Dynamic Offline Service Worker Auto-Registration via Blob URL
       if ('serviceWorker' in navigator) {
         try {
           const swCode = `
@@ -2365,7 +2263,7 @@
           const swBlob = new Blob([swCode], { type: 'application/javascript' });
           const swUrl = URL.createObjectURL(swBlob);
           navigator.serviceWorker.register(swUrl)
-            .then(() => console.log('[PWA] Direct ServiceWorker registered via Blob'))
+            .then(() => console.log('[PWA] ServiceWorker registered successfully'))
             .catch((err) => console.debug('[PWA] ServiceWorker note:', err));
         } catch (err) {
           console.debug('[PWA] ServiceWorker Blob initialization skipped:', err);
