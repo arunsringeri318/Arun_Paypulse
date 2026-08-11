@@ -214,8 +214,12 @@
         <!-- Royal Theme Palette Dropdown Button -->
         <div class="relative" id="themeMenuWrapper">
           <button onclick="toggleThemeMenu()" class="p-2.5 rounded-xl border transition shadow-sm flex items-center gap-1.5" style="background-color: var(--bg-card); border-color: var(--border-color);" title="Select Royal Theme">
-            <svg class="w-4 h-4 theme-accent-text" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-              <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M7 21a4 4 0 01-4-4V5a2 2 0 012-2h4a2 2 0 012 2v12a4 4 0 01-4 4zm0 0h12a2 2 0 002-2v-4a2 2 0 00-2-2h-2.343M11 7.343l1.657-1.657a2 2 0 012.828 0l2.829 2.829a2 2 0 010 2.828l-8.486 8.485M7 17h.01"/>
+            <svg class="w-4 h-4 theme-accent-text" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
+              <path d="M12 2a10 10 0 0 0-10 10c0 5.52 4.48 10 10 10a2 2 0 0 0 2-2c0-.52-.2-.98-.53-1.33a1.99 1.99 0 0 1-.47-1.23c0-1.1.9-2 2-2h1.6a5 5 0 0 0 5-5c0-4.87-4.27-8.44-9.6-8.44z"/>
+              <circle cx="7.5" cy="11.5" r="1" fill="currentColor"/>
+              <circle cx="9" cy="7.5" r="1" fill="currentColor"/>
+              <circle cx="13.5" cy="6.5" r="1" fill="currentColor"/>
+              <circle cx="17" cy="9.5" r="1" fill="currentColor"/>
             </svg>
             <span class="text-[10px] font-bold uppercase tracking-wider hidden sm:inline opacity-80">Theme</span>
           </button>
@@ -558,7 +562,7 @@
               </svg>
             </button>
 
-            <button onclick="confirmClearHistory()" class="p-2 rounded-xl bg-red-500/10 hover:bg-red-500/20 text-red-500 border border-red-500/20 transition shadow-sm flex items-center justify-center" title="Clear Logs">
+            <button onclick="openClearHistoryModal()" class="p-2 rounded-xl bg-red-500/10 hover:bg-red-500/20 text-red-500 border border-red-500/20 transition shadow-sm flex items-center justify-center" title="Clear Logs">
               <svg class="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24">
                 <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M19 7l-.867 12.142A2 2 0 0116.138 21H7.862a2 2 0 01-1.995-1.858L5 7m5 4v6m4-6v6m1-10V4a1 1 0 00-1-1h-4a1 1 0 00-1 1v3M4 7h16"></path>
               </svg>
@@ -763,30 +767,30 @@
           </button>
 
           <div class="grid grid-cols-2 gap-2">
-            <a id="modalWaBtn" target="_blank" href="#" class="py-2.5 rounded-xl bg-emerald-600 hover:bg-emerald-500 text-white font-semibold text-xs transition flex items-center justify-center gap-1.5">
+            <a id="modalWaBtn" target="_blank" href="#" class="py-2.5 rounded-xl bg-emerald-600 hover:bg-emerald-500 text-white font-semibold text-xs transition flex items-center justify-center gap-1.5" title="WhatsApp">
               <svg class="w-4 h-4" fill="currentColor" viewBox="0 0 24 24"><path d="M17.472 14.382c-.297-.149-1.758-.867-2.03-.967-.273-.099-.471-.148-.67.15-.197.297-.767.966-.94 1.164-.173.199-.347.223-.644.075-.297-.15-1.255-.463-2.39-1.475-.883-.788-1.48-1.761-1.653-2.059-.173-.297-.018-.458.13-.606.134-.133.298-.347.446-.52.149-.174.198-.298.298-.497.099-.198.05-.371-.025-.52-.075-.149-.669-1.612-.916-2.207-.242-.579-.487-.5-.669-.51-.173-.008-.371-.01-.57-.01-.198 0-.52.074-.792.372-.272.297-1.04 1.016-1.04 2.479 0 1.462 1.065 2.875 1.213 3.074.149.198 2.096 3.2 5.077 4.487.709.306 1.262.489 1.694.625.712.227 1.36.195 1.872.118.571-.085 1.758-.719 2.006-1.413.248-.694.248-1.29.173-1.414-.074-.124-.272-.198-.57-.347z"/></svg>
-              WhatsApp
+              <span>WhatsApp</span>
             </a>
 
-            <button onclick="downloadQRImage()" class="py-2.5 rounded-xl theme-keypad text-xs font-semibold border transition flex items-center justify-center gap-1.5">
+            <button onclick="downloadQRImage()" class="py-2.5 rounded-xl theme-keypad text-xs font-semibold border transition flex items-center justify-center gap-1.5" title="Save Image">
               <svg class="w-4 h-4 theme-accent-text" fill="none" stroke="currentColor" viewBox="0 0 24 24">
                 <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M4 16v1a3 3 0 003 3h10a3 3 0 003-3v-1m-4-4l-4 4m0 0l-4-4m4 4V4"></path>
               </svg>
-              Save Image
+              <span>Save Image</span>
             </button>
 
-            <button onclick="copyUpiPayLink()" class="py-2.5 rounded-xl theme-keypad text-xs font-semibold border transition flex items-center justify-center gap-1.5">
+            <button onclick="copyUpiPayLink()" class="py-2.5 rounded-xl theme-keypad text-xs font-semibold border transition flex items-center justify-center gap-1.5" title="Copy Link">
               <svg class="w-4 h-4 theme-accent-text" fill="none" stroke="currentColor" viewBox="0 0 24 24">
                 <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M8 16H6a2 2 0 01-2-2V6a2 2 0 012-2h8a2 2 0 012 2v2m-6 12h8a2 2 0 002-2v-8a2 2 0 00-2-h-8a2 2 0 00-2 2v8a2 2 0 002 2z"></path>
               </svg>
-              Copy Link
+              <span>Copy Link</span>
             </button>
 
-            <button onclick="printReceipt()" class="py-2.5 rounded-xl theme-sub-bg theme-accent-text text-xs font-semibold border border-indigo-500/30 transition flex items-center justify-center gap-1.5">
+            <button onclick="printReceipt()" class="py-2.5 rounded-xl theme-sub-bg theme-accent-text text-xs font-semibold border border-indigo-500/30 transition flex items-center justify-center gap-1.5" title="Print Receipt">
               <svg class="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24">
                 <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M17 17h2a2 2 0 002-2v-4a2 2 0 00-2-2H5a2 2 0 00-2 2v4a2 2 0 002 2h2m2 4h6a2 2 0 002-2v-4a2 2 0 00-2-2H9a2 2 0 00-2 2v4a2 2 0 002 2zm8-12V5a2 2 0 00-2-2H9a2 2 0 00-2 2v4h10z"></path>
               </svg>
-              Print Receipt
+              <span>Print Receipt</span>
             </button>
           </div>
         </div>
@@ -896,6 +900,26 @@
         <div class="flex gap-2">
           <button onclick="closeResetUpiModal()" class="flex-1 py-2.5 rounded-xl theme-keypad font-semibold text-xs transition">Cancel</button>
           <button onclick="confirmResetAllMerchants()" class="flex-1 py-2.5 rounded-xl bg-red-600 hover:bg-red-500 text-white font-semibold text-xs transition">Delete All</button>
+        </div>
+      </div>
+    </div>
+  </div>
+
+  <!-- MODAL 6: Clear History Confirmation Modal -->
+  <div id="clearHistoryModal" class="fixed inset-0 z-50 bg-slate-950/80 backdrop-blur-md flex items-center justify-center p-4 hidden opacity-0 transition-opacity duration-200">
+    <div class="theme-card-bg border rounded-3xl p-6 max-w-sm w-full shadow-2xl relative transform scale-95 transition-transform duration-200" id="clearHistoryModalCard" style="border-color: var(--border-color);">
+      <div class="text-center">
+        <div class="w-12 h-12 rounded-2xl bg-red-500/10 text-red-500 p-3 border border-red-500/30 mx-auto mb-3 flex items-center justify-center">
+          <svg class="w-6 h-6" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+            <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M19 7l-.867 12.142A2 2 0 0116.138 21H7.862a2 2 0 01-1.995-1.858L5 7m5 4v6m4-6v6m1-10V4a1 1 0 00-1-1h-4a1 1 0 00-1 1v3M4 7h16"/>
+          </svg>
+        </div>
+        <h3 class="text-base font-bold mb-1">Clear Transaction History?</h3>
+        <p class="text-xs opacity-70 mb-4">Are you sure you want to delete <strong class="text-red-500">all transaction logs</strong>? This action cannot be undone.</p>
+
+        <div class="flex gap-2">
+          <button onclick="closeClearHistoryModal()" class="flex-1 py-2.5 rounded-xl theme-keypad font-semibold text-xs transition">Cancel</button>
+          <button onclick="confirmClearHistory()" class="flex-1 py-2.5 rounded-xl bg-red-600 hover:bg-red-500 text-white font-semibold text-xs transition">Clear Logs</button>
         </div>
       </div>
     </div>
@@ -1207,7 +1231,21 @@
       renderMerchantList(document.getElementById('merchantSearch')?.value || '');
 
       if (shouldScroll && card) {
-        card.scrollIntoView({ behavior: 'smooth', block: 'center' });
+        // Scroll down to position the selected payee card near top of viewport to focus the terminal
+        const yOffset = -16;
+        const elementPosition = card.getBoundingClientRect().top;
+        const offsetPosition = elementPosition + window.pageYOffset + yOffset;
+
+        window.scrollTo({
+          top: offsetPosition,
+          behavior: 'smooth'
+        });
+
+        // Add temporary ring highlight pulse animation
+        card.classList.add('ring-2', 'ring-indigo-500', 'scale-[1.01]', 'shadow-lg');
+        setTimeout(() => {
+          card.classList.remove('ring-2', 'ring-indigo-500', 'scale-[1.01]', 'shadow-lg');
+        }, 1200);
       }
     }
 
@@ -1473,6 +1511,10 @@
       const exprDisplay = document.getElementById('calcExpressionDisplay');
       const amountLabel = document.getElementById('amountLabel');
 
+      const amountInput = document.getElementById('amount');
+      const currentVal = (amountInput.value || '').replace(/,/g, '');
+      const numVal = parseFloat(currentVal);
+
       if (mode === 'calc') {
         quickBtn.className = "flex-1 py-1.5 rounded-lg text-xs font-bold transition-all flex items-center justify-center gap-1.5 opacity-60 hover:opacity-100 transition-opacity";
         calcBtn.className = "flex-1 py-1.5 rounded-lg text-xs font-bold transition-all flex items-center justify-center gap-1.5 theme-accent-btn text-white shadow-sm";
@@ -1483,8 +1525,7 @@
         exprDisplay.classList.remove('hidden');
         amountLabel.textContent = "Calculated Total";
 
-        const currentVal = (document.getElementById('amount').value || '').replace(/,/g, '');
-        if (!calcExpression && currentVal && !isNaN(parseFloat(currentVal))) {
+        if (!calcExpression && currentVal && !isNaN(numVal) && numVal > 0) {
           calcExpression = currentVal;
         }
         updateCalcUI();
@@ -1497,6 +1538,11 @@
         calcNumpad.classList.add('hidden');
         exprDisplay.classList.add('hidden');
         amountLabel.textContent = "Enter Amount";
+
+        if (isNaN(numVal) || numVal === 0) {
+          amountInput.value = '';
+          calcExpression = '';
+        }
       }
     }
 
@@ -1504,6 +1550,10 @@
       if (!expr) return 0;
       try {
         let sanitized = expr.replace(/×/g, '*').replace(/÷/g, '/');
+        // Clean leading zeros from numbers (e.g., 087 -> 87, 005 -> 5) to prevent JS strict mode errors
+        sanitized = sanitized.replace(/\b0+([1-9]\d*)/g, '$1');
+        sanitized = sanitized.replace(/\b0+(0|\.)/g, '0$1');
+        
         if (!/^[0-9+\-*/.() ]+$/.test(sanitized)) return NaN;
         return Function('"use strict"; return (' + sanitized + ')')();
       } catch (e) {
@@ -1519,19 +1569,45 @@
         exprDisplay.textContent = calcExpression || '0';
       }
 
-      const evalResult = safeEvalCalc(calcExpression);
-      if (!isNaN(evalResult) && evalResult >= 0) {
+      // Trim trailing operators or dots for calculating the main amount preview
+      let evalExpr = (calcExpression || '').trim().replace(/[+\-*/×÷. ]+$/, '');
+
+      // Balance any unclosed parentheses for live preview
+      let openCount = (evalExpr.match(/\(/g) || []).length;
+      let closeCount = (evalExpr.match(/\)/g) || []).length;
+      while (openCount > closeCount) {
+        evalExpr += ')';
+        closeCount++;
+      }
+
+      const evalResult = safeEvalCalc(evalExpr);
+      if (!isNaN(evalResult) && evalResult > 0) {
         const valStr = Number.isInteger(evalResult) ? evalResult.toString() : parseFloat(evalResult.toFixed(2)).toString();
         amountInput.value = formatInputValue(valStr);
         document.getElementById('amountError').classList.add('hidden');
-      } else if (!calcExpression) {
+      } else {
         amountInput.value = '';
       }
     }
 
     function calcPress(val) {
       playBeep('click');
-      calcExpression += val;
+      const isOp = ['+', '-', '×', '÷'].includes(val);
+
+      if (calcExpression === '0' && !isOp && val !== '.' && val !== '(' && val !== ')') {
+        calcExpression = val;
+      } else {
+        if (isOp && calcExpression.length > 0) {
+          const lastChar = calcExpression.slice(-1);
+          if (['+', '-', '×', '÷'].includes(lastChar)) {
+            calcExpression = calcExpression.slice(0, -1) + val;
+          } else {
+            calcExpression += val;
+          }
+        } else {
+          calcExpression += val;
+        }
+      }
       updateCalcUI();
     }
 
@@ -1543,39 +1619,44 @@
 
     function calcBackspace() {
       playBeep('click');
-      calcExpression = calcExpression.slice(0, -1);
+      if (calcExpression.length > 0) {
+        calcExpression = calcExpression.slice(0, -1);
+      }
       updateCalcUI();
     }
 
     function calcEquals() {
       playBeep('click');
-      const evalResult = safeEvalCalc(calcExpression);
-      if (!isNaN(evalResult) && evalResult > 0) {
-        calcExpression = evalResult.toString();
+      const res = safeEvalCalc(calcExpression);
+      if (!isNaN(res) && res > 0) {
+        calcExpression = Number.isInteger(res) ? res.toString() : parseFloat(res.toFixed(2)).toString();
         updateCalcUI();
+      } else {
+        showToast('Invalid math expression', 'error');
       }
     }
 
-    /* Terminal Quick Inputs */
+    /* Quick Entry Numpad Functions */
     function numpadPress(val) {
       playBeep('click');
       const input = document.getElementById('amount');
-      let currentRaw = (input.value || '').replace(/,/g, '');
+      let current = (input.value || '').replace(/,/g, '');
       
-      if (val === '.' && currentRaw.includes('.')) return;
-      if (val === '.' && currentRaw === '') currentRaw = '0';
+      if (val === '.' && current.includes('.')) return;
+      if (val === '.' && current === '') current = '0';
       
-      currentRaw += val;
-      input.value = formatInputValue(currentRaw);
+      let nextVal = current + val;
+      input.value = formatInputValue(nextVal);
       document.getElementById('amountError').classList.add('hidden');
     }
 
     function addPresetAmount(val) {
       playBeep('click');
       const input = document.getElementById('amount');
-      const curr = parseFloat((input.value || '').replace(/,/g, '')) || 0;
-      const total = curr + val;
-      input.value = formatInputValue(total.toString());
+      const currentRaw = (input.value || '').replace(/,/g, '');
+      const curr = parseFloat(currentRaw) || 0;
+      const sum = curr + val;
+      input.value = formatInputValue(sum.toString());
       document.getElementById('amountError').classList.add('hidden');
     }
 
@@ -1586,11 +1667,11 @@
       if (currentRaw.length > 0) {
         currentRaw = currentRaw.slice(0, -1);
       }
-      input.value = currentRaw ? formatInputValue(currentRaw) : '';
+      input.value = formatInputValue(currentRaw);
       document.getElementById('amountError').classList.add('hidden');
     }
 
-    /* QR Generation & Output Modal */
+    /* QR Generation & Modal Output */
     let qrCodeInstance = null;
     let currentQrData = null;
 
@@ -1600,12 +1681,23 @@
         return;
       }
 
+      const amountInput = document.getElementById('amount');
+      let rawAmount = (amountInput.value || '').replace(/,/g, '');
+
       if (terminalMode === 'calc') {
-        calcEquals();
+        let evalExpr = (calcExpression || '').trim().replace(/[+\-*/×÷. ]+$/, '');
+        let openCount = (evalExpr.match(/\(/g) || []).length;
+        let closeCount = (evalExpr.match(/\)/g) || []).length;
+        while (openCount > closeCount) {
+          evalExpr += ')';
+          closeCount++;
+        }
+        const evalRes = safeEvalCalc(evalExpr);
+        if (!isNaN(evalRes) && evalRes > 0) {
+          rawAmount = evalRes.toString();
+        }
       }
 
-      const amountInput = document.getElementById('amount');
-      const rawAmount = (amountInput.value || '').replace(/,/g, '');
       const amountVal = parseFloat(rawAmount);
 
       if (isNaN(amountVal) || amountVal <= 0) {
@@ -1617,6 +1709,7 @@
 
       const upiUrl = `upi://pay?pa=${encodeURIComponent(selectedMerchant.upi)}&pn=${encodeURIComponent(selectedMerchant.name)}&am=${amountVal.toFixed(2)}&cu=INR`;
 
+      // Clear previous QR
       const qrContainer = document.getElementById('qrcode');
       qrContainer.innerHTML = '';
 
@@ -1629,10 +1722,12 @@
         correctLevel: QRCode.CorrectLevel.H
       });
 
+      // Update Modal Display
       document.getElementById('modalPayeeName').textContent = selectedMerchant.name;
       document.getElementById('modalUpiId').textContent = selectedMerchant.upi;
       document.getElementById('modalAmount').textContent = '₹' + formatIndianCurrency(amountVal);
 
+      // Setup WhatsApp button link
       const cleanPhone = (selectedMerchant.mobile || '').replace(/[^0-9]/g, '');
       const waBtn = document.getElementById('modalWaBtn');
       if (cleanPhone.length >= 10) {
@@ -1650,11 +1745,14 @@
         upiUrl
       };
 
+      // Reset input box after QR generation
       amountInput.value = '';
       calcExpression = '';
 
+      // Record transaction history
       saveHistoryRecord(selectedMerchant.upi, selectedMerchant.name, amountVal);
 
+      // Open Modal
       const modal = document.getElementById('qrModal');
       const card = document.getElementById('qrModalCard');
       modal.classList.remove('hidden');
@@ -1669,203 +1767,131 @@
     function closeQrModal() {
       const modal = document.getElementById('qrModal');
       const card = document.getElementById('qrModalCard');
+      if (!modal || !card) return;
       modal.classList.add('opacity-0');
       card.classList.add('scale-95');
-      
-      window.scrollTo({ top: 0, behavior: 'smooth' });
-
       setTimeout(() => {
         modal.classList.add('hidden');
         window.scrollTo({ top: 0, behavior: 'smooth' });
       }, 200);
     }
 
-    function getQrImageElement() {
-      return new Promise((resolve) => {
+    function generateCardCanvas() {
+      return new Promise((resolve, reject) => {
+        if (!currentQrData) return reject('No QR data');
         const qrCanvas = document.querySelector('#qrcode canvas');
-        if (qrCanvas) {
-          resolve(qrCanvas);
-          return;
+        if (!qrCanvas) return reject('QR Canvas not rendered');
+
+        const canvas = document.createElement('canvas');
+        canvas.width = 600;
+        canvas.height = 800;
+        const ctx = canvas.getContext('2d');
+
+        // Card Background Gradient
+        const gradient = ctx.createLinearGradient(0, 0, 0, 800);
+        gradient.addColorStop(0, '#0f172a');
+        gradient.addColorStop(1, '#1e1b4b');
+        ctx.fillStyle = gradient;
+        ctx.fillRect(0, 0, 600, 800);
+
+        // Header Accent Line
+        ctx.fillStyle = '#6366f1';
+        ctx.fillRect(0, 0, 600, 10);
+
+        // Header Title
+        ctx.fillStyle = '#818cf8';
+        ctx.font = 'bold 22px Inter, sans-serif';
+        ctx.textAlign = 'center';
+        ctx.fillText('PAYMENT REQUEST CARD', 300, 50);
+
+        // Payee Name
+        ctx.fillStyle = '#ffffff';
+        ctx.font = 'bold 30px Inter, sans-serif';
+        ctx.fillText(currentQrData.name, 300, 95);
+
+        // Payee UPI ID
+        ctx.fillStyle = '#94a3b8';
+        ctx.font = '18px "JetBrains Mono", monospace';
+        ctx.fillText(currentQrData.upi, 300, 125);
+
+        // QR Code Container Box
+        ctx.fillStyle = '#ffffff';
+        ctx.roundRect ? ctx.roundRect(140, 155, 320, 320, 20) : ctx.fillRect(140, 155, 320, 320);
+        ctx.fill();
+
+        // Draw QR Image
+        ctx.drawImage(qrCanvas, 160, 175, 280, 280);
+
+        // Amount Section Box
+        ctx.fillStyle = 'rgba(255, 255, 255, 0.06)';
+        ctx.strokeStyle = 'rgba(99, 102, 241, 0.3)';
+        ctx.lineWidth = 2;
+        if (ctx.roundRect) {
+          ctx.beginPath();
+          ctx.roundRect(100, 505, 400, 120, 16);
+          ctx.fill();
+          ctx.stroke();
+        } else {
+          ctx.fillRect(100, 505, 400, 120);
         }
-        const qrImg = document.querySelector('#qrcode img');
-        if (qrImg) {
-          if (qrImg.complete) {
-            resolve(qrImg);
-          } else {
-            qrImg.onload = () => resolve(qrImg);
-            qrImg.onerror = () => resolve(null);
-          }
-          return;
-        }
-        resolve(null);
+
+        ctx.fillStyle = '#94a3b8';
+        ctx.font = 'bold 16px Inter, sans-serif';
+        ctx.fillText('PAYABLE AMOUNT', 300, 540);
+
+        ctx.fillStyle = '#34d399';
+        ctx.font = 'black 42px "JetBrains Mono", monospace';
+        ctx.fillText('₹' + formatIndianCurrency(currentQrData.amount), 300, 590);
+
+        // Footer Branding & Info
+        ctx.fillStyle = '#a5b4fc';
+        ctx.font = '14px Inter, sans-serif';
+        ctx.fillText('Scan with GPay, PhonePe, Paytm, BHIM or any UPI App', 300, 675);
+
+        ctx.fillStyle = '#64748b';
+        ctx.font = '12px Inter, sans-serif';
+        ctx.fillText('Generated via Paypulse v7.6 POS Terminal', 300, 750);
+
+        canvas.toBlob((blob) => {
+          if (blob) resolve(blob);
+          else reject('Blob generation failed');
+        }, 'image/png');
       });
     }
 
-    async function generateCardCanvas() {
-      if (!currentQrData) return null;
-
-      const canvas = document.createElement('canvas');
-      const ctx = canvas.getContext('2d');
-
-      canvas.width = 640;
-      canvas.height = 840;
-
-      const bgGradient = ctx.createLinearGradient(0, 0, 0, canvas.height);
-      bgGradient.addColorStop(0, '#0f172a');
-      bgGradient.addColorStop(1, '#1e1b4b');
-      ctx.fillStyle = bgGradient;
-      ctx.fillRect(0, 0, canvas.width, canvas.height);
-
-      ctx.strokeStyle = 'rgba(99, 102, 241, 0.4)';
-      ctx.lineWidth = 6;
-      if (ctx.roundRect) {
-        ctx.beginPath();
-        ctx.roundRect(20, 20, canvas.width - 40, canvas.height - 40, 28);
-        ctx.stroke();
-      } else {
-        ctx.strokeRect(20, 20, canvas.width - 40, canvas.height - 40);
-      }
-
-      ctx.fillStyle = '#818cf8';
-      ctx.font = 'bold 20px Inter, sans-serif';
-      ctx.textAlign = 'center';
-      ctx.fillText('Paypulse POS • Dynamic Payment Request', 320, 65);
-
-      ctx.strokeStyle = 'rgba(255, 255, 255, 0.12)';
-      ctx.lineWidth = 2;
-      ctx.beginPath();
-      ctx.moveTo(50, 85);
-      ctx.lineTo(590, 85);
-      ctx.stroke();
-
-      ctx.fillStyle = '#ffffff';
-      ctx.font = 'bold 30px Inter, sans-serif';
-      ctx.fillText(currentQrData.name, 320, 135);
-
-      ctx.fillStyle = '#94a3b8';
-      ctx.font = '600 20px "JetBrains Mono", monospace';
-      ctx.fillText(currentQrData.upi, 320, 170);
-
-      const qrElement = await getQrImageElement();
-      if (qrElement) {
-        ctx.fillStyle = '#ffffff';
-        if (ctx.roundRect) {
-          ctx.beginPath();
-          ctx.roundRect(150, 200, 340, 340, 24);
-          ctx.fill();
-        } else {
-          ctx.fillRect(150, 200, 340, 340);
-        }
-
-        ctx.drawImage(qrElement, 170, 220, 300, 300);
-      }
-
-      ctx.fillStyle = 'rgba(2, 6, 23, 0.7)';
-      if (ctx.roundRect) {
-        ctx.beginPath();
-        ctx.roundRect(90, 570, 460, 120, 20);
-        ctx.fill();
-      } else {
-        ctx.fillRect(90, 570, 460, 120);
-      }
-
-      ctx.strokeStyle = 'rgba(99, 102, 241, 0.35)';
-      ctx.lineWidth = 2;
-      if (ctx.roundRect) {
-        ctx.beginPath();
-        ctx.roundRect(90, 570, 460, 120, 20);
-        ctx.stroke();
-      }
-
-      ctx.fillStyle = '#94a3b8';
-      ctx.font = 'bold 15px Inter, sans-serif';
-      ctx.fillText('PAYABLE AMOUNT', 320, 605);
-
-      ctx.fillStyle = '#34d399';
-      ctx.font = 'bold 44px "JetBrains Mono", monospace';
-      ctx.fillText('₹' + formatIndianCurrency(currentQrData.amount), 320, 660);
-
-      ctx.fillStyle = '#cbd5e1';
-      ctx.font = '600 16px Inter, sans-serif';
-      ctx.fillText('Scan & Pay using any UPI Application', 320, 735);
-
-      ctx.fillStyle = '#64748b';
-      ctx.font = '500 13px Inter, sans-serif';
-      ctx.fillText('Google Pay • PhonePe • Paytm • BHIM • Cred • Bank Apps', 320, 770);
-
-      return canvas;
-    }
-
     async function shareQRImage() {
-      if (!currentQrData) return;
-
-      playBeep('click');
-      showToast('Generating payment card...');
-
       try {
-        const canvas = await generateCardCanvas();
-        if (!canvas) {
-          showToast('Could not generate card image', 'error');
-          return;
+        const blob = await generateCardCanvas();
+        const file = new File([blob], `Payment-Card-${currentQrData.name.replace(/\s+/g, '_')}.png`, { type: 'image/png' });
+
+        if (navigator.share && navigator.canShare && navigator.canShare({ files: [file] })) {
+          await navigator.share({
+            title: `Pay ${currentQrData.name}`,
+            text: `Payment request of ₹${formatIndianCurrency(currentQrData.amount)} for ${currentQrData.name} (${currentQrData.upi})`,
+            files: [file]
+          });
+          showToast('Payment Card Shared Successfully');
+        } else {
+          downloadQRImage();
         }
-
-        canvas.toBlob(async (blob) => {
-          if (!blob) {
-            showToast('Failed to create image file', 'error');
-            return;
-          }
-
-          const fileName = `Paypulse-QR-${currentQrData.name.replace(/\s+/g, '_')}-₹${currentQrData.amount}.png`;
-          const file = new File([blob], fileName, { type: 'image/png' });
-
-          if (navigator.canShare && navigator.canShare({ files: [file] })) {
-            try {
-              await navigator.share({
-                title: `Payment QR for ${currentQrData.name}`,
-                text: `Payment Request: ₹${formatIndianCurrency(currentQrData.amount)} to ${currentQrData.name} (${currentQrData.upi})`,
-                files: [file]
-              });
-              showToast('Shared successfully!');
-            } catch (err) {
-              if (err.name !== 'AbortError') {
-                downloadCardBlob(blob, fileName);
-              }
-            }
-          } else if (navigator.share) {
-            try {
-              await navigator.share({
-                title: `Payment QR for ${currentQrData.name}`,
-                text: `Pay ₹${formatIndianCurrency(currentQrData.amount)} to ${currentQrData.name} (${currentQrData.upi})\n\nPayment Link: ${currentQrData.upiUrl}`
-              });
-            } catch (err) {
-              if (err.name !== 'AbortError') {
-                downloadCardBlob(blob, fileName);
-              }
-            }
-          } else {
-            downloadCardBlob(blob, fileName);
-            showToast('Image card downloaded!');
-          }
-        }, 'image/png');
       } catch (e) {
-        console.error('Share canvas error:', e);
-        showToast('Failed to generate share image', 'error');
+        console.warn('Share failed fallback:', e);
+        downloadQRImage();
       }
-    }
-
-    function downloadCardBlob(blob, fileName) {
-      const url = URL.createObjectURL(blob);
-      const a = document.createElement('a');
-      a.href = url;
-      a.download = fileName;
-      document.body.appendChild(a);
-      a.click();
-      document.body.removeChild(a);
-      URL.revokeObjectURL(url);
     }
 
     function downloadQRImage() {
-      shareQRImage();
+      generateCardCanvas().then(blob => {
+        const url = URL.createObjectURL(blob);
+        const link = document.createElement('a');
+        link.download = `UPI-QR-${currentQrData.name.replace(/\s+/g, '_')}-₹${currentQrData.amount}.png`;
+        link.href = url;
+        link.click();
+        URL.revokeObjectURL(url);
+        showToast('QR Image saved');
+      }).catch(() => {
+        showToast('Unable to export card image', 'error');
+      });
     }
 
     function copyUpiPayLink() {
@@ -1972,7 +1998,7 @@
           <div>
             <div class="flex items-center justify-between gap-2 mb-1">
               <span class="text-xs font-bold truncate">${r.payeeName}</span>
-              <span class="text-[20px] font-mono font-extrabold text-emerald-500">₹${formatIndianCurrency(r.amount)}</span>
+              <span class="text-[18px] font-mono font-extrabold text-emerald-500">₹${formatIndianCurrency(r.amount)}</span>
             </div>
             <div class="text-[10px] font-mono opacity-70 truncate">${r.upiId}</div>
             <div class="text-[10px] opacity-50 mt-1">${formatTime(r.timestamp)}</div>
@@ -2043,16 +2069,36 @@
       showToast('CSV Exported Successfully');
     }
 
-    function confirmClearHistory() {
-      if (confirm('Are you sure you want to clear all transaction logs?')) {
-        persistHistory([]);
-        populateHistoryUpiFilter();
-        renderHistory();
-        showToast('Transaction logs cleared');
-      }
+    function openClearHistoryModal() {
+      playBeep('click');
+      const modal = document.getElementById('clearHistoryModal');
+      const card = document.getElementById('clearHistoryModalCard');
+      if (!modal || !card) return;
+      modal.classList.remove('hidden');
+      requestAnimationFrame(() => {
+        modal.classList.remove('opacity-0');
+        card.classList.remove('scale-95');
+      });
     }
 
-    /* Custom Dropdowns Control */
+    function closeClearHistoryModal() {
+      const modal = document.getElementById('clearHistoryModal');
+      const card = document.getElementById('clearHistoryModalCard');
+      if (!modal || !card) return;
+      modal.classList.add('opacity-0');
+      card.classList.add('scale-95');
+      setTimeout(() => modal.classList.add('hidden'), 200);
+    }
+
+    function confirmClearHistory() {
+      persistHistory([]);
+      populateHistoryUpiFilter();
+      renderHistory();
+      closeClearHistoryModal();
+      showToast('Transaction logs cleared');
+    }
+
+    /* Custom Dropdown Helpers */
     function toggleCustomDropdown(id) {
       const menu = document.getElementById(id + 'Menu');
       if (!menu) return;
@@ -2142,7 +2188,7 @@
       }, 2500);
     }
 
-    /* Global Click Outside Handler */
+    // Dismiss custom dropdowns when clicking outside
     document.addEventListener('click', function(e) {
       if (!e.target.closest('#themeMenuWrapper')) {
         closeThemeMenu();
@@ -2155,15 +2201,16 @@
       }
     });
 
-    /* Application Entry Point */
     window.onload = function() {
       if ('scrollRestoration' in history) {
         history.scrollRestoration = 'manual';
       }
       window.scrollTo(0, 0);
 
+      // Initialize PWA SW
       initPWAInfrastructure();
 
+      // Restore saved theme
       const savedTheme = localStorage.getItem('paypulse_royal_theme') || 'platinum';
       setTheme(savedTheme);
 
@@ -2180,91 +2227,23 @@
       document.getElementById('filterUpi')?.addEventListener('change', renderHistory);
     };
 
-    /* Dynamic Inline PWA Registration */
+    /* Dynamic PWA Infrastructure via Blob URLs */
     function initPWAInfrastructure() {
-      let manifestLink = document.querySelector('link[rel="manifest"]');
-      const manifestData = {
-        name: "Paypulse v7.6",
-        short_name: "Paypulse",
-        description: "Instant UPI Payment QR Terminal and POS Analytics",
-        start_url: ".",
-        scope: ".",
-        id: "paypulse-pos-v7.6",
-        display: "standalone",
-        display_override: ["standalone", "minimal-ui"],
-        orientation: "portrait-primary",
-        background_color: "#0f172a",
-        theme_color: "#4f46e5",
-        prefer_related_applications: false,
-        icons: [
-          {
-            src: "https://cdn-icons-png.flaticon.com/512/9493/9493583.png",
-            sizes: "512x512",
-            type: "image/png",
-            purpose: "any maskable"
-          }
-        ]
-      };
-      const manifestBlob = new Blob([JSON.stringify(manifestData)], { type: 'application/manifest+json' });
-      const manifestUrl = URL.createObjectURL(manifestBlob);
-      if (manifestLink) {
-        manifestLink.href = manifestUrl;
-      } else {
-        manifestLink = document.createElement('link');
-        manifestLink.rel = 'manifest';
-        manifestLink.href = manifestUrl;
-        document.head.appendChild(manifestLink);
-      }
-
       if ('serviceWorker' in navigator) {
         try {
           const swCode = `
-            const CACHE_NAME = 'paypulse-pos-v7.6-direct';
-            const ASSETS = [
-              './',
-              'https://cdn.tailwindcss.com',
-              'https://cdnjs.cloudflare.com/ajax/libs/qrcodejs/1.0.0/qrcode.min.js',
-              'https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700;800&family=JetBrains+Mono:wght@500;700&display=swap'
-            ];
-
-            self.addEventListener('install', (e) => {
-              self.skipWaiting();
-              e.waitUntil(
-                caches.open(CACHE_NAME).then((cache) => cache.addAll(ASSETS).catch(() => {}))
-              );
-            });
-
-            self.addEventListener('activate', (e) => {
-              e.waitUntil(
-                caches.keys().then((keys) => {
-                  return Promise.all(
-                    keys.map((key) => { if (key !== CACHE_NAME) return caches.delete(key); })
-                  );
-                }).then(() => self.clients.claim())
-              );
-            });
-
+            const CACHE_NAME = 'paypulse-pos-v7.6';
+            self.addEventListener('install', (e) => self.skipWaiting());
+            self.addEventListener('activate', (e) => e.waitUntil(clients.claim()));
             self.addEventListener('fetch', (e) => {
-              if (e.request.method !== 'GET') return;
-              e.respondWith(
-                caches.match(e.request).then((cached) => {
-                  const networked = fetch(e.request).then((response) => {
-                    if (response && response.status === 200) {
-                      const cacheCopy = response.clone();
-                      caches.open(CACHE_NAME).then((cache) => cache.put(e.request, cacheCopy));
-                    }
-                    return response;
-                  }).catch(() => cached);
-                  return cached || networked;
-                })
-              );
+              e.respondWith(fetch(e.request).catch(() => caches.match(e.request)));
             });
           `;
           const swBlob = new Blob([swCode], { type: 'application/javascript' });
           const swUrl = URL.createObjectURL(swBlob);
           navigator.serviceWorker.register(swUrl)
-            .then(() => console.log('[PWA] ServiceWorker registered successfully'))
-            .catch((err) => console.debug('[PWA] ServiceWorker note:', err));
+            .then(() => console.log('[PWA] ServiceWorker registered'))
+            .catch((err) => console.debug('[PWA] ServiceWorker Note:', err));
         } catch (err) {
           console.debug('[PWA] ServiceWorker Blob initialization skipped:', err);
         }
