@@ -3,14 +3,14 @@
 <head>
   <meta charset="UTF-8">
   <meta name="viewport" content="width=device-width, initial-scale=1.0">
-  <title>Paypulse v7.7</title>
+  <title>Paypulse v7.6</title>
   
   <!-- Favicon & Touch Icon Config -->
-  <link rel="icon" type="image/png" href="https://cdn-icons-png.flaticon.com/512/3142/3142615.png">
-  <link rel="apple-touch-icon" href="https://cdn-icons-png.flaticon.com/512/3142/3142615.png">
+  <link rel="icon" type="image/png" href="https://cdn-icons-png.flaticon.com/512/2313/2313039.png">
+  <link rel="apple-touch-icon" href="https://cdn-icons-png.flaticon.com/512/2313/2313039.png">
 
-  <!-- PWA Web App Manifest (Fully Compliant for Android / Chrome / iOS) -->
-  <link rel="manifest" id="appManifestLink" href='data:application/manifest+json;utf8,{"id":"paypulse-pos-v77","name":"Paypulse v7.7","short_name":"Paypulse","description":"Instant UPI Payment QR Terminal POS","start_url":".","scope":".","display":"standalone","orientation":"portrait","background_color":"#0f172a","theme_color":"#4f46e5","icons":[{"src":"https://cdn-icons-png.flaticon.com/512/3142/3142615.png","sizes":"192x192","type":"image/png","purpose":"any"},{"src":"https://cdn-icons-png.flaticon.com/512/3142/3142615.png","sizes":"512x512","type":"image/png","purpose":"any"},{"src":"https://cdn-icons-png.flaticon.com/512/3142/3142615.png","sizes":"512x512","type":"image/png","purpose":"maskable"}]}'>
+  <!-- PWA Web App Manifest -->
+  <link rel="manifest" href='data:application/manifest+json;utf8,{"name":"Paypulse v7.6","short_name":"Paypulse","start_url":".","display":"standalone","background_color":"#0f172a","theme_color":"#4f46e5","icons":[{"src":"https://cdn-icons-png.flaticon.com/512/2313/2313039.png","sizes":"512x512","type":"image/png","purpose":"any maskable"}]}'>
   <meta name="theme-color" content="#4f46e5">
 
   <!-- Tailwind CSS -->
@@ -194,16 +194,11 @@
     <header class="flex items-center justify-between gap-3 pb-3 sm:pb-4 border-b border-slate-200/50 dark:border-slate-800/80 mb-3 sm:mb-4">
       <div class="flex items-center gap-2.5 text-left">
         <div class="w-7 h-7 rounded-lg p-1 border flex items-center justify-center shadow-sm shrink-0" style="background-color: var(--badge-bg); border-color: var(--border-color);">
-          <svg class="w-full h-full theme-accent-text" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
-            <rect x="3" y="3" width="6" height="6" rx="1" />
-            <rect x="15" y="3" width="6" height="6" rx="1" />
-            <rect x="3" y="15" width="6" height="6" rx="1" />
-            <path d="M14 14h2v2h-2zM18 14h3v3h-3zM14 18h3v3h-3zM19 19h2v2h-2z" />
-          </svg>
+          <img src="https://cdn-icons-png.flaticon.com/512/2313/2313039.png" alt="Paypulse Icon" class="w-full h-full object-contain">
         </div>
         <div>
           <div class="flex items-center gap-2">
-            <h1 class="text-[15px] font-bold tracking-tight">Paypulse <span class="text-xs font-semibold text-red-600 dark:text-red-400 ml-1">v7.7</span></h1>
+            <h1 class="text-[15px] font-bold tracking-tight">Paypulse <span class="text-xs font-semibold text-red-600 dark:text-red-400 ml-1">v7.6</span></h1>
           </div>
           <p class="text-[8px] opacity-75">Instant UPI Payment QR Terminal</p>
         </div>
@@ -297,9 +292,7 @@
           <div id="systemMenuDropdown" class="hidden absolute right-0 mt-2 w-56 theme-card-bg backdrop-blur-xl border rounded-2xl shadow-2xl z-50 py-1.5 transition-all duration-150 transform opacity-0 scale-95" style="background-color: var(--bg-card); border-color: var(--border-color);">
             <button onclick="triggerPwaInstall()" class="w-full px-3.5 py-2.5 text-xs font-semibold hover:bg-black/5 dark:hover:bg-white/5 transition flex items-center gap-2.5 text-left">
               <div class="w-6 h-6 rounded-lg p-1 flex items-center justify-center shrink-0" style="background-color: var(--badge-bg);">
-                <svg class="w-3.5 h-3.5 theme-accent-text" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-                  <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M4 16v1a3 3 0 003 3h10a3 3 0 003-3v-1m-4-4l-4 4m0 0l-4-4m4 4V4"/>
-                </svg>
+                <img src="https://cdn-icons-png.flaticon.com/512/2313/2313039.png" alt="Install Icon" class="w-4 h-4 object-contain">
               </div>
               <div>
                 <span class="block leading-tight">Install App</span>
@@ -342,7 +335,7 @@
             </button>
 
             <div class="px-3.5 py-1.5 text-[10px] opacity-50 border-t mt-1" style="border-color: var(--border-color);">
-              Paypulse v7.7
+              Paypulse v7.6
             </div>
           </div>
         </div>
@@ -545,7 +538,110 @@
       <div class="flex flex-col lg:flex-row lg:items-center justify-between gap-4 pb-4 border-b border-slate-200/50 dark:border-slate-800/80 mb-5">
         <div class="flex items-center justify-between gap-3 w-full lg:w-auto">
           <div>
-            <h3 class="text-base font-bold leading-tight">Paypulse v7.7</h3>
+            <h2 class="text-xs font-bold flex items-center gap-1.5">
+              <svg class="w-4 h-4 theme-accent-text" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M12 8v4l3 3m6-3a9 9 0 11-18 0 9 9 0 0118 0z"></path>
+              </svg>
+              Transaction History & Logs
+            </h2>
+            <p class="text-[10px] opacity-70">Track and review generated payment requests</p>
+          </div>
+
+          <!-- Icon Action Buttons Moved Beside Title -->
+          <div class="flex items-center gap-1 shrink-0">
+            <button onclick="exportHistoryCSV()" class="p-2 rounded-xl theme-keypad border transition shadow-sm flex items-center justify-center" title="Export CSV">
+              <svg class="w-4 h-4 theme-accent-text" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M4 16v1a3 3 0 003 3h10a3 3 0 003-3v-1m-4-4l-4 4m0 0l-4-4m4 4V4"></path>
+              </svg>
+            </button>
+
+            <button onclick="openClearHistoryModal()" class="p-2 rounded-xl bg-red-500/10 hover:bg-red-500/20 text-red-500 border border-red-500/20 transition shadow-sm flex items-center justify-center" title="Clear Logs">
+              <svg class="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M19 7l-.867 12.142A2 2 0 0116.138 21H7.862a2 2 0 01-1.995-1.858L5 7m5 4v6m4-6v6m1-10V4a1 1 0 00-1-1h-4a1 1 0 00-1 1v3M4 7h16"></path>
+              </svg>
+            </button>
+          </div>
+        </div>
+
+        <!-- Filter Tools Bar -->
+        <div class="flex items-center gap-1.5 w-full lg:w-auto flex-nowrap overflow-x-auto py-0.5">
+          <!-- Time Filter Custom Dropdown -->
+          <div class="relative w-28 sm:w-32 shrink-0" id="customDropdownTime">
+            <button type="button" onclick="toggleCustomDropdown('customDropdownTime')" class="w-full theme-sub-bg border rounded-xl px-2 py-2 text-xs font-semibold flex items-center justify-between gap-1 shadow-sm transition-all focus:outline-none" style="border-color: var(--border-color);">
+              <span class="flex items-center gap-1 truncate min-w-0">
+                <svg class="w-3.5 h-3.5 theme-accent-text shrink-0" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                  <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M8 7V3m8 4V3m-9 8h10M5 21h14a2 2 0 002-2V7a2 2 0 00-2-2H5a2 2 0 00-2 2v12a2 2 0 002 2z"></path>
+                </svg>
+                <span id="customDropdownTimeLabel" class="truncate">All Time</span>
+              </span>
+              <svg class="w-3 h-3 opacity-50 shrink-0" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M19 9l-7 7-7-7"></path>
+              </svg>
+            </button>
+            
+            <div id="customDropdownTimeMenu" class="hidden absolute left-0 w-36 mt-1.5 theme-card-bg backdrop-blur-xl border rounded-xl shadow-xl z-30 py-1 overflow-hidden transition-all duration-150 transform opacity-0 scale-95" style="border-color: var(--border-color);">
+              <div onclick="selectCustomTime('all', 'All Time')" class="px-3 py-2 text-xs font-medium hover:bg-black/5 dark:hover:bg-white/5 cursor-pointer flex items-center justify-between">
+                <span>All Time</span>
+              </div>
+              <div onclick="selectCustomTime('today', 'Today')" class="px-3 py-2 text-xs font-medium hover:bg-black/5 dark:hover:bg-white/5 cursor-pointer flex items-center justify-between">
+                <span>Today</span>
+              </div>
+              <div onclick="selectCustomTime('week', 'This Week')" class="px-3 py-2 text-xs font-medium hover:bg-black/5 dark:hover:bg-white/5 cursor-pointer flex items-center justify-between">
+                <span>This Week</span>
+              </div>
+            </div>
+          </div>
+
+          <!-- Merchant UPI Filter Custom Dropdown -->
+          <div class="relative flex-1 min-w-[110px]" id="customDropdownUpi">
+            <button type="button" onclick="toggleCustomDropdown('customDropdownUpi')" class="w-full theme-sub-bg border rounded-xl px-2 py-2 text-xs font-semibold flex items-center justify-between gap-1 shadow-sm transition-all focus:outline-none" style="border-color: var(--border-color);">
+              <span class="flex items-center gap-1 truncate min-w-0">
+                <svg class="w-3.5 h-3.5 theme-accent-text shrink-0" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                  <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M19 21V5a2 2 0 00-2-2H7a2 2 0 00-2 2v16m14 0h2m-2 0h-5m-9 0H3m2 0h5M9 7h1m-1 4h1m4-4h1m-1 4h1m-5 10v-5a1 1 0 011-1h2a1 1 0 011 1v5m-4 0h4"></path>
+                </svg>
+                <span id="customDropdownUpiLabel" class="truncate">All Accounts</span>
+              </span>
+              <svg class="w-3 h-3 opacity-50 shrink-0" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M19 9l-7 7-7-7"></path>
+              </svg>
+            </button>
+            
+            <div id="customDropdownUpiMenu" class="hidden absolute right-0 w-56 mt-1.5 theme-card-bg backdrop-blur-xl border rounded-xl shadow-xl z-30 py-1 max-h-56 overflow-y-auto transition-all duration-150 transform opacity-0 scale-95" style="border-color: var(--border-color);">
+              <!-- Dynamically populated via JS -->
+            </div>
+          </div>
+
+          <select id="filterTime" class="hidden">
+            <option value="all">All Time</option>
+            <option value="today">Today</option>
+            <option value="week">This Week</option>
+          </select>
+
+          <select id="filterUpi" class="hidden">
+            <option value="all">All Merchant Accounts</option>
+          </select>
+        </div>
+      </div>
+
+      <!-- History Record Cards Container -->
+      <div id="historyList" class="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-3 max-h-[480px] overflow-y-auto pr-1">
+        <!-- Rendered via JavaScript -->
+      </div>
+    </section>
+
+  </div>
+
+  <!-- MODAL: About App Modal -->
+  <div id="aboutModal" class="fixed inset-0 z-50 bg-slate-950/80 backdrop-blur-md flex items-center justify-center p-4 hidden opacity-0 transition-opacity duration-200">
+    <div class="theme-card-bg border rounded-3xl p-6 max-w-md w-full shadow-2xl relative transform scale-95 transition-transform duration-200" id="aboutModalCard" style="border-color: var(--border-color);">
+      
+      <div class="flex items-center justify-between mb-4 pb-3 border-b" style="border-color: var(--border-color);">
+        <div class="flex items-center gap-2.5">
+          <div class="w-9 h-9 rounded-xl p-1.5 border flex items-center justify-center shadow-sm" style="background-color: var(--badge-bg); border-color: var(--border-color);">
+            <img src="https://cdn-icons-png.flaticon.com/512/2313/2313039.png" alt="App Logo" class="w-full h-full object-contain">
+          </div>
+          <div>
+            <h3 class="text-base font-bold leading-tight">Paypulse v7.6</h3>
             <p class="text-[10px] opacity-70">POS Terminal Edition</p>
           </div>
         </div>
@@ -601,11 +697,11 @@
         <div class="grid grid-cols-2 gap-2">
           <div class="theme-sub-bg p-2.5 rounded-xl border" style="border-color: var(--border-color);">
             <div class="text-[9px] uppercase font-bold opacity-60">App Version</div>
-            <div class="text-xs font-bold font-mono theme-accent-text mt-0.5">Paypulse v7.7</div>
+            <div class="text-xs font-bold font-mono theme-accent-text mt-0.5">Paypulse v7.6</div>
           </div>
           <div class="theme-sub-bg p-2.5 rounded-xl border" style="border-color: var(--border-color);">
             <div class="text-[9px] uppercase font-bold opacity-60">Build ID</div>
-            <div class="text-xs font-bold font-mono opacity-80 mt-0.5">2026.08.14-v7.7</div>
+            <div class="text-xs font-bold font-mono opacity-80 mt-0.5">2026.08.11-v7.6</div>
           </div>
         </div>
 
@@ -817,104 +913,7 @@
     </div>
   </div>
 
-  <!-- MODAL 7: PWA Installation Guide Modal -->
-  <div id="pwaInstallModal" class="fixed inset-0 z-50 bg-slate-950/80 backdrop-blur-md flex items-center justify-center p-4 hidden opacity-0 transition-opacity duration-200">
-    <div class="theme-card-bg border rounded-3xl p-6 max-w-md w-full shadow-2xl relative transform scale-95 transition-transform duration-200" id="pwaInstallModalCard" style="border-color: var(--border-color);">
-      
-      <div class="flex items-center justify-between mb-4 pb-3 border-b" style="border-color: var(--border-color);">
-        <div class="flex items-center gap-2.5">
-          <img src="https://cdn-icons-png.flaticon.com/512/3142/3142615.png" class="w-8 h-8 rounded-xl p-1 bg-indigo-500/10 border border-indigo-500/20" alt="App Icon">
-          <div>
-            <h3 class="text-sm font-bold leading-tight">Install Paypulse v7.7</h3>
-            <p class="text-[10px] opacity-70">POS Terminal App</p>
-          </div>
-        </div>
-        <button onclick="closePwaInstallModal()" class="p-1.5 rounded-full hover:bg-black/10 dark:hover:bg-white/10 opacity-60">✕</button>
-      </div>
-
-      <!-- Device Tabs Selector -->
-      <div class="flex items-center theme-sub-bg p-1 rounded-xl border mb-4 text-xs font-bold" style="border-color: var(--border-color);">
-        <button id="pwaTabAndroid" onclick="setPwaTab('android')" class="flex-1 py-1.5 rounded-lg transition-all flex items-center justify-center gap-1 theme-accent-btn text-white">Android</button>
-        <button id="pwaTabIos" onclick="setPwaTab('ios')" class="flex-1 py-1.5 rounded-lg transition-all flex items-center justify-center gap-1 opacity-60">iPhone / iPad</button>
-        <button id="pwaTabDesktop" onclick="setPwaTab('desktop')" class="flex-1 py-1.5 rounded-lg transition-all flex items-center justify-center gap-1 opacity-60">Desktop</button>
-      </div>
-
-      <!-- Android Step Guide -->
-      <div id="pwaGuideAndroid" class="space-y-3 text-xs">
-        <div class="p-3 theme-sub-bg rounded-2xl border space-y-2" style="border-color: var(--border-color);">
-          <div class="flex items-start gap-2.5">
-            <span class="w-5 h-5 rounded-full theme-accent-btn text-white font-bold text-[10px] flex items-center justify-center shrink-0 mt-0.5">1</span>
-            <div>
-              <span class="font-bold">Open Menu:</span> Tap the <strong class="theme-accent-text">Three Dots (⋮)</strong> icon in the top right corner of Chrome.
-            </div>
-          </div>
-          <div class="flex items-start gap-2.5">
-            <span class="w-5 h-5 rounded-full theme-accent-btn text-white font-bold text-[10px] flex items-center justify-center shrink-0 mt-0.5">2</span>
-            <div>
-              <span class="font-bold">Select Install:</span> Tap <strong class="theme-accent-text">"Install app"</strong> or <strong class="theme-accent-text">"Add to Home screen"</strong>.
-            </div>
-          </div>
-          <div class="flex items-start gap-2.5">
-            <span class="w-5 h-5 rounded-full theme-accent-btn text-white font-bold text-[10px] flex items-center justify-center shrink-0 mt-0.5">3</span>
-            <div>
-              <span class="font-bold">Confirm:</span> Tap <strong>"Install"</strong> when prompted to add the app icon to your home screen.
-            </div>
-          </div>
-        </div>
-      </div>
-
-      <!-- iOS Safari Step Guide -->
-      <div id="pwaGuideIos" class="space-y-3 text-xs hidden">
-        <div class="p-3 theme-sub-bg rounded-2xl border space-y-2" style="border-color: var(--border-color);">
-          <div class="flex items-start gap-2.5">
-            <span class="w-5 h-5 rounded-full theme-accent-btn text-white font-bold text-[10px] flex items-center justify-center shrink-0 mt-0.5">1</span>
-            <div>
-              <span class="font-bold">Tap Share:</span> Open Safari and tap the <strong class="theme-accent-text">Share button (⎋ / ⍗)</strong> at the bottom of the screen.
-            </div>
-          </div>
-          <div class="flex items-start gap-2.5">
-            <span class="w-5 h-5 rounded-full theme-accent-btn text-white font-bold text-[10px] flex items-center justify-center shrink-0 mt-0.5">2</span>
-            <div>
-              <span class="font-bold">Add to Home Screen:</span> Scroll down and tap <strong class="theme-accent-text">"Add to Home Screen" (+ icon)</strong>.
-            </div>
-          </div>
-          <div class="flex items-start gap-2.5">
-            <span class="w-5 h-5 rounded-full theme-accent-btn text-white font-bold text-[10px] flex items-center justify-center shrink-0 mt-0.5">3</span>
-            <div>
-              <span class="font-bold">Confirm:</span> Tap <strong class="theme-accent-text">"Add"</strong> in the top right corner.
-            </div>
-          </div>
-        </div>
-      </div>
-
-      <!-- Desktop Step Guide -->
-      <div id="pwaGuideDesktop" class="space-y-3 text-xs hidden">
-        <div class="p-3 theme-sub-bg rounded-2xl border space-y-2" style="border-color: var(--border-color);">
-          <div class="flex items-start gap-2.5">
-            <span class="w-5 h-5 rounded-full theme-accent-btn text-white font-bold text-[10px] flex items-center justify-center shrink-0 mt-0.5">1</span>
-            <div>
-              <span class="font-bold">Address Bar:</span> Look for the <strong class="theme-accent-text">Install Icon (⊕ /电脑)</strong> on the right side of the URL bar in Chrome/Edge.
-            </div>
-          </div>
-          <div class="flex items-start gap-2.5">
-            <span class="w-5 h-5 rounded-full theme-accent-btn text-white font-bold text-[10px] flex items-center justify-center shrink-0 mt-0.5">2</span>
-            <div>
-              <span class="font-bold">Or Browser Menu:</span> Click browser menu (⋮) → <strong class="theme-accent-text">"Save and Share"</strong> → <strong class="theme-accent-text">"Install Paypulse"</strong>.
-            </div>
-          </div>
-        </div>
-      </div>
-
-      <div class="mt-4 flex gap-2">
-        <button onclick="closePwaInstallModal()" class="w-full py-2.5 rounded-xl theme-accent-btn text-white text-xs font-bold shadow-md">Got It</button>
-      </div>
-
-    </div>
-  </div>
-
   <!-- Main Application Logic Script -->
-<!-- ... existing code -->
-
   <script>
     /* System Audio Feedback Setup */
     let soundEnabled = true;
@@ -1024,19 +1023,10 @@
     window.addEventListener('beforeinstallprompt', (e) => {
       e.preventDefault();
       deferredPwaPrompt = e;
-      console.log('[PWA] beforeinstallprompt captured successfully');
     });
 
     function triggerPwaInstall() {
       closeSystemMenu();
-
-      // Check if already running in standalone PWA mode
-      const isStandalone = window.matchMedia('(display-mode: standalone)').matches || window.navigator.standalone === true;
-      if (isStandalone) {
-        showToast('App is already installed and running in standalone mode!');
-        return;
-      }
-
       if (deferredPwaPrompt) {
         deferredPwaPrompt.prompt();
         deferredPwaPrompt.userChoice.then((choice) => {
@@ -1044,60 +1034,10 @@
             showToast('Paypulse installed successfully!');
           }
           deferredPwaPrompt = null;
-        }).catch(() => {
-          openPwaInstallModal();
         });
       } else {
-        openPwaInstallModal();
+        showToast('To install: Tap browser menu (⋮ or Share) -> "Add to Home Screen"');
       }
-    }
-
-    /* PWA Installation Guide Modal Helpers */
-    function openPwaInstallModal() {
-      playBeep('click');
-      const modal = document.getElementById('pwaInstallModal');
-      const card = document.getElementById('pwaInstallModalCard');
-      if (!modal || !card) return;
-
-      // Auto-detect platform
-      const ua = navigator.userAgent || '';
-      if (/iPad|iPhone|iPod/.test(ua) && !window.MSStream) {
-        setPwaTab('ios');
-      } else if (/Android/.test(ua)) {
-        setPwaTab('android');
-      } else {
-        setPwaTab('desktop');
-      }
-
-      modal.classList.remove('hidden');
-      requestAnimationFrame(() => {
-        modal.classList.remove('opacity-0');
-        card.classList.remove('scale-95');
-      });
-    }
-
-    function closePwaInstallModal() {
-      const modal = document.getElementById('pwaInstallModal');
-      const card = document.getElementById('pwaInstallModalCard');
-      if (!modal || !card) return;
-      modal.classList.add('opacity-0');
-      card.classList.add('scale-95');
-      setTimeout(() => modal.classList.add('hidden'), 200);
-    }
-
-    function setPwaTab(platform) {
-      const tabs = ['android', 'ios', 'desktop'];
-      tabs.forEach(t => {
-        const btn = document.getElementById(`pwaTab${t.charAt(0).toUpperCase() + t.slice(1)}`);
-        const guide = document.getElementById(`pwaGuide${t.charAt(0).toUpperCase() + t.slice(1)}`);
-        if (t === platform) {
-          if (btn) btn.className = "flex-1 py-1.5 rounded-lg transition-all flex items-center justify-center gap-1 theme-accent-btn text-white shadow-sm";
-          if (guide) guide.classList.remove('hidden');
-        } else {
-          if (btn) btn.className = "flex-1 py-1.5 rounded-lg transition-all flex items-center justify-center gap-1 opacity-60 hover:opacity-100";
-          if (guide) guide.classList.add('hidden');
-        }
-      });
     }
 
     /* Modals Control */
@@ -1279,7 +1219,6 @@
       renderMerchantList(document.getElementById('merchantSearch')?.value || '');
 
       if (shouldScroll && card) {
-        // Scroll down to position the selected payee card near top of viewport to focus the terminal
         const yOffset = -16;
         const elementPosition = card.getBoundingClientRect().top;
         const offsetPosition = elementPosition + window.pageYOffset + yOffset;
@@ -1289,7 +1228,6 @@
           behavior: 'smooth'
         });
 
-        // Add temporary ring highlight pulse animation
         card.classList.add('ring-2', 'ring-indigo-500', 'scale-[1.01]', 'shadow-lg');
         setTimeout(() => {
           card.classList.remove('ring-2', 'ring-indigo-500', 'scale-[1.01]', 'shadow-lg');
@@ -1598,7 +1536,6 @@
       if (!expr) return 0;
       try {
         let sanitized = expr.replace(/×/g, '*').replace(/÷/g, '/');
-        // Clean leading zeros from numbers (e.g., 087 -> 87, 005 -> 5) to prevent JS strict mode errors
         sanitized = sanitized.replace(/\b0+([1-9]\d*)/g, '$1');
         sanitized = sanitized.replace(/\b0+(0|\.)/g, '0$1');
         
@@ -1617,10 +1554,8 @@
         exprDisplay.textContent = calcExpression || '0';
       }
 
-      // Trim trailing operators or dots for calculating the main amount preview
       let evalExpr = (calcExpression || '').trim().replace(/[+\-*/×÷. ]+$/, '');
 
-      // Balance any unclosed parentheses for live preview
       let openCount = (evalExpr.match(/\(/g) || []).length;
       let closeCount = (evalExpr.match(/\)/g) || []).length;
       while (openCount > closeCount) {
@@ -1757,7 +1692,6 @@
 
       const upiUrl = `upi://pay?pa=${encodeURIComponent(selectedMerchant.upi)}&pn=${encodeURIComponent(selectedMerchant.name)}&am=${amountVal.toFixed(2)}&cu=INR`;
 
-      // Clear previous QR
       const qrContainer = document.getElementById('qrcode');
       qrContainer.innerHTML = '';
 
@@ -1770,12 +1704,10 @@
         correctLevel: QRCode.CorrectLevel.H
       });
 
-      // Update Modal Display
       document.getElementById('modalPayeeName').textContent = selectedMerchant.name;
       document.getElementById('modalUpiId').textContent = selectedMerchant.upi;
       document.getElementById('modalAmount').textContent = '₹' + formatIndianCurrency(amountVal);
 
-      // Setup WhatsApp button link
       const cleanPhone = (selectedMerchant.mobile || '').replace(/[^0-9]/g, '');
       const waBtn = document.getElementById('modalWaBtn');
       if (cleanPhone.length >= 10) {
@@ -1793,14 +1725,11 @@
         upiUrl
       };
 
-      // Reset input box after QR generation
       amountInput.value = '';
       calcExpression = '';
 
-      // Record transaction history
       saveHistoryRecord(selectedMerchant.upi, selectedMerchant.name, amountVal);
 
-      // Open Modal
       const modal = document.getElementById('qrModal');
       const card = document.getElementById('qrModalCard');
       modal.classList.remove('hidden');
@@ -1835,42 +1764,34 @@
         canvas.height = 800;
         const ctx = canvas.getContext('2d');
 
-        // Card Background Gradient
         const gradient = ctx.createLinearGradient(0, 0, 0, 800);
         gradient.addColorStop(0, '#0f172a');
         gradient.addColorStop(1, '#1e1b4b');
         ctx.fillStyle = gradient;
         ctx.fillRect(0, 0, 600, 800);
 
-        // Header Accent Line
         ctx.fillStyle = '#6366f1';
         ctx.fillRect(0, 0, 600, 10);
 
-        // Header Title
         ctx.fillStyle = '#818cf8';
         ctx.font = 'bold 22px Inter, sans-serif';
         ctx.textAlign = 'center';
         ctx.fillText('PAYMENT REQUEST CARD', 300, 50);
 
-        // Payee Name
         ctx.fillStyle = '#ffffff';
         ctx.font = 'bold 30px Inter, sans-serif';
         ctx.fillText(currentQrData.name, 300, 95);
 
-        // Payee UPI ID
         ctx.fillStyle = '#94a3b8';
         ctx.font = '18px "JetBrains Mono", monospace';
         ctx.fillText(currentQrData.upi, 300, 125);
 
-        // QR Code Container Box
         ctx.fillStyle = '#ffffff';
         ctx.roundRect ? ctx.roundRect(120, 145, 360, 360, 20) : ctx.fillRect(120, 145, 360, 360);
         ctx.fill();
 
-        // Draw QR Image
         ctx.drawImage(qrCanvas, 135, 160, 330, 330);
 
-        // Amount Section Box
         ctx.fillStyle = 'rgba(255, 255, 255, 0.06)';
         ctx.strokeStyle = 'rgba(99, 102, 241, 0.3)';
         ctx.lineWidth = 2;
@@ -1891,14 +1812,13 @@
         ctx.font = '900 56px "JetBrains Mono", monospace';
         ctx.fillText('₹' + formatIndianCurrency(currentQrData.amount), 300, 612);
 
-        // Footer Branding & Info
         ctx.fillStyle = '#a5b4fc';
         ctx.font = '14px Inter, sans-serif';
         ctx.fillText('Scan with GPay, PhonePe, Paytm, BHIM or any UPI App', 300, 685);
 
         ctx.fillStyle = '#64748b';
         ctx.font = '12px Inter, sans-serif';
-        ctx.fillText('Generated via Paypulse v7.7 POS Terminal', 300, 755);
+        ctx.fillText('Generated via Paypulse v7.6 POS Terminal', 300, 755);
 
         canvas.toBlob((blob) => {
           if (blob) resolve(blob);
@@ -1963,11 +1883,11 @@
     }
 
     /* History & Analytics Data Layer */
-    const HISTORY_KEY = 'paypulse_history_v7.7';
+    const HISTORY_KEY = 'paypulse_history_v7.6';
 
     function loadHistory() {
       try {
-        const stored = localStorage.getItem(HISTORY_KEY) || localStorage.getItem('paypulse_history_v7.6') || localStorage.getItem('paypulse_history_v7');
+        const stored = localStorage.getItem(HISTORY_KEY) || localStorage.getItem('paypulse_history_v7');
         return stored ? JSON.parse(stored) : [];
       } catch (e) {
         return [];
@@ -2110,7 +2030,7 @@
       const url = URL.createObjectURL(blob);
       const link = document.createElement('a');
       link.setAttribute('href', url);
-      link.setAttribute('download', `UPI-Transactions-v7.7-${Date.now()}.csv`);
+      link.setAttribute('download', `UPI-Transactions-v7.6-${Date.now()}.csv`);
       document.body.appendChild(link);
       link.click();
       document.body.removeChild(link);
@@ -2255,10 +2175,8 @@
       }
       window.scrollTo(0, 0);
 
-      // Initialize PWA SW & Manifest
       initPWAInfrastructure();
 
-      // Restore saved theme
       const savedTheme = localStorage.getItem('paypulse_royal_theme') || 'platinum';
       setTheme(savedTheme);
 
@@ -2277,72 +2195,21 @@
 
     /* Dynamic PWA Infrastructure via Blob URLs */
     function initPWAInfrastructure() {
-      // 1. Dynamic Blob Web App Manifest Injection
-      try {
-        const manifestObj = {
-          id: "paypulse-pos-v77",
-          name: "Paypulse v7.7",
-          short_name: "Paypulse",
-          description: "Instant UPI Payment QR Terminal POS",
-          start_url: ".",
-          scope: ".",
-          display: "standalone",
-          orientation: "portrait",
-          background_color: "#0f172a",
-          theme_color: "#4f46e5",
-          icons: [
-            {
-              src: "https://cdn-icons-png.flaticon.com/512/3142/3142615.png",
-              sizes: "192x192",
-              type: "image/png",
-              purpose: "any"
-            },
-            {
-              src: "https://cdn-icons-png.flaticon.com/512/3142/3142615.png",
-              sizes: "512x512",
-              type: "image/png",
-              purpose: "any"
-            },
-            {
-              src: "https://cdn-icons-png.flaticon.com/512/3142/3142615.png",
-              sizes: "512x512",
-              type: "image/png",
-              purpose: "maskable"
-            }
-          ]
-        };
-        const manifestBlob = new Blob([JSON.stringify(manifestObj)], { type: 'application/manifest+json' });
-        const manifestUrl = URL.createObjectURL(manifestBlob);
-        let link = document.getElementById('appManifestLink');
-        if (link) {
-          link.href = manifestUrl;
-        }
-      } catch (err) {
-        console.debug('[PWA] Manifest blob initialization note:', err);
-      }
-
-      // 2. Service Worker Registration
       if ('serviceWorker' in navigator) {
         try {
           const swCode = `
-            const CACHE_NAME = 'paypulse-pos-v7.7';
+            const CACHE_NAME = 'paypulse-pos-v7.6';
             self.addEventListener('install', (e) => self.skipWaiting());
             self.addEventListener('activate', (e) => e.waitUntil(clients.claim()));
             self.addEventListener('fetch', (e) => {
-              if (e.request.method !== 'GET') return;
-              e.respondWith(
-                fetch(e.request).catch(() => caches.match(e.request))
-              );
+              e.respondWith(fetch(e.request).catch(() => caches.match(e.request)));
             });
           `;
           const swBlob = new Blob([swCode], { type: 'application/javascript' });
           const swUrl = URL.createObjectURL(swBlob);
           navigator.serviceWorker.register(swUrl)
-            .then(() => console.log('[PWA] ServiceWorker registered successfully'))
-            .catch((err) => {
-              navigator.serviceWorker.register('./sw.js')
-                .catch((e) => console.debug('[PWA] ServiceWorker fallback note:', e));
-            });
+            .then(() => console.log('[PWA] ServiceWorker registered'))
+            .catch((err) => console.debug('[PWA] ServiceWorker Note:', err));
         } catch (err) {
           console.debug('[PWA] ServiceWorker Blob initialization skipped:', err);
         }
