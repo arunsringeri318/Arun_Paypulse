@@ -9,8 +9,8 @@
   <link rel="icon" type="image/png" href="https://cdn-icons-png.flaticon.com/512/3142/3142615.png">
   <link rel="apple-touch-icon" href="https://cdn-icons-png.flaticon.com/512/3142/3142615.png">
 
-  <!-- PWA Web App Manifest -->
-  <link rel="manifest" href='data:application/manifest+json;utf8,{"name":"Paypulse v7.7","short_name":"Paypulse","start_url":".","display":"standalone","background_color":"#0f172a","theme_color":"#4f46e5","icons":[{"src":"https://cdn-icons-png.flaticon.com/512/3142/3142615.png","sizes":"512x512","type":"image/png","purpose":"any maskable"}]}'>
+  <!-- PWA Web App Manifest (Fully Compliant for Android / Chrome / iOS) -->
+  <link rel="manifest" id="appManifestLink" href='data:application/manifest+json;utf8,{"id":"paypulse-pos-v77","name":"Paypulse v7.7","short_name":"Paypulse","description":"Instant UPI Payment QR Terminal POS","start_url":".","scope":".","display":"standalone","orientation":"portrait","background_color":"#0f172a","theme_color":"#4f46e5","icons":[{"src":"https://cdn-icons-png.flaticon.com/512/3142/3142615.png","sizes":"192x192","type":"image/png","purpose":"any"},{"src":"https://cdn-icons-png.flaticon.com/512/3142/3142615.png","sizes":"512x512","type":"image/png","purpose":"any"},{"src":"https://cdn-icons-png.flaticon.com/512/3142/3142615.png","sizes":"512x512","type":"image/png","purpose":"maskable"}]}'>
   <meta name="theme-color" content="#4f46e5">
 
   <!-- Tailwind CSS -->
@@ -817,7 +817,104 @@
     </div>
   </div>
 
+  <!-- MODAL 7: PWA Installation Guide Modal -->
+  <div id="pwaInstallModal" class="fixed inset-0 z-50 bg-slate-950/80 backdrop-blur-md flex items-center justify-center p-4 hidden opacity-0 transition-opacity duration-200">
+    <div class="theme-card-bg border rounded-3xl p-6 max-w-md w-full shadow-2xl relative transform scale-95 transition-transform duration-200" id="pwaInstallModalCard" style="border-color: var(--border-color);">
+      
+      <div class="flex items-center justify-between mb-4 pb-3 border-b" style="border-color: var(--border-color);">
+        <div class="flex items-center gap-2.5">
+          <img src="https://cdn-icons-png.flaticon.com/512/3142/3142615.png" class="w-8 h-8 rounded-xl p-1 bg-indigo-500/10 border border-indigo-500/20" alt="App Icon">
+          <div>
+            <h3 class="text-sm font-bold leading-tight">Install Paypulse v7.7</h3>
+            <p class="text-[10px] opacity-70">POS Terminal App</p>
+          </div>
+        </div>
+        <button onclick="closePwaInstallModal()" class="p-1.5 rounded-full hover:bg-black/10 dark:hover:bg-white/10 opacity-60">✕</button>
+      </div>
+
+      <!-- Device Tabs Selector -->
+      <div class="flex items-center theme-sub-bg p-1 rounded-xl border mb-4 text-xs font-bold" style="border-color: var(--border-color);">
+        <button id="pwaTabAndroid" onclick="setPwaTab('android')" class="flex-1 py-1.5 rounded-lg transition-all flex items-center justify-center gap-1 theme-accent-btn text-white">Android</button>
+        <button id="pwaTabIos" onclick="setPwaTab('ios')" class="flex-1 py-1.5 rounded-lg transition-all flex items-center justify-center gap-1 opacity-60">iPhone / iPad</button>
+        <button id="pwaTabDesktop" onclick="setPwaTab('desktop')" class="flex-1 py-1.5 rounded-lg transition-all flex items-center justify-center gap-1 opacity-60">Desktop</button>
+      </div>
+
+      <!-- Android Step Guide -->
+      <div id="pwaGuideAndroid" class="space-y-3 text-xs">
+        <div class="p-3 theme-sub-bg rounded-2xl border space-y-2" style="border-color: var(--border-color);">
+          <div class="flex items-start gap-2.5">
+            <span class="w-5 h-5 rounded-full theme-accent-btn text-white font-bold text-[10px] flex items-center justify-center shrink-0 mt-0.5">1</span>
+            <div>
+              <span class="font-bold">Open Menu:</span> Tap the <strong class="theme-accent-text">Three Dots (⋮)</strong> icon in the top right corner of Chrome.
+            </div>
+          </div>
+          <div class="flex items-start gap-2.5">
+            <span class="w-5 h-5 rounded-full theme-accent-btn text-white font-bold text-[10px] flex items-center justify-center shrink-0 mt-0.5">2</span>
+            <div>
+              <span class="font-bold">Select Install:</span> Tap <strong class="theme-accent-text">"Install app"</strong> or <strong class="theme-accent-text">"Add to Home screen"</strong>.
+            </div>
+          </div>
+          <div class="flex items-start gap-2.5">
+            <span class="w-5 h-5 rounded-full theme-accent-btn text-white font-bold text-[10px] flex items-center justify-center shrink-0 mt-0.5">3</span>
+            <div>
+              <span class="font-bold">Confirm:</span> Tap <strong>"Install"</strong> when prompted to add the app icon to your home screen.
+            </div>
+          </div>
+        </div>
+      </div>
+
+      <!-- iOS Safari Step Guide -->
+      <div id="pwaGuideIos" class="space-y-3 text-xs hidden">
+        <div class="p-3 theme-sub-bg rounded-2xl border space-y-2" style="border-color: var(--border-color);">
+          <div class="flex items-start gap-2.5">
+            <span class="w-5 h-5 rounded-full theme-accent-btn text-white font-bold text-[10px] flex items-center justify-center shrink-0 mt-0.5">1</span>
+            <div>
+              <span class="font-bold">Tap Share:</span> Open Safari and tap the <strong class="theme-accent-text">Share button (⎋ / ⍗)</strong> at the bottom of the screen.
+            </div>
+          </div>
+          <div class="flex items-start gap-2.5">
+            <span class="w-5 h-5 rounded-full theme-accent-btn text-white font-bold text-[10px] flex items-center justify-center shrink-0 mt-0.5">2</span>
+            <div>
+              <span class="font-bold">Add to Home Screen:</span> Scroll down and tap <strong class="theme-accent-text">"Add to Home Screen" (+ icon)</strong>.
+            </div>
+          </div>
+          <div class="flex items-start gap-2.5">
+            <span class="w-5 h-5 rounded-full theme-accent-btn text-white font-bold text-[10px] flex items-center justify-center shrink-0 mt-0.5">3</span>
+            <div>
+              <span class="font-bold">Confirm:</span> Tap <strong class="theme-accent-text">"Add"</strong> in the top right corner.
+            </div>
+          </div>
+        </div>
+      </div>
+
+      <!-- Desktop Step Guide -->
+      <div id="pwaGuideDesktop" class="space-y-3 text-xs hidden">
+        <div class="p-3 theme-sub-bg rounded-2xl border space-y-2" style="border-color: var(--border-color);">
+          <div class="flex items-start gap-2.5">
+            <span class="w-5 h-5 rounded-full theme-accent-btn text-white font-bold text-[10px] flex items-center justify-center shrink-0 mt-0.5">1</span>
+            <div>
+              <span class="font-bold">Address Bar:</span> Look for the <strong class="theme-accent-text">Install Icon (⊕ /电脑)</strong> on the right side of the URL bar in Chrome/Edge.
+            </div>
+          </div>
+          <div class="flex items-start gap-2.5">
+            <span class="w-5 h-5 rounded-full theme-accent-btn text-white font-bold text-[10px] flex items-center justify-center shrink-0 mt-0.5">2</span>
+            <div>
+              <span class="font-bold">Or Browser Menu:</span> Click browser menu (⋮) → <strong class="theme-accent-text">"Save and Share"</strong> → <strong class="theme-accent-text">"Install Paypulse"</strong>.
+            </div>
+          </div>
+        </div>
+      </div>
+
+      <div class="mt-4 flex gap-2">
+        <button onclick="closePwaInstallModal()" class="w-full py-2.5 rounded-xl theme-accent-btn text-white text-xs font-bold shadow-md">Got It</button>
+      </div>
+
+    </div>
+  </div>
+
   <!-- Main Application Logic Script -->
+<!-- ... existing code -->
+
   <script>
     /* System Audio Feedback Setup */
     let soundEnabled = true;
@@ -927,10 +1024,19 @@
     window.addEventListener('beforeinstallprompt', (e) => {
       e.preventDefault();
       deferredPwaPrompt = e;
+      console.log('[PWA] beforeinstallprompt captured successfully');
     });
 
     function triggerPwaInstall() {
       closeSystemMenu();
+
+      // Check if already running in standalone PWA mode
+      const isStandalone = window.matchMedia('(display-mode: standalone)').matches || window.navigator.standalone === true;
+      if (isStandalone) {
+        showToast('App is already installed and running in standalone mode!');
+        return;
+      }
+
       if (deferredPwaPrompt) {
         deferredPwaPrompt.prompt();
         deferredPwaPrompt.userChoice.then((choice) => {
@@ -938,10 +1044,60 @@
             showToast('Paypulse installed successfully!');
           }
           deferredPwaPrompt = null;
+        }).catch(() => {
+          openPwaInstallModal();
         });
       } else {
-        showToast('To install: Tap browser menu (⋮ or Share) -> "Add to Home Screen"');
+        openPwaInstallModal();
       }
+    }
+
+    /* PWA Installation Guide Modal Helpers */
+    function openPwaInstallModal() {
+      playBeep('click');
+      const modal = document.getElementById('pwaInstallModal');
+      const card = document.getElementById('pwaInstallModalCard');
+      if (!modal || !card) return;
+
+      // Auto-detect platform
+      const ua = navigator.userAgent || '';
+      if (/iPad|iPhone|iPod/.test(ua) && !window.MSStream) {
+        setPwaTab('ios');
+      } else if (/Android/.test(ua)) {
+        setPwaTab('android');
+      } else {
+        setPwaTab('desktop');
+      }
+
+      modal.classList.remove('hidden');
+      requestAnimationFrame(() => {
+        modal.classList.remove('opacity-0');
+        card.classList.remove('scale-95');
+      });
+    }
+
+    function closePwaInstallModal() {
+      const modal = document.getElementById('pwaInstallModal');
+      const card = document.getElementById('pwaInstallModalCard');
+      if (!modal || !card) return;
+      modal.classList.add('opacity-0');
+      card.classList.add('scale-95');
+      setTimeout(() => modal.classList.add('hidden'), 200);
+    }
+
+    function setPwaTab(platform) {
+      const tabs = ['android', 'ios', 'desktop'];
+      tabs.forEach(t => {
+        const btn = document.getElementById(`pwaTab${t.charAt(0).toUpperCase() + t.slice(1)}`);
+        const guide = document.getElementById(`pwaGuide${t.charAt(0).toUpperCase() + t.slice(1)}`);
+        if (t === platform) {
+          if (btn) btn.className = "flex-1 py-1.5 rounded-lg transition-all flex items-center justify-center gap-1 theme-accent-btn text-white shadow-sm";
+          if (guide) guide.classList.remove('hidden');
+        } else {
+          if (btn) btn.className = "flex-1 py-1.5 rounded-lg transition-all flex items-center justify-center gap-1 opacity-60 hover:opacity-100";
+          if (guide) guide.classList.add('hidden');
+        }
+      });
     }
 
     /* Modals Control */
@@ -2099,7 +2255,7 @@
       }
       window.scrollTo(0, 0);
 
-      // Initialize PWA SW
+      // Initialize PWA SW & Manifest
       initPWAInfrastructure();
 
       // Restore saved theme
@@ -2121,6 +2277,51 @@
 
     /* Dynamic PWA Infrastructure via Blob URLs */
     function initPWAInfrastructure() {
+      // 1. Dynamic Blob Web App Manifest Injection
+      try {
+        const manifestObj = {
+          id: "paypulse-pos-v77",
+          name: "Paypulse v7.7",
+          short_name: "Paypulse",
+          description: "Instant UPI Payment QR Terminal POS",
+          start_url: ".",
+          scope: ".",
+          display: "standalone",
+          orientation: "portrait",
+          background_color: "#0f172a",
+          theme_color: "#4f46e5",
+          icons: [
+            {
+              src: "https://cdn-icons-png.flaticon.com/512/3142/3142615.png",
+              sizes: "192x192",
+              type: "image/png",
+              purpose: "any"
+            },
+            {
+              src: "https://cdn-icons-png.flaticon.com/512/3142/3142615.png",
+              sizes: "512x512",
+              type: "image/png",
+              purpose: "any"
+            },
+            {
+              src: "https://cdn-icons-png.flaticon.com/512/3142/3142615.png",
+              sizes: "512x512",
+              type: "image/png",
+              purpose: "maskable"
+            }
+          ]
+        };
+        const manifestBlob = new Blob([JSON.stringify(manifestObj)], { type: 'application/manifest+json' });
+        const manifestUrl = URL.createObjectURL(manifestBlob);
+        let link = document.getElementById('appManifestLink');
+        if (link) {
+          link.href = manifestUrl;
+        }
+      } catch (err) {
+        console.debug('[PWA] Manifest blob initialization note:', err);
+      }
+
+      // 2. Service Worker Registration
       if ('serviceWorker' in navigator) {
         try {
           const swCode = `
@@ -2128,14 +2329,20 @@
             self.addEventListener('install', (e) => self.skipWaiting());
             self.addEventListener('activate', (e) => e.waitUntil(clients.claim()));
             self.addEventListener('fetch', (e) => {
-              e.respondWith(fetch(e.request).catch(() => caches.match(e.request)));
+              if (e.request.method !== 'GET') return;
+              e.respondWith(
+                fetch(e.request).catch(() => caches.match(e.request))
+              );
             });
           `;
           const swBlob = new Blob([swCode], { type: 'application/javascript' });
           const swUrl = URL.createObjectURL(swBlob);
           navigator.serviceWorker.register(swUrl)
-            .then(() => console.log('[PWA] ServiceWorker registered'))
-            .catch((err) => console.debug('[PWA] ServiceWorker Note:', err));
+            .then(() => console.log('[PWA] ServiceWorker registered successfully'))
+            .catch((err) => {
+              navigator.serviceWorker.register('./sw.js')
+                .catch((e) => console.debug('[PWA] ServiceWorker fallback note:', e));
+            });
         } catch (err) {
           console.debug('[PWA] ServiceWorker Blob initialization skipped:', err);
         }
