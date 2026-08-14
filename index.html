@@ -10,8 +10,11 @@
   <link rel="apple-touch-icon" href="https://cdn-icons-png.flaticon.com/512/2313/2313039.png">
 
   <!-- PWA Web App Manifest -->
-  <link rel="manifest" href='data:application/manifest+json;utf8,{"name":"Paypulse v7.6","short_name":"Paypulse","start_url":".","display":"standalone","background_color":"#0f172a","theme_color":"#4f46e5","icons":[{"src":"https://cdn-icons-png.flaticon.com/512/2313/2313039.png","sizes":"512x512","type":"image/png","purpose":"any maskable"}]}'>
+  <link rel="manifest" href='data:application/manifest+json;utf8,{"id":"paypulse-pos-v7.6","name":"Paypulse POS Terminal","short_name":"Paypulse","start_url":".","scope":".","display":"standalone","orientation":"any","background_color":"#0f172a","theme_color":"#4f46e5","icons":[{"src":"https://cdn-icons-png.flaticon.com/512/2313/2313039.png","sizes":"512x512","type":"image/png","purpose":"any maskable"}]}'>
   <meta name="theme-color" content="#4f46e5">
+  <meta name="apple-mobile-web-app-capable" content="yes">
+  <meta name="apple-mobile-web-app-status-bar-style" content="black-translucent">
+  <meta name="apple-mobile-web-app-title" content="Paypulse">
 
   <!-- Tailwind CSS -->
   <script src="https://cdn.tailwindcss.com"></script>
@@ -194,7 +197,7 @@
     <header class="flex items-center justify-between gap-3 pb-3 sm:pb-4 border-b border-slate-200/50 dark:border-slate-800/80 mb-3 sm:mb-4">
       <div class="flex items-center gap-2.5 text-left">
         <div class="w-7 h-7 rounded-lg p-1 border flex items-center justify-center shadow-sm shrink-0" style="background-color: var(--badge-bg); border-color: var(--border-color);">
-          <img src="https://cdn-icons-png.flaticon.com/512/2313/2313039.png" alt="Paypulse Icon" class="w-full h-full object-contain">
+          <img src="https://cdn-icons-png.flaticon.com/512/2313/2313039.png" alt="Paypulse Logo" class="w-full h-full object-contain">
         </div>
         <div>
           <div class="flex items-center gap-2">
@@ -290,13 +293,13 @@
 
           <!-- 3-Dots Menu Dropdown Card -->
           <div id="systemMenuDropdown" class="hidden absolute right-0 mt-2 w-56 theme-card-bg backdrop-blur-xl border rounded-2xl shadow-2xl z-50 py-1.5 transition-all duration-150 transform opacity-0 scale-95" style="background-color: var(--bg-card); border-color: var(--border-color);">
-            <button onclick="triggerPwaInstall()" class="w-full px-3.5 py-2.5 text-xs font-semibold hover:bg-black/5 dark:hover:bg-white/5 transition flex items-center gap-2.5 text-left">
+            <button id="pwaInstallMenuBtn" onclick="triggerPwaInstall()" class="w-full px-3.5 py-2.5 text-xs font-semibold hover:bg-black/5 dark:hover:bg-white/5 transition flex items-center gap-2.5 text-left">
               <div class="w-6 h-6 rounded-lg p-1 flex items-center justify-center shrink-0" style="background-color: var(--badge-bg);">
                 <img src="https://cdn-icons-png.flaticon.com/512/2313/2313039.png" alt="Install Icon" class="w-4 h-4 object-contain">
               </div>
               <div>
-                <span class="block leading-tight">Install App</span>
-                <span class="text-[9px] opacity-60 font-normal">Add to Home Screen</span>
+                <span id="pwaInstallTitle" class="block leading-tight">Install App</span>
+                <span id="pwaInstallSub" class="text-[9px] opacity-60 font-normal">Add to Home Screen</span>
               </div>
             </button>
 
@@ -913,6 +916,103 @@
     </div>
   </div>
 
+  <!-- MODAL 7: PWA Installation Guide Modal (Fixes "Install App not working") -->
+  <div id="installGuideModal" class="fixed inset-0 z-50 bg-slate-950/80 backdrop-blur-md flex items-center justify-center p-4 hidden opacity-0 transition-opacity duration-200">
+    <div class="theme-card-bg border rounded-3xl p-6 max-w-md w-full shadow-2xl relative transform scale-95 transition-transform duration-200" id="installGuideModalCard" style="border-color: var(--border-color);">
+      
+      <div class="flex items-center justify-between mb-4 pb-3 border-b" style="border-color: var(--border-color);">
+        <div class="flex items-center gap-2.5">
+          <div class="w-9 h-9 rounded-xl p-1.5 border flex items-center justify-center shadow-sm" style="background-color: var(--badge-bg); border-color: var(--border-color);">
+            <img src="https://cdn-icons-png.flaticon.com/512/2313/2313039.png" alt="App Icon" class="w-full h-full object-contain">
+          </div>
+          <div>
+            <h3 class="text-base font-bold leading-tight">Install Paypulse POS</h3>
+            <p class="text-[10px] opacity-70">Add app to your Home Screen</p>
+          </div>
+        </div>
+        <button onclick="closeInstallGuideModal()" class="p-1.5 rounded-full hover:bg-black/10 dark:hover:bg-white/10 opacity-60">✕</button>
+      </div>
+
+      <!-- Native Prompt Container (If available) -->
+      <div id="installNativePromptContainer" class="hidden mb-4 p-4 rounded-2xl theme-sub-bg border text-center" style="border-color: var(--border-color);">
+        <p class="text-xs font-semibold mb-3">Your browser supports direct 1-tap app installation!</p>
+        <button onclick="execNativePwaInstall()" class="w-full py-3 rounded-xl theme-accent-btn text-white text-xs font-bold shadow-lg flex items-center justify-center gap-2">
+          <img src="https://cdn-icons-png.flaticon.com/512/2313/2313039.png" class="w-4 h-4 object-contain">
+          <span>Click Here to Install Now</span>
+        </button>
+      </div>
+
+      <!-- Step-by-Step Manual Guidance for iOS / Chrome / Safari / Edge -->
+      <div class="space-y-3.5 text-xs">
+        
+        <!-- Platform Selector Tabs -->
+        <div class="flex rounded-xl p-1 theme-sub-bg border" style="border-color: var(--border-color);">
+          <button id="tabIosGuide" onclick="switchInstallTab('ios')" class="flex-1 py-1.5 rounded-lg text-[11px] font-bold transition theme-accent-btn text-white">iPhone / iPad</button>
+          <button id="tabAndroidGuide" onclick="switchInstallTab('android')" class="flex-1 py-1.5 rounded-lg text-[11px] font-bold transition opacity-60 hover:opacity-100">Android</button>
+          <button id="tabDesktopGuide" onclick="switchInstallTab('desktop')" class="flex-1 py-1.5 rounded-lg text-[11px] font-bold transition opacity-60 hover:opacity-100">Desktop / Mac</button>
+        </div>
+
+        <!-- iOS Instructions -->
+        <div id="iosInstallContent" class="space-y-2.5 theme-sub-bg p-3.5 rounded-2xl border" style="border-color: var(--border-color);">
+          <div class="flex items-start gap-2.5">
+            <span class="w-5 h-5 rounded-full theme-accent-btn text-white text-xs font-bold flex items-center justify-center shrink-0 mt-0.5">1</span>
+            <span>Open this webpage in <strong>Safari Browser</strong> on iOS.</span>
+          </div>
+          <div class="flex items-start gap-2.5">
+            <span class="w-5 h-5 rounded-full theme-accent-btn text-white text-xs font-bold flex items-center justify-center shrink-0 mt-0.5">2</span>
+            <span>Tap the <strong>Share</strong> icon <svg class="w-4 h-4 inline theme-accent-text" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M8.684 13.342C8.886 12.938 9 12.482 9 12c0-.482-.114-.938-.316-1.342m0 2.684a3 3 0 110-2.684m0 2.684l6.632 3.316m-6.632-6l6.632-3.316m0 0a3 3 0 105.367-2.684 3 3 0 00-5.367 2.684zm0 9.316a3 3 0 105.368 2.684 3 3 0 00-5.368-2.684z"/></svg> at the bottom bar.</span>
+          </div>
+          <div class="flex items-start gap-2.5">
+            <span class="w-5 h-5 rounded-full theme-accent-btn text-white text-xs font-bold flex items-center justify-center shrink-0 mt-0.5">3</span>
+            <span>Scroll down and select <strong>"Add to Home Screen"</strong> <span class="font-bold theme-accent-text"> [+]</span>.</span>
+          </div>
+          <div class="flex items-start gap-2.5">
+            <span class="w-5 h-5 rounded-full theme-accent-btn text-white text-xs font-bold flex items-center justify-center shrink-0 mt-0.5">4</span>
+            <span>Tap <strong>Add</strong> at top-right to launch Paypulse as a full-screen app.</span>
+          </div>
+        </div>
+
+        <!-- Android Instructions -->
+        <div id="androidInstallContent" class="space-y-2.5 theme-sub-bg p-3.5 rounded-2xl border hidden" style="border-color: var(--border-color);">
+          <div class="flex items-start gap-2.5">
+            <span class="w-5 h-5 rounded-full theme-accent-btn text-white text-xs font-bold flex items-center justify-center shrink-0 mt-0.5">1</span>
+            <span>Tap the <strong>3 Dots Menu (⋮)</strong> at top-right of Chrome / Edge.</span>
+          </div>
+          <div class="flex items-start gap-2.5">
+            <span class="w-5 h-5 rounded-full theme-accent-btn text-white text-xs font-bold flex items-center justify-center shrink-0 mt-0.5">2</span>
+            <span>Select <strong>"Install app"</strong> or <strong>"Add to Home screen"</strong>.</span>
+          </div>
+          <div class="flex items-start gap-2.5">
+            <span class="w-5 h-5 rounded-full theme-accent-btn text-white text-xs font-bold flex items-center justify-center shrink-0 mt-0.5">3</span>
+            <span>Confirm by clicking <strong>Install</strong>.</span>
+          </div>
+        </div>
+
+        <!-- Desktop Instructions -->
+        <div id="desktopInstallContent" class="space-y-2.5 theme-sub-bg p-3.5 rounded-2xl border hidden" style="border-color: var(--border-color);">
+          <div class="flex items-start gap-2.5">
+            <span class="w-5 h-5 rounded-full theme-accent-btn text-white text-xs font-bold flex items-center justify-center shrink-0 mt-0.5">1</span>
+            <span>Look at the right side of Chrome / Edge URL address bar.</span>
+          </div>
+          <div class="flex items-start gap-2.5">
+            <span class="w-5 h-5 rounded-full theme-accent-btn text-white text-xs font-bold flex items-center justify-center shrink-0 mt-0.5">2</span>
+            <span>Click the <strong>Install / Desktop Icon</strong> <span class="theme-accent-text font-bold">(⊕)</span>.</span>
+          </div>
+          <div class="flex items-start gap-2.5">
+            <span class="w-5 h-5 rounded-full theme-accent-btn text-white text-xs font-bold flex items-center justify-center shrink-0 mt-0.5">3</span>
+            <span>Click <strong>Install</strong> to open Paypulse in an independent app window.</span>
+          </div>
+        </div>
+
+      </div>
+
+      <div class="mt-4 flex gap-2">
+        <button onclick="closeInstallGuideModal()" class="w-full py-2.5 rounded-xl theme-accent-btn text-white text-xs font-bold shadow-md">Got It</button>
+      </div>
+
+    </div>
+  </div>
+
   <!-- Main Application Logic Script -->
   <script>
     /* System Audio Feedback Setup */
@@ -1018,26 +1118,114 @@
       });
     }
 
-    /* PWA Prompt Handling */
+    /* PWA Prompt & Installation Handling */
     let deferredPwaPrompt = null;
+    let isStandaloneMode = false;
+
+    function checkStandaloneMode() {
+      isStandaloneMode = window.matchMedia('(display-mode: standalone)').matches || 
+                         window.navigator.standalone || 
+                         document.referrer.includes('android-app://');
+      
+      if (isStandaloneMode) {
+        const titleElem = document.getElementById('pwaInstallTitle');
+        const subElem = document.getElementById('pwaInstallSub');
+        if (titleElem) titleElem.textContent = 'App Installed ✓';
+        if (subElem) subElem.textContent = 'Running in POS Mode';
+      }
+    }
+
     window.addEventListener('beforeinstallprompt', (e) => {
       e.preventDefault();
       deferredPwaPrompt = e;
+      const nativeBox = document.getElementById('installNativePromptContainer');
+      if (nativeBox) nativeBox.classList.remove('hidden');
+    });
+
+    window.addEventListener('appinstalled', () => {
+      deferredPwaPrompt = null;
+      checkStandaloneMode();
+      showToast('Paypulse POS installed successfully!');
+      closeInstallGuideModal();
     });
 
     function triggerPwaInstall() {
       closeSystemMenu();
-      if (deferredPwaPrompt) {
-        deferredPwaPrompt.prompt();
-        deferredPwaPrompt.userChoice.then((choice) => {
-          if (choice.outcome === 'accepted') {
-            showToast('Paypulse installed successfully!');
-          }
-          deferredPwaPrompt = null;
-        });
-      } else {
-        showToast('To install: Tap browser menu (⋮ or Share) -> "Add to Home Screen"');
+      playBeep('click');
+
+      if (isStandaloneMode) {
+        showToast('Paypulse is already running as an installed PWA!');
+        return;
       }
+
+      if (deferredPwaPrompt) {
+        execNativePwaInstall();
+      } else {
+        openInstallGuideModal();
+      }
+    }
+
+    function execNativePwaInstall() {
+      if (!deferredPwaPrompt) return;
+      deferredPwaPrompt.prompt();
+      deferredPwaPrompt.userChoice.then((choice) => {
+        if (choice.outcome === 'accepted') {
+          showToast('Installing Paypulse POS...');
+        }
+        deferredPwaPrompt = null;
+        closeInstallGuideModal();
+      });
+    }
+
+    function openInstallGuideModal() {
+      const modal = document.getElementById('installGuideModal');
+      const card = document.getElementById('installGuideModalCard');
+      if (!modal || !card) return;
+
+      const userAgent = navigator.userAgent || navigator.vendor || window.opera;
+      if (/iPad|iPhone|iPod/.test(userAgent) && !window.MSStream) {
+        switchInstallTab('ios');
+      } else if (/android/i.test(userAgent)) {
+        switchInstallTab('android');
+      } else {
+        switchInstallTab('desktop');
+      }
+
+      modal.classList.remove('hidden');
+      requestAnimationFrame(() => {
+        modal.classList.remove('opacity-0');
+        card.classList.remove('scale-95');
+      });
+    }
+
+    function closeInstallGuideModal() {
+      const modal = document.getElementById('installGuideModal');
+      const card = document.getElementById('installGuideModalCard');
+      if (!modal || !card) return;
+      modal.classList.add('opacity-0');
+      card.classList.add('scale-95');
+      setTimeout(() => modal.classList.add('hidden'), 200);
+    }
+
+    function switchInstallTab(platform) {
+      const iosTab = document.getElementById('tabIosGuide');
+      const androidTab = document.getElementById('tabAndroidGuide');
+      const desktopTab = document.getElementById('tabDesktopGuide');
+
+      const iosContent = document.getElementById('iosInstallContent');
+      const androidContent = document.getElementById('androidInstallContent');
+      const desktopContent = document.getElementById('desktopInstallContent');
+
+      const activeClass = "flex-1 py-1.5 rounded-lg text-[11px] font-bold transition theme-accent-btn text-white";
+      const inactiveClass = "flex-1 py-1.5 rounded-lg text-[11px] font-bold transition opacity-60 hover:opacity-100";
+
+      iosTab.className = platform === 'ios' ? activeClass : inactiveClass;
+      androidTab.className = platform === 'android' ? activeClass : inactiveClass;
+      desktopTab.className = platform === 'desktop' ? activeClass : inactiveClass;
+
+      iosContent.classList.toggle('hidden', platform !== 'ios');
+      androidContent.classList.toggle('hidden', platform !== 'android');
+      desktopContent.classList.toggle('hidden', platform !== 'desktop');
     }
 
     /* Modals Control */
@@ -2176,6 +2364,7 @@
       window.scrollTo(0, 0);
 
       initPWAInfrastructure();
+      checkStandaloneMode();
 
       const savedTheme = localStorage.getItem('paypulse_royal_theme') || 'platinum';
       setTheme(savedTheme);
@@ -2193,7 +2382,7 @@
       document.getElementById('filterUpi')?.addEventListener('change', renderHistory);
     };
 
-    /* Dynamic PWA Infrastructure via Blob URLs */
+    /* Dynamic PWA ServiceWorker Infrastructure */
     function initPWAInfrastructure() {
       if ('serviceWorker' in navigator) {
         try {
