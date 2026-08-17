@@ -214,6 +214,7 @@
     .theme-card-bg {
       background-color: var(--bg-card);
       border-color: var(--border-color);
+      color: var(--text-main);
     }
 
     .theme-sub-bg {
@@ -275,7 +276,7 @@
           </button>
 
           <!-- Theme Palette Menu -->
-          <div id="themeMenuDropdown" class="hidden absolute right-0 mt-2 w-60 theme-card-bg backdrop-blur-xl border rounded-2xl shadow-2xl z-50 p-2 space-y-1.5 transition-all duration-150 transform opacity-0 scale-95">
+          <div id="themeMenuDropdown" class="hidden absolute right-0 mt-2 w-60 theme-card-bg backdrop-blur-xl border rounded-2xl shadow-2xl z-50 p-2 space-y-1.5 transition-all duration-150 transform opacity-0 scale-95" style="color: var(--text-main);">
             <div class="px-2 py-1 text-[10px] font-bold uppercase tracking-wider opacity-60">Themes Palette</div>
             
             <button onclick="setTheme('sapphire'); closeThemeMenu();" class="w-full p-2 rounded-xl border text-left transition flex items-center justify-between bg-slate-900 border-indigo-500/40">
@@ -344,7 +345,7 @@
           </button>
 
           <!-- 3-Dots Dropdown Options -->
-          <div id="systemMenuDropdown" class="hidden absolute right-0 mt-2 w-56 theme-card-bg backdrop-blur-xl border rounded-2xl shadow-2xl z-50 py-1.5 transition-all duration-150 transform opacity-0 scale-95">
+          <div id="systemMenuDropdown" class="hidden absolute right-0 mt-2 w-56 theme-card-bg backdrop-blur-xl border rounded-2xl shadow-2xl z-50 py-1.5 transition-all duration-150 transform opacity-0 scale-95" style="color: var(--text-main);">
             <button onclick="triggerPwaInstall()" class="w-full px-3.5 py-2.5 text-xs font-semibold hover:bg-black/5 dark:hover:bg-white/5 transition flex items-center gap-2.5 text-left">
               <div class="w-6 h-6 rounded-lg p-1 flex items-center justify-center shrink-0" style="background-color: var(--badge-bg);">
                 <img src="https://cdn-icons-png.flaticon.com/512/2313/2313039.png" alt="Install Icon" class="w-full h-full object-contain">
