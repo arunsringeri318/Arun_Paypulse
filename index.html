@@ -3,17 +3,13 @@
 <head>
   <meta charset="UTF-8">
   <meta name="viewport" content="width=device-width, initial-scale=1.0">
-  <title>Paypulse v7.7 | POS Terminal</title>
-  
-  <!-- Favicon & Touch Icon Config -->
+  <title>Paypulse v8.0 | POS Terminal</title>
+
   <link rel="icon" type="image/png" href="https://cdn-icons-png.flaticon.com/512/2313/2313039.png">
   <link rel="apple-touch-icon" href="https://cdn-icons-png.flaticon.com/512/2313/2313039.png">
-
-  <!-- PWA Web App Manifest Link -->
   <link rel="manifest" id="appManifestLink">
   <meta name="theme-color" content="#4f46e5">
 
-  <!-- Tailwind CSS -->
   <script src="https://cdn.tailwindcss.com"></script>
   <script>
     tailwind.config = {
@@ -37,97 +33,146 @@
       }
     }
   </script>
-  
-  <!-- Google Fonts & QR Code JS Library -->
+
   <link rel="preconnect" href="https://fonts.googleapis.com">
   <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
-  <link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700;800&family=JetBrains+Mono:wght@500;700&display=swap" rel="stylesheet">
+  <link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700;800;900&family=JetBrains+Mono:wght@500;700;800&display=swap" rel="stylesheet">
   <script src="https://cdnjs.cloudflare.com/ajax/libs/qrcodejs/1.0.0/qrcode.min.js"></script>
 
   <style>
+    /* Platinum Executive Theme (Matches Image 2 - Vibrant Indigo POS Bar & Crisp Cards) */
     :root, [data-theme="platinum"] {
-      --bg-main: #f8fafc;
+      --bg-main: #f3f4f8;
+      --bg-header-bar: linear-gradient(135deg, #4f46e5, #4338ca);
+      --header-text: #ffffff;
+      --header-sub: rgba(255, 255, 255, 0.8);
       --bg-card: #ffffff;
-      --bg-card-sub: #f1f5f9;
-      --border-color: #cbd5e1;
+      --bg-card-sub: #f8fafc;
+      --border-color: #e2e8f0;
       --accent-primary: #4f46e5;
       --accent-hover: #4338ca;
       --accent-gradient: linear-gradient(135deg, #6366f1, #4f46e5, #4338ca);
       --accent-text: #4f46e5;
       --text-main: #0f172a;
       --text-sub: #64748b;
-      --card-glow: 0 10px 30px -5px rgba(79, 70, 229, 0.15);
-      --badge-bg: rgba(79, 70, 229, 0.1);
+      --card-glow: 0 4px 20px -2px rgba(79, 70, 229, 0.12);
+      --badge-bg: rgba(79, 70, 229, 0.08);
       --keypad-bg: #ffffff;
-      --keypad-hover: #e2e8f0;
+      --keypad-hover: #f1f5f9;
+      --theme-btn-bg: #f59e0b; /* Yellow palette button from Image 2 */
+      --theme-btn-icon: #ffffff;
+      --dots-btn-bg: rgba(255, 255, 255, 0.22);
+      --dots-btn-icon: #ffffff;
+      --active-payee-bg: #ede9fe; /* Soft purple container at bottom of Image 2 */
+      --active-payee-border: #c7d2fe;
     }
 
+    /* Royal Sapphire Theme (Matches Image 3 - Pitch Dark Midnight & High Contrast) */
     [data-theme="sapphire"] {
-      --bg-main: #0f172a;
-      --bg-card: rgba(15, 23, 42, 0.85);
-      --bg-card-sub: rgba(2, 6, 23, 0.7);
-      --border-color: rgba(99, 102, 241, 0.3);
+      --bg-main: #0b0f19;
+      --bg-header-bar: #0f172a;
+      --header-text: #f8fafc;
+      --header-sub: #94a3b8;
+      --bg-card: #141a29;
+      --bg-card-sub: #0f1422;
+      --border-color: #1e293b;
       --accent-primary: #6366f1;
       --accent-hover: #4f46e5;
       --accent-gradient: linear-gradient(135deg, #6366f1, #4f46e5, #3730a3);
       --accent-text: #818cf8;
       --text-main: #f8fafc;
       --text-sub: #94a3b8;
-      --card-glow: 0 0 35px -5px rgba(99, 102, 241, 0.35);
-      --badge-bg: rgba(99, 102, 241, 0.2);
-      --keypad-bg: rgba(2, 6, 23, 0.6);
-      --keypad-hover: rgba(30, 41, 59, 0.9);
+      --card-glow: 0 0 25px -5px rgba(99, 102, 241, 0.25);
+      --badge-bg: rgba(99, 102, 241, 0.15);
+      --keypad-bg: #111625;
+      --keypad-hover: #1e2638;
+      --theme-btn-bg: #1e1b4b;
+      --theme-btn-icon: #a5b4fc;
+      --dots-btn-bg: #1e293b;
+      --dots-btn-icon: #f8fafc;
+      --active-payee-bg: #0f1526;
+      --active-payee-border: #2e3856;
     }
 
+    /* Imperial Gold Theme */
     [data-theme="gold"] {
       --bg-main: #090a0f;
-      --bg-card: rgba(20, 18, 28, 0.9);
-      --bg-card-sub: rgba(12, 10, 18, 0.8);
-      --border-color: rgba(217, 119, 6, 0.35);
+      --bg-header-bar: #14121c;
+      --header-text: #fffbeb;
+      --header-sub: #d97706;
+      --bg-card: #171522;
+      --bg-card-sub: #0f0d17;
+      --border-color: rgba(217, 119, 6, 0.3);
       --accent-primary: #d97706;
       --accent-hover: #b45309;
       --accent-gradient: linear-gradient(135deg, #f59e0b, #d97706, #78350f);
       --accent-text: #fbbf24;
       --text-main: #fffbeb;
       --text-sub: #d97706;
-      --card-glow: 0 0 35px -5px rgba(245, 158, 11, 0.3);
+      --card-glow: 0 0 25px -5px rgba(245, 158, 11, 0.25);
       --badge-bg: rgba(245, 158, 11, 0.18);
-      --keypad-bg: rgba(15, 13, 22, 0.8);
-      --keypad-hover: rgba(45, 38, 25, 0.9);
+      --keypad-bg: #13111c;
+      --keypad-hover: #262133;
+      --theme-btn-bg: #f59e0b;
+      --theme-btn-icon: #000000;
+      --dots-btn-bg: rgba(245, 158, 11, 0.2);
+      --dots-btn-icon: #fbbf24;
+      --active-payee-bg: #1c1829;
+      --active-payee-border: #523b12;
     }
 
+    /* Regal Emerald Theme */
     [data-theme="emerald"] {
       --bg-main: #022c22;
-      --bg-card: rgba(6, 78, 59, 0.45);
+      --bg-header-bar: #064e3b;
+      --header-text: #ecfdf5;
+      --header-sub: #6ee7b7;
+      --bg-card: rgba(6, 78, 59, 0.5);
       --bg-card-sub: rgba(2, 44, 34, 0.85);
-      --border-color: rgba(16, 185, 129, 0.35);
+      --border-color: rgba(16, 185, 129, 0.3);
       --accent-primary: #10b981;
       --accent-hover: #059669;
       --accent-gradient: linear-gradient(135deg, #34d399, #10b981, #047857);
       --accent-text: #34d399;
       --text-main: #ecfdf5;
       --text-sub: #6ee7b7;
-      --card-glow: 0 0 35px -5px rgba(16, 185, 129, 0.35);
+      --card-glow: 0 0 25px -5px rgba(16, 185, 129, 0.3);
       --badge-bg: rgba(16, 185, 129, 0.2);
       --keypad-bg: rgba(2, 44, 34, 0.7);
       --keypad-hover: rgba(6, 78, 59, 0.8);
+      --theme-btn-bg: #10b981;
+      --theme-btn-icon: #000000;
+      --dots-btn-bg: rgba(16, 185, 129, 0.2);
+      --dots-btn-icon: #6ee7b7;
+      --active-payee-bg: rgba(6, 78, 59, 0.7);
+      --active-payee-border: rgba(16, 185, 129, 0.4);
     }
 
+    /* Crown Burgundy Theme */
     [data-theme="burgundy"] {
       --bg-main: #1e0a14;
-      --bg-card: rgba(45, 16, 31, 0.75);
+      --bg-header-bar: #2d101f;
+      --header-text: #fff1f2;
+      --header-sub: #fecdd3;
+      --bg-card: rgba(45, 16, 31, 0.8);
       --bg-card-sub: rgba(20, 5, 13, 0.85);
-      --border-color: rgba(225, 29, 72, 0.35);
+      --border-color: rgba(225, 29, 72, 0.3);
       --accent-primary: #e11d48;
       --accent-hover: #be123c;
       --accent-gradient: linear-gradient(135deg, #fb7185, #e11d48, #881337);
       --accent-text: #fb7185;
       --text-main: #fff1f2;
       --text-sub: #fecdd3;
-      --card-glow: 0 0 35px -5px rgba(225, 29, 72, 0.35);
+      --card-glow: 0 0 25px -5px rgba(225, 29, 72, 0.3);
       --badge-bg: rgba(225, 29, 72, 0.2);
       --keypad-bg: rgba(20, 5, 13, 0.8);
       --keypad-hover: rgba(76, 14, 45, 0.8);
+      --theme-btn-bg: #e11d48;
+      --theme-btn-icon: #ffffff;
+      --dots-btn-bg: rgba(225, 29, 72, 0.2);
+      --dots-btn-icon: #fb7185;
+      --active-payee-bg: rgba(45, 16, 31, 0.9);
+      --active-payee-border: rgba(225, 29, 72, 0.4);
     }
 
     body {
@@ -137,9 +182,11 @@
       color: var(--text-main);
       transition: background-color 0.3s ease, color 0.3s ease;
     }
+
     .font-mono {
       font-family: 'JetBrains Mono', monospace;
     }
+
     ::-webkit-scrollbar {
       width: 6px;
       height: 6px;
@@ -154,68 +201,81 @@
     ::-webkit-scrollbar-thumb:hover {
       background: rgba(156, 163, 175, 0.5);
     }
+
     .keypad-btn:active {
-      transform: scale(0.94);
+      transform: scale(0.95);
     }
+
+    .theme-header {
+      background: var(--bg-header-bar);
+      color: var(--header-text);
+    }
+
     .theme-card-bg {
       background-color: var(--bg-card);
       border-color: var(--border-color);
     }
+
     .theme-sub-bg {
       background-color: var(--bg-card-sub);
     }
+
     .theme-accent-btn {
       background: var(--accent-gradient);
     }
+
     .theme-accent-text {
       color: var(--accent-text);
     }
+
     .theme-keypad {
       background-color: var(--keypad-bg);
       border-color: var(--border-color);
     }
+
     .theme-keypad:hover {
       background-color: var(--keypad-hover);
     }
   </style>
 </head>
-<body class="min-h-screen transition-colors duration-300 antialiased">
+<body class="min-h-screen transition-colors duration-300 antialiased pb-10">
 
-  <!-- Toast Notification Container -->
   <div id="toastContainer" class="fixed top-5 right-5 z-50 flex flex-col gap-2 pointer-events-none"></div>
 
-  <div class="min-h-screen flex flex-col max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-3 sm:py-4">
-    
-    <header class="flex items-center justify-between gap-3 pb-3 sm:pb-4 border-b border-slate-200/50 dark:border-slate-800/80 mb-3 sm:mb-4">
-      <div class="flex items-center gap-2.5 text-left">
-        <div class="w-8 h-8 rounded-xl p-1.5 border flex items-center justify-center shadow-sm shrink-0" style="background-color: var(--badge-bg); border-color: var(--border-color);">
+  <header class="theme-header shadow-md border-b border-white/10 px-4 sm:px-6 lg:px-8 py-3.5 mb-5 transition-all">
+    <div class="max-w-7xl mx-auto flex items-center justify-between gap-3">
+      
+      <!-- Brand Logo & Header Titles -->
+      <div class="flex items-center gap-3 text-left">
+        <div class="w-10 h-10 rounded-2xl p-2 bg-white/95 dark:bg-slate-900 border border-white/20 shadow-md flex items-center justify-center shrink-0">
           <img src="https://cdn-icons-png.flaticon.com/512/2313/2313039.png" alt="Paypulse Logo" class="w-full h-full object-contain">
         </div>
         <div>
           <div class="flex items-center gap-2">
-            <h1 class="text-[15px] font-bold tracking-tight">Paypulse <span class="text-xs font-semibold theme-accent-text ml-1">v7.7</span></h1>
+            <h1 class="text-base sm:text-lg font-black tracking-tight leading-none text-white">
+              Paypulse <span class="text-xs font-bold px-1.5 py-0.5 rounded-md bg-white/20 text-white ml-1">v8.0</span>
+            </h1>
           </div>
-          <p class="text-[9px] opacity-75">Instant UPI Payment QR Terminal</p>
+          <p class="text-[10px] sm:text-[11px] opacity-80 mt-0.5">Instant UPI Payment QR Terminal</p>
         </div>
       </div>
 
       <!-- Controls Right Corner -->
       <div class="flex items-center gap-2 shrink-0">
-        <!-- Palette Theme Menu -->
+        <!-- Palette Theme Dropdown Button -->
         <div class="relative" id="themeMenuWrapper">
-          <button onclick="toggleThemeMenu()" class="p-2.5 rounded-xl border transition shadow-sm flex items-center gap-1.5" style="background-color: var(--bg-card); border-color: var(--border-color);" title="Select Theme">
-            <svg class="w-4 h-4 theme-accent-text" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
+          <button onclick="toggleThemeMenu()" class="w-9 h-9 sm:w-10 sm:h-10 rounded-2xl flex items-center justify-center transition shadow-sm" style="background-color: var(--theme-btn-bg); color: var(--theme-btn-icon);" title="Select Theme">
+            <svg class="w-5 h-5" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
               <circle cx="13.5" cy="6.5" r=".5" fill="currentColor"/>
               <circle cx="17.5" cy="10.5" r=".5" fill="currentColor"/>
               <circle cx="8.5" cy="7.5" r=".5" fill="currentColor"/>
               <circle cx="6.5" cy="12.5" r=".5" fill="currentColor"/>
               <path d="M12 2C6.5 2 2 6.5 2 12s4.5 10 10 10c.92 0 1.7-.75 1.7-1.67 0-.42-.16-.8-.43-1.09-.27-.29-.43-.69-.43-1.11 0-.92.75-1.67 1.67-1.67H16c3.31 0 6-2.69 6-6 0-4.96-4.49-9-10-9z"/>
             </svg>
-            <span class="text-[10px] font-bold uppercase tracking-wider hidden sm:inline opacity-80">Theme</span>
           </button>
 
-          <!-- Theme Dropdown Menu -->
-          <div id="themeMenuDropdown" class="hidden absolute right-0 mt-2 w-60 theme-card-bg backdrop-blur-xl border rounded-2xl shadow-2xl z-50 p-2 space-y-1.5 transition-all duration-150 transform opacity-0 scale-95" style="background-color: var(--bg-card); border-color: var(--border-color);">
+          <!-- Theme Palette Menu -->
+          <div id="themeMenuDropdown" class="hidden absolute right-0 mt-2 w-60 theme-card-bg backdrop-blur-xl border rounded-2xl shadow-2xl z-50 p-2 space-y-1.5 transition-all duration-150 transform opacity-0 scale-95">
             <div class="px-2 py-1 text-[10px] font-bold uppercase tracking-wider opacity-60">Themes Palette</div>
             
             <button onclick="setTheme('sapphire'); closeThemeMenu();" class="w-full p-2 rounded-xl border text-left transition flex items-center justify-between bg-slate-900 border-indigo-500/40">
@@ -234,7 +294,7 @@
                 <span class="text-xs">🛡️</span>
                 <div>
                   <div class="text-xs font-bold text-slate-900">Platinum Executive</div>
-                  <div class="text-[9px] text-slate-600">Light Slate</div>
+                  <div class="text-[9px] text-slate-600">Light Indigo POS</div>
                 </div>
               </div>
               <span class="text-[10px] font-bold text-blue-600 theme-indicator" id="theme-indicator-platinum"></span>
@@ -275,16 +335,16 @@
           </div>
         </div>
 
-        <!-- 3-Dots System Menu -->
+        <!-- 3-Dots System Menu Button -->
         <div class="relative" id="systemMenuWrapper">
-          <button onclick="toggleSystemMenu()" class="p-2.5 rounded-xl border transition shadow-sm" style="background-color: var(--bg-card); border-color: var(--border-color);" title="More Options">
-            <svg class="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-              <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M12 5v.01M12 12v.01M12 19v.01M12 6a1 1 0 110-2 1 1 0 010 2zm0 7a1 1 0 110-2 1 1 0 010 2zm0 7a1 1 0 110-2 1 1 0 010 2z"/>
+          <button onclick="toggleSystemMenu()" class="w-9 h-9 sm:w-10 sm:h-10 rounded-2xl flex items-center justify-center transition shadow-sm" style="background-color: var(--dots-btn-bg); color: var(--dots-btn-icon);" title="More Options">
+            <svg class="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+              <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2.5" d="M12 5v.01M12 12v.01M12 19v.01M12 6a1 1 0 110-2 1 1 0 010 2zm0 7a1 1 0 110-2 1 1 0 010 2zm0 7a1 1 0 110-2 1 1 0 010 2z"/>
             </svg>
           </button>
 
-          <!-- 3-Dots Dropdown Card -->
-          <div id="systemMenuDropdown" class="hidden absolute right-0 mt-2 w-56 theme-card-bg backdrop-blur-xl border rounded-2xl shadow-2xl z-50 py-1.5 transition-all duration-150 transform opacity-0 scale-95" style="background-color: var(--bg-card); border-color: var(--border-color);">
+          <!-- 3-Dots Dropdown Options -->
+          <div id="systemMenuDropdown" class="hidden absolute right-0 mt-2 w-56 theme-card-bg backdrop-blur-xl border rounded-2xl shadow-2xl z-50 py-1.5 transition-all duration-150 transform opacity-0 scale-95">
             <button onclick="triggerPwaInstall()" class="w-full px-3.5 py-2.5 text-xs font-semibold hover:bg-black/5 dark:hover:bg-white/5 transition flex items-center gap-2.5 text-left">
               <div class="w-6 h-6 rounded-lg p-1 flex items-center justify-center shrink-0" style="background-color: var(--badge-bg);">
                 <img src="https://cdn-icons-png.flaticon.com/512/2313/2313039.png" alt="Install Icon" class="w-full h-full object-contain">
@@ -342,24 +402,25 @@
             </button>
 
             <div class="px-3.5 py-1.5 text-[10px] opacity-50 border-t mt-1" style="border-color: var(--border-color);">
-              Paypulse v7.7
+              Paypulse v8.0
             </div>
           </div>
         </div>
 
       </div>
-    </header>
+    </div>
+  </header>
 
-    <!-- Main Content Grid -->
+  <div class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
+    
     <main class="grid grid-cols-1 lg:grid-cols-12 gap-6 items-start mb-8">
       
-      <!-- Left Column: Payee Manager (5 Cols) -->
-      <section class="lg:col-span-5 theme-card-bg border rounded-2xl p-4 sm:p-5 backdrop-blur-xl flex flex-col h-full shadow-sm">
+      <section class="lg:col-span-5 theme-card-bg border rounded-3xl p-4 sm:p-5 flex flex-col shadow-sm">
         
         <div class="flex items-center justify-between gap-2 mb-3">
           <div class="min-w-0">
-            <h2 class="text-xs sm:text-sm font-bold flex items-center gap-1.5 truncate">
-              <svg class="w-3.5 h-3.5 theme-accent-text shrink-0" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+            <h2 class="text-xs sm:text-sm font-extrabold flex items-center gap-1.5 truncate">
+              <svg class="w-4 h-4 theme-accent-text shrink-0" fill="none" stroke="currentColor" viewBox="0 0 24 24">
                 <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M17 9V7a2 2 0 00-2-2H5a2 2 0 00-2 2v6a2 2 0 002 2h2m2 4h10a2 2 0 002-2v-6a2 2 0 00-2-2H9a2 2 0 00-2 2v6a2 2 0 002 2zm7-5a2 2 0 11-4 0 2 2 0 014 0z"></path>
               </svg>
               Select Payee Account
@@ -367,61 +428,59 @@
             <p class="text-[10px] sm:text-[11px] opacity-70 truncate">Choose destination UPI ID</p>
           </div>
           
-          <button onclick="openAddModal()" class="px-2.5 py-1 rounded-lg theme-sub-bg theme-accent-text border border-indigo-500/30 text-[11px] font-semibold flex items-center gap-1 transition shrink-0">
-            <svg class="w-3 h-3" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+          <button onclick="openAddModal()" class="px-3 py-1.5 rounded-xl theme-accent-btn text-white text-[11px] font-bold flex items-center gap-1 transition shrink-0 shadow-md">
+            <svg class="w-3.5 h-3.5" fill="none" stroke="currentColor" viewBox="0 0 24 24">
               <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2.5" d="M12 4v16m8-8H4"></path>
             </svg>
-            Add New
+            + Add New
           </button>
         </div>
 
-        <!-- Merchant Search Input -->
+        <!-- Search Input -->
         <div class="relative mb-3">
-          <svg class="w-4 h-4 absolute left-3 top-2.5 opacity-50" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+          <svg class="w-4 h-4 absolute left-3 top-3 opacity-50" fill="none" stroke="currentColor" viewBox="0 0 24 24">
             <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M21 21l-6-6m2-5a7 7 0 11-14 0 7 7 0 0114 0z"></path>
           </svg>
-          <input type="text" id="merchantSearch" oninput="filterMerchants()" placeholder="Search payee or UPI handle..." class="w-full theme-sub-bg border rounded-xl pl-9 pr-3 py-2 text-xs placeholder-slate-400 focus:outline-none transition" style="border-color: var(--border-color);">
+          <input type="text" id="merchantSearch" oninput="filterMerchants()" placeholder="Search payee or UPI handle..." class="w-full theme-sub-bg border rounded-2xl pl-9 pr-3 py-2.5 text-xs focus:outline-none transition" style="border-color: var(--border-color);">
         </div>
 
-        <!-- Scrollable Payee List Container -->
-        <div id="upiList" class="space-y-2 max-h-[420px] overflow-y-auto pr-1">
-          <!-- Dynamically populated via JS -->
+        <!-- Scrollable Payee Cards Container -->
+        <div id="upiList" class="space-y-1.5 max-h-[420px] overflow-y-auto pr-1">
+          <!-- Populated dynamically via JS -->
         </div>
 
-      </section>
-
-      <!-- Right Column: Amount Terminal & Keypad (7 Cols) -->
-      <section class="lg:col-span-7 theme-card-bg border rounded-2xl p-5 sm:p-6 backdrop-blur-xl relative shadow-sm">
-        
-        <!-- Active Selected Merchant Header Card -->
-        <div id="activeMerchantCard" class="theme-sub-bg border rounded-xl p-3.5 mb-5 flex items-center justify-between transition-all duration-300" style="border-color: var(--border-color);">
+        <div id="activeMerchantCard" class="mt-4 p-3.5 rounded-2xl border transition-all duration-300 flex items-center justify-between" style="background-color: var(--active-payee-bg); border-color: var(--active-payee-border);">
           <div class="flex items-center gap-3 min-w-0">
-            <div id="activeAvatar" class="w-10 h-10 rounded-xl font-bold flex items-center justify-center shrink-0 border" style="background-color: var(--badge-bg); border-color: var(--border-color);">
+            <div id="activeAvatar" class="w-11 h-11 rounded-2xl font-black text-sm flex items-center justify-center shrink-0 border text-white shadow-md bg-indigo-600 border-indigo-400">
               --
             </div>
             <div class="truncate">
-              <div class="text-[10px] theme-accent-text font-semibold uppercase tracking-wider">Selected Payee</div>
-              <div id="activeName" class="text-sm font-bold truncate">Select a merchant</div>
-              <div id="activeUpi" class="text-xs opacity-70 font-mono truncate">--</div>
+              <div class="text-[9px] theme-accent-text font-black uppercase tracking-wider">SELECTED PAYEE</div>
+              <div id="activeName" class="text-xs sm:text-sm font-extrabold truncate">Select a merchant</div>
+              <div id="activeUpi" class="text-[10px] sm:text-xs opacity-70 font-mono truncate">--</div>
             </div>
           </div>
           <div class="text-right shrink-0">
-            <span class="inline-flex items-center gap-1 text-[11px] font-medium text-emerald-500 bg-emerald-500/10 px-2.5 py-1 rounded-full border border-emerald-500/20">
-              <span class="w-1.5 h-1.5 rounded-full bg-emerald-500"></span>
+            <span class="inline-flex items-center gap-1.5 text-[11px] font-bold text-emerald-500 bg-emerald-500/10 px-3 py-1 rounded-full border border-emerald-500/20 shadow-sm">
+              <span class="w-2 h-2 rounded-full bg-emerald-500 animate-pulse"></span>
               Ready
             </span>
           </div>
         </div>
 
-        <!-- Terminal Mode Switcher -->
-        <div class="flex items-center theme-sub-bg p-1 rounded-xl border mb-4" style="border-color: var(--border-color);">
-          <button id="tabQuickMode" onclick="setTerminalMode('quick')" class="flex-1 py-1.5 rounded-lg text-xs font-bold transition-all flex items-center justify-center gap-1.5 theme-accent-btn text-white shadow-sm">
+      </section>
+
+      <section class="lg:col-span-7 theme-card-bg border rounded-3xl p-5 sm:p-6 shadow-sm relative">
+        
+        <!-- Terminal Mode Switcher Tabs -->
+        <div class="flex items-center theme-sub-bg p-1 rounded-2xl border mb-4" style="border-color: var(--border-color);">
+          <button id="tabQuickMode" onclick="setTerminalMode('quick')" class="flex-1 py-2 rounded-xl text-xs font-extrabold transition-all flex items-center justify-center gap-1.5 theme-accent-btn text-white shadow-md">
             <svg class="w-3.5 h-3.5" fill="none" stroke="currentColor" viewBox="0 0 24 24">
               <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M12 4v16m8-8H4"></path>
             </svg>
             Quick Entry
           </button>
-          <button id="tabCalcMode" onclick="setTerminalMode('calc')" class="flex-1 py-1.5 rounded-lg text-xs font-bold transition-all flex items-center justify-center gap-1.5 opacity-60 hover:opacity-100 transition-opacity">
+          <button id="tabCalcMode" onclick="setTerminalMode('calc')" class="flex-1 py-2 rounded-xl text-xs font-extrabold transition-all flex items-center justify-center gap-1.5 opacity-60 hover:opacity-100">
             <svg class="w-3.5 h-3.5" fill="none" stroke="currentColor" viewBox="0 0 24 24">
               <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M9 7h6m0 10v-3m-3 3h.01M9 17h.01M9 14h.01M12 14h.01M15 11h.01M12 11h.01M9 11h.01M7 21h10a2 2 0 002-2V5a2 2 0 00-2-2H7a2 2 0 00-2 2v14a2 2 0 002 2z"></path>
             </svg>
@@ -429,47 +488,46 @@
           </button>
         </div>
 
-        <!-- Amount Display Card -->
-        <div class="theme-sub-bg border rounded-xl p-4 mb-4 text-center relative overflow-hidden" style="border-color: var(--border-color);">
-          <!-- Expression Display Line for Calculator Mode -->
+        <!-- Amount Display Box -->
+        <div class="theme-sub-bg border rounded-2xl p-4 mb-4 text-center relative overflow-hidden" style="border-color: var(--border-color);">
           <div id="calcExpressionDisplay" class="text-xs font-mono opacity-60 h-4 mb-1 truncate hidden text-right pr-2"></div>
           
-          <label id="amountLabel" class="block text-[11px] font-semibold opacity-70 uppercase tracking-wider mb-1">Enter Amount</label>
+          <label id="amountLabel" class="block text-[11px] font-bold opacity-70 uppercase tracking-wider mb-1">Enter Amount</label>
           <div class="flex items-center justify-center gap-1">
-            <span class="text-2xl sm:text-3xl font-extrabold opacity-50">₹</span>
+            <span class="text-2xl sm:text-3xl font-black opacity-50">₹</span>
             <input type="text" id="amount" readonly placeholder="0" class="w-full bg-transparent text-center font-mono text-3xl sm:text-4xl font-black theme-accent-text focus:outline-none tracking-tight">
           </div>
-          <div id="amountError" class="text-red-500 text-xs font-medium mt-1 hidden animate-bounce">
+          <div id="amountError" class="text-red-500 text-xs font-bold mt-1.5 hidden animate-bounce">
             ⚠️ Please enter a valid amount greater than ₹0
           </div>
         </div>
 
-        <!-- Quick Amount Increments (Quick Mode) -->
+        <!-- Quick Amount Increments -->
         <div id="quickPresetRow" class="grid grid-cols-5 gap-2 mb-4">
-          <button onclick="addPresetAmount(10)" class="py-1.5 rounded-lg theme-keypad text-xs font-semibold border transition">+₹10</button>
-          <button onclick="addPresetAmount(50)" class="py-1.5 rounded-lg theme-keypad text-xs font-semibold border transition">+₹50</button>
-          <button onclick="addPresetAmount(100)" class="py-1.5 rounded-lg theme-keypad text-xs font-semibold border transition">+₹100</button>
-          <button onclick="addPresetAmount(500)" class="py-1.5 rounded-lg theme-keypad text-xs font-semibold border transition">+₹500</button>
-          <button onclick="addPresetAmount(1000)" class="py-1.5 rounded-lg theme-keypad text-xs font-semibold border transition">+₹1k</button>
+          <button onclick="addPresetAmount(10)" class="py-2 rounded-xl theme-keypad text-xs font-bold border transition shadow-sm">+₹10</button>
+          <button onclick="addPresetAmount(50)" class="py-2 rounded-xl theme-keypad text-xs font-bold border transition shadow-sm">+₹50</button>
+          <button onclick="addPresetAmount(100)" class="py-2 rounded-xl theme-keypad text-xs font-bold border transition shadow-sm">+₹100</button>
+          <button onclick="addPresetAmount(500)" class="py-2 rounded-xl theme-keypad text-xs font-bold border transition shadow-sm">+₹500</button>
+          <button onclick="addPresetAmount(1000)" class="py-2 rounded-xl theme-keypad text-xs font-bold border transition shadow-sm">+₹1k</button>
         </div>
 
         <!-- Quick Entry Numpad Grid -->
         <div id="quickNumpad" class="grid grid-cols-3 gap-2 sm:gap-2.5 mb-5">
-          <button onclick="numpadPress('1')" class="keypad-btn py-3.5 rounded-xl theme-keypad text-lg font-bold border transition">1</button>
-          <button onclick="numpadPress('2')" class="keypad-btn py-3.5 rounded-xl theme-keypad text-lg font-bold border transition">2</button>
-          <button onclick="numpadPress('3')" class="keypad-btn py-3.5 rounded-xl theme-keypad text-lg font-bold border transition">3</button>
+          <button onclick="numpadPress('1')" class="keypad-btn py-3.5 rounded-2xl theme-keypad text-lg font-black border transition shadow-sm">1</button>
+          <button onclick="numpadPress('2')" class="keypad-btn py-3.5 rounded-2xl theme-keypad text-lg font-black border transition shadow-sm">2</button>
+          <button onclick="numpadPress('3')" class="keypad-btn py-3.5 rounded-2xl theme-keypad text-lg font-black border transition shadow-sm">3</button>
 
-          <button onclick="numpadPress('4')" class="keypad-btn py-3.5 rounded-xl theme-keypad text-lg font-bold border transition">4</button>
-          <button onclick="numpadPress('5')" class="keypad-btn py-3.5 rounded-xl theme-keypad text-lg font-bold border transition">5</button>
-          <button onclick="numpadPress('6')" class="keypad-btn py-3.5 rounded-xl theme-keypad text-lg font-bold border transition">6</button>
+          <button onclick="numpadPress('4')" class="keypad-btn py-3.5 rounded-2xl theme-keypad text-lg font-black border transition shadow-sm">4</button>
+          <button onclick="numpadPress('5')" class="keypad-btn py-3.5 rounded-2xl theme-keypad text-lg font-black border transition shadow-sm">5</button>
+          <button onclick="numpadPress('6')" class="keypad-btn py-3.5 rounded-2xl theme-keypad text-lg font-black border transition shadow-sm">6</button>
 
-          <button onclick="numpadPress('7')" class="keypad-btn py-3.5 rounded-xl theme-keypad text-lg font-bold border transition">7</button>
-          <button onclick="numpadPress('8')" class="keypad-btn py-3.5 rounded-xl theme-keypad text-lg font-bold border transition">8</button>
-          <button onclick="numpadPress('9')" class="keypad-btn py-3.5 rounded-xl theme-keypad text-lg font-bold border transition">9</button>
+          <button onclick="numpadPress('7')" class="keypad-btn py-3.5 rounded-2xl theme-keypad text-lg font-black border transition shadow-sm">7</button>
+          <button onclick="numpadPress('8')" class="keypad-btn py-3.5 rounded-2xl theme-keypad text-lg font-black border transition shadow-sm">8</button>
+          <button onclick="numpadPress('9')" class="keypad-btn py-3.5 rounded-2xl theme-keypad text-lg font-black border transition shadow-sm">9</button>
 
-          <button onclick="numpadPress('.')" class="keypad-btn py-3.5 rounded-xl theme-keypad text-lg font-bold border transition">.</button>
-          <button onclick="numpadPress('0')" class="keypad-btn py-3.5 rounded-xl theme-keypad text-lg font-bold border transition">0</button>
-          <button onclick="clearAmount()" class="keypad-btn py-3.5 rounded-xl bg-red-500/10 hover:bg-red-500/20 text-lg font-bold text-red-500 border border-red-500/20 transition flex items-center justify-center" title="Backspace">
+          <button onclick="numpadPress('.')" class="keypad-btn py-3.5 rounded-2xl theme-keypad text-lg font-black border transition shadow-sm">.</button>
+          <button onclick="numpadPress('0')" class="keypad-btn py-3.5 rounded-2xl theme-keypad text-lg font-black border transition shadow-sm">0</button>
+          <button onclick="clearAmount()" class="keypad-btn py-3.5 rounded-2xl bg-red-500/10 hover:bg-red-500/20 text-lg font-bold text-red-500 border border-red-500/20 transition flex items-center justify-center shadow-sm" title="Backspace">
             <svg class="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24">
               <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M12 14l2-2m0 0l2-2m-2 2l-2-2m2 2l2 2M3 12l6.414 6.414a2 2 0 001.414.586H19a2 2 0 002-2V7a2 2 0 00-2-2H10.828a2 2 0 00-1.414.586L3 12z"></path>
             </svg>
@@ -478,29 +536,29 @@
 
         <!-- Calculator Numpad Grid -->
         <div id="calcNumpad" class="grid grid-cols-4 gap-2 mb-5 hidden">
-          <button onclick="calcClear()" class="keypad-btn py-3 rounded-xl bg-red-500/10 hover:bg-red-500/20 text-red-500 border border-red-500/20 text-base font-extrabold transition">C</button>
-          <button onclick="calcPress('(')" class="keypad-btn py-3 rounded-xl theme-keypad text-base font-bold theme-accent-text border transition">(</button>
-          <button onclick="calcPress(')')" class="keypad-btn py-3 rounded-xl theme-keypad text-base font-bold theme-accent-text border transition">)</button>
-          <button onclick="calcPress('÷')" class="keypad-btn py-3 rounded-xl theme-keypad text-base font-bold theme-accent-text border transition">÷</button>
+          <button onclick="calcClear()" class="keypad-btn py-3 rounded-xl bg-red-500/10 hover:bg-red-500/20 text-red-500 border border-red-500/20 text-base font-extrabold transition shadow-sm">C</button>
+          <button onclick="calcPress('(')" class="keypad-btn py-3 rounded-xl theme-keypad text-base font-bold theme-accent-text border transition shadow-sm">(</button>
+          <button onclick="calcPress(')')" class="keypad-btn py-3 rounded-xl theme-keypad text-base font-bold theme-accent-text border transition shadow-sm">)</button>
+          <button onclick="calcPress('÷')" class="keypad-btn py-3 rounded-xl theme-keypad text-base font-bold theme-accent-text border transition shadow-sm">÷</button>
 
-          <button onclick="calcPress('7')" class="keypad-btn py-3 rounded-xl theme-keypad text-base font-bold border transition">7</button>
-          <button onclick="calcPress('8')" class="keypad-btn py-3 rounded-xl theme-keypad text-base font-bold border transition">8</button>
-          <button onclick="calcPress('9')" class="keypad-btn py-3 rounded-xl theme-keypad text-base font-bold border transition">9</button>
-          <button onclick="calcPress('×')" class="keypad-btn py-3 rounded-xl theme-keypad text-base font-bold theme-accent-text border transition">×</button>
+          <button onclick="calcPress('7')" class="keypad-btn py-3 rounded-xl theme-keypad text-base font-extrabold border transition shadow-sm">7</button>
+          <button onclick="calcPress('8')" class="keypad-btn py-3 rounded-xl theme-keypad text-base font-extrabold border transition shadow-sm">8</button>
+          <button onclick="calcPress('9')" class="keypad-btn py-3 rounded-xl theme-keypad text-base font-extrabold border transition shadow-sm">9</button>
+          <button onclick="calcPress('×')" class="keypad-btn py-3 rounded-xl theme-keypad text-base font-bold theme-accent-text border transition shadow-sm">×</button>
 
-          <button onclick="calcPress('4')" class="keypad-btn py-3 rounded-xl theme-keypad text-base font-bold border transition">4</button>
-          <button onclick="calcPress('5')" class="keypad-btn py-3 rounded-xl theme-keypad text-base font-bold border transition">5</button>
-          <button onclick="calcPress('6')" class="keypad-btn py-3 rounded-xl theme-keypad text-base font-bold border transition">6</button>
-          <button onclick="calcPress('-')" class="keypad-btn py-3 rounded-xl theme-keypad text-base font-bold theme-accent-text border transition">-</button>
+          <button onclick="calcPress('4')" class="keypad-btn py-3 rounded-xl theme-keypad text-base font-extrabold border transition shadow-sm">4</button>
+          <button onclick="calcPress('5')" class="keypad-btn py-3 rounded-xl theme-keypad text-base font-extrabold border transition shadow-sm">5</button>
+          <button onclick="calcPress('6')" class="keypad-btn py-3 rounded-xl theme-keypad text-base font-extrabold border transition shadow-sm">6</button>
+          <button onclick="calcPress('-')" class="keypad-btn py-3 rounded-xl theme-keypad text-base font-bold theme-accent-text border transition shadow-sm">-</button>
 
-          <button onclick="calcPress('1')" class="keypad-btn py-3 rounded-xl theme-keypad text-base font-bold border transition">1</button>
-          <button onclick="calcPress('2')" class="keypad-btn py-3 rounded-xl theme-keypad text-base font-bold border transition">2</button>
-          <button onclick="calcPress('3')" class="keypad-btn py-3 rounded-xl theme-keypad text-base font-bold border transition">3</button>
-          <button onclick="calcPress('+')" class="keypad-btn py-3 rounded-xl theme-keypad text-base font-bold theme-accent-text border transition">+</button>
+          <button onclick="calcPress('1')" class="keypad-btn py-3 rounded-xl theme-keypad text-base font-extrabold border transition shadow-sm">1</button>
+          <button onclick="calcPress('2')" class="keypad-btn py-3 rounded-xl theme-keypad text-base font-extrabold border transition shadow-sm">2</button>
+          <button onclick="calcPress('3')" class="keypad-btn py-3 rounded-xl theme-keypad text-base font-extrabold border transition shadow-sm">3</button>
+          <button onclick="calcPress('+')" class="keypad-btn py-3 rounded-xl theme-keypad text-base font-bold theme-accent-text border transition shadow-sm">+</button>
 
-          <button onclick="calcPress('.')" class="keypad-btn py-3 rounded-xl theme-keypad text-base font-bold border transition">.</button>
-          <button onclick="calcPress('0')" class="keypad-btn py-3 rounded-xl theme-keypad text-base font-bold border transition">0</button>
-          <button onclick="calcBackspace()" class="keypad-btn py-3 rounded-xl theme-keypad text-base font-bold border transition flex items-center justify-center text-amber-500" title="Backspace">
+          <button onclick="calcPress('.')" class="keypad-btn py-3 rounded-xl theme-keypad text-base font-extrabold border transition shadow-sm">.</button>
+          <button onclick="calcPress('0')" class="keypad-btn py-3 rounded-xl theme-keypad text-base font-extrabold border transition shadow-sm">0</button>
+          <button onclick="calcBackspace()" class="keypad-btn py-3 rounded-xl theme-keypad text-base font-bold border transition flex items-center justify-center text-amber-500 shadow-sm" title="Backspace">
             <svg class="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24">
               <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M12 14l2-2m0 0l2-2m-2 2l-2-2m2 2l2 2M3 12l6.414 6.414a2 2 0 001.414.586H19a2 2 0 002-2V7a2 2 0 00-2-2H10.828a2 2 0 00-1.414.586L3 12z"></path>
             </svg>
@@ -509,7 +567,7 @@
         </div>
 
         <!-- Primary CTA Generate QR Button -->
-        <button onclick="generateQR()" class="w-full py-4 rounded-xl theme-accent-btn text-white font-bold text-base shadow-xl active:scale-[0.99] transition flex items-center justify-center gap-2">
+        <button onclick="generateQR()" class="w-full py-4 rounded-2xl theme-accent-btn text-white font-extrabold text-base shadow-xl active:scale-[0.99] transition flex items-center justify-center gap-2">
           <svg class="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24">
             <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M12 4v1m6 11h2m-6 0h-2v4m0-11v3m0 0h.01M12 12h4.01M16 20h4M4 12h4m12 0h.01M5 8h2a1 1 0 001-1V5a1 1 0 00-1-1H5a1 1 0 00-1 1v2a1 1 0 001 1zm12 0h2a1 1 0 001-1V5a1 1 0 00-1-1h-2a1 1 0 00-1 1v2a1 1 0 001 1zM5 20h2a1 1 0 001-1v-2a1 1 0 00-1-1H5a1 1 0 00-1 1v2a1 1 0 001 1z"></path>
           </svg>
@@ -519,25 +577,23 @@
       </section>
     </main>
 
-    <!-- Today's Collection Tile Banner -->
-    <div class="theme-card-bg border border-emerald-500/30 rounded-2xl p-4 sm:p-5 mb-4 backdrop-blur-xl flex items-center justify-between shadow-sm">
+    <div class="theme-card-bg border border-emerald-500/30 rounded-3xl p-4 sm:p-5 mb-6 backdrop-blur-xl flex items-center justify-between shadow-sm">
       <div class="flex items-center gap-3">
-        <div class="w-10 h-10 rounded-xl bg-emerald-500/20 text-emerald-500 flex items-center justify-center font-bold text-lg border border-emerald-500/30 shrink-0">
+        <div class="w-11 h-11 rounded-2xl bg-emerald-500/20 text-emerald-500 flex items-center justify-center font-black text-xl border border-emerald-500/30 shrink-0 shadow-sm">
           ₹
         </div>
         <div>
           <span class="block text-[10px] uppercase font-bold opacity-70 tracking-wider">Today's Earnings</span>
-          <span id="headerTodayTotal" class="text-xl sm:text-2xl font-extrabold font-mono text-emerald-500">₹0</span>
+          <span id="headerTodayTotal" class="text-xl sm:text-2xl font-black font-mono text-emerald-500">₹0.00</span>
         </div>
       </div>
       <div class="flex items-center gap-2">
         <span class="w-2.5 h-2.5 rounded-full bg-emerald-500 animate-pulse"></span>
-        <span class="text-xs font-semibold text-emerald-500 hidden sm:inline">Live Total</span>
+        <span class="text-xs font-bold text-emerald-500 hidden sm:inline">Live POS Total</span>
       </div>
     </div>
 
-    <!-- Analytics & History Section -->
-    <section class="theme-card-bg border rounded-2xl p-5 sm:p-6 backdrop-blur-xl shadow-sm relative z-10">
+    <section class="theme-card-bg border rounded-3xl p-5 sm:p-6 backdrop-blur-xl shadow-sm relative z-10">
       <div class="flex flex-col lg:flex-row lg:items-center justify-between gap-4 pb-4 border-b border-slate-200/50 dark:border-slate-800/80 mb-5">
         <div class="flex items-center justify-between gap-3 w-full lg:w-auto">
           <div>
@@ -550,7 +606,6 @@
             <p class="text-[10px] opacity-70">Track and review generated payment requests</p>
           </div>
 
-          <!-- Icon Action Buttons -->
           <div class="flex items-center gap-1 shrink-0">
             <button onclick="exportHistoryCSV()" class="p-2 rounded-xl theme-keypad border transition shadow-sm flex items-center justify-center" title="Export CSV">
               <svg class="w-4 h-4 theme-accent-text" fill="none" stroke="currentColor" viewBox="0 0 24 24">
@@ -566,9 +621,7 @@
           </div>
         </div>
 
-        <!-- Filter Tools Bar -->
         <div class="flex items-center gap-2 w-full lg:w-auto flex-wrap sm:flex-nowrap relative z-20">
-          <!-- Time Filter Custom Dropdown -->
           <div class="relative w-full sm:w-36 shrink-0" id="customDropdownTime">
             <button type="button" onclick="toggleCustomDropdown('customDropdownTimeMenu')" class="w-full theme-sub-bg border rounded-xl px-3 py-2 text-xs font-semibold flex items-center justify-between gap-1 shadow-sm transition-all focus:outline-none" style="border-color: var(--border-color);">
               <span class="flex items-center gap-1.5 truncate min-w-0">
@@ -595,7 +648,6 @@
             </div>
           </div>
 
-          <!-- Merchant UPI Filter Custom Dropdown -->
           <div class="relative w-full sm:w-52 shrink-0" id="customDropdownUpi">
             <button type="button" onclick="toggleCustomDropdown('customDropdownUpiMenu')" class="w-full theme-sub-bg border rounded-xl px-3 py-2 text-xs font-semibold flex items-center justify-between gap-1 shadow-sm transition-all focus:outline-none" style="border-color: var(--border-color);">
               <span class="flex items-center gap-1.5 truncate min-w-0">
@@ -610,7 +662,6 @@
             </button>
             
             <div id="customDropdownUpiMenu" class="hidden absolute right-0 top-full mt-1.5 w-full sm:w-64 theme-card-bg backdrop-blur-xl border rounded-xl shadow-2xl z-50 py-1 max-h-56 overflow-y-auto transition-all duration-150 transform opacity-0 scale-95" style="border-color: var(--border-color);">
-              <!-- Dynamically populated via JS -->
             </div>
           </div>
 
@@ -626,9 +677,7 @@
         </div>
       </div>
 
-      <!-- History Record Cards Container -->
       <div id="historyList" class="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-3 max-h-[480px] overflow-y-auto pr-1">
-        <!-- Rendered via JavaScript -->
       </div>
     </section>
 
@@ -644,7 +693,6 @@
       <h3 id="modalPayeeName" class="text-base font-extrabold truncate px-4">Payee Name</h3>
       <p id="modalPayeeUpi" class="text-xs opacity-70 font-mono mb-3 truncate px-4">payee@upi</p>
 
-      <!-- Canvas / QR Container -->
       <div class="p-3 rounded-2xl theme-sub-bg border inline-block my-1 shadow-inner relative" style="border-color: var(--border-color);">
         <div id="qrcode" class="flex items-center justify-center bg-white p-3 rounded-xl min-w-[200px] min-h-[200px]"></div>
       </div>
@@ -654,7 +702,6 @@
         <span id="modalAmountDisplay" class="text-3xl font-black font-mono theme-accent-text">₹0.00</span>
       </div>
 
-      <!-- Quick Action Buttons -->
       <div class="space-y-2">
         <button onclick="shareQrCardImage()" class="w-full py-3 rounded-xl theme-accent-btn text-white text-xs font-bold shadow-lg flex items-center justify-center gap-2">
           <svg class="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24">
@@ -822,7 +869,7 @@
             <img src="https://cdn-icons-png.flaticon.com/512/2313/2313039.png" alt="Paypulse Logo" class="w-full h-full object-contain">
           </div>
           <div>
-            <h3 class="text-base font-bold leading-tight">Paypulse v7.7</h3>
+            <h3 class="text-base font-bold leading-tight">Paypulse v8.0</h3>
             <p class="text-[10px] opacity-70">POS Terminal Edition</p>
           </div>
         </div>
@@ -843,11 +890,11 @@
         <div class="grid grid-cols-2 gap-2">
           <div class="theme-sub-bg p-2.5 rounded-xl border" style="border-color: var(--border-color);">
             <div class="text-[9px] uppercase font-bold opacity-60">App Version</div>
-            <div class="text-xs font-bold font-mono theme-accent-text mt-0.5">Paypulse v7.7</div>
+            <div class="text-xs font-bold font-mono theme-accent-text mt-0.5">Paypulse v8.0</div>
           </div>
           <div class="theme-sub-bg p-2.5 rounded-xl border" style="border-color: var(--border-color);">
             <div class="text-[9px] uppercase font-bold opacity-60">Build ID</div>
-            <div class="text-xs font-bold font-mono opacity-80 mt-0.5">2026.08.17-v7.7</div>
+            <div class="text-xs font-bold font-mono opacity-80 mt-0.5">2026.08.17-v8.0</div>
           </div>
         </div>
       </div>
@@ -858,10 +905,9 @@
     </div>
   </div>
 
-  <!-- Hidden File Input for Importing UPI Accounts -->
   <input type="file" id="upiFileInput" accept=".json,.csv" onchange="handleUpiFileImport(event)" class="hidden">
 
-  <!-- MODAL: PWA Install Guide & Direct Prompt Modal -->
+  <!-- MODAL: PWA Install Guide & Prompt Modal -->
   <div id="installGuideModal" class="fixed inset-0 z-50 bg-slate-950/80 backdrop-blur-md flex items-center justify-center p-4 hidden opacity-0 transition-opacity duration-200">
     <div class="theme-card-bg border rounded-3xl p-6 max-w-md w-full shadow-2xl relative transform scale-95 transition-transform duration-200" id="installGuideModalCard" style="border-color: var(--border-color);">
       <div class="flex items-center justify-between mb-4 pb-3 border-b" style="border-color: var(--border-color);">
@@ -874,7 +920,6 @@
         <button onclick="closeInstallGuideModal()" class="p-1 rounded-full hover:bg-black/10 dark:hover:bg-white/10 opacity-60">✕</button>
       </div>
 
-      <!-- Direct Native Trigger Box if Deferred Prompt is ready -->
       <div id="installNativePromptContainer" class="hidden mb-4 p-3.5 rounded-2xl theme-sub-bg border text-center" style="border-color: var(--border-color);">
         <p class="text-xs font-bold mb-2 theme-accent-text">Direct 1-Tap App Install Ready!</p>
         <button onclick="execNativePwaInstall()" class="w-full py-3 rounded-xl theme-accent-btn text-white text-xs font-bold shadow-lg flex items-center justify-center gap-2">
@@ -883,7 +928,6 @@
         </button>
       </div>
 
-      <!-- Iframe Notice Box -->
       <div id="iframeNoticeContainer" class="hidden mb-4 p-3 rounded-2xl bg-amber-500/10 border border-amber-500/30 text-amber-500 text-xs">
         <div class="font-bold mb-1">Embedded Frame Detected</div>
         <p class="opacity-90 mb-2">PWA installation is restricted inside embedded browser frames. Open in full window for direct install:</p>
@@ -923,7 +967,7 @@
     let qrInstance = null;
     let isStandaloneMode = false;
 
-    // Default Original Merchants List
+    // Default Merchants List
     const DEFAULT_MERCHANTS = [
       { id: '1', name: 'S C ARUN KUMAR', upi: '8105104599@ybl', phone: '8105104599' },
       { id: '2', name: 'ARUN TRADERS', upi: 'Q065025025@ybl', phone: '8105104599' },
@@ -936,7 +980,31 @@
       { id: '9', name: 'KAVYA LM', upi: '9620504256@ybl', phone: '9620504256' }
     ];
 
-    // Helper: Format raw float/number into Indian currency commas (en-IN)
+    const AVATAR_PALETTE = [
+      { bgStyle: 'background-color: #2563eb; color: #ffffff;' }, // SC Royal Blue
+      { bgStyle: 'background-color: #059669; color: #ffffff;' }, // AT Emerald Green
+      { bgStyle: 'background-color: #7c3aed; color: #ffffff;' }, // TT Vibrant Purple
+      { bgStyle: 'background-color: #f97316; color: #ffffff;' }, // SV Bright Orange
+      { bgStyle: 'background-color: #db2777; color: #ffffff;' }, // SS Hot Pink
+      { bgStyle: 'background-color: #0d9488; color: #ffffff;' }, // TG Teal Cyan
+      { bgStyle: 'background-color: #d97706; color: #ffffff;' }, // VM Amber Yellow
+      { bgStyle: 'background-color: #e11d48; color: #ffffff;' }, // Rose Red
+      { bgStyle: 'background-color: #4f46e5; color: #ffffff;' }  // Indigo
+    ];
+
+    function getAvatarBgStyle(index, name) {
+      if (index !== undefined && index >= 0) {
+        return AVATAR_PALETTE[index % AVATAR_PALETTE.length].bgStyle;
+      }
+      let hash = 0;
+      for (let i = 0; i < (name || '').length; i++) {
+        hash = name.charCodeAt(i) + ((hash << 5) - hash);
+      }
+      const idx = Math.abs(hash) % AVATAR_PALETTE.length;
+      return AVATAR_PALETTE[idx].bgStyle;
+    }
+
+    // Helper: Format number into Indian currency (en-IN)
     function formatIndianCurrency(num) {
       if (isNaN(num) || num === null || num === undefined) return '0.00';
       return new Intl.NumberFormat('en-IN', {
@@ -945,7 +1013,7 @@
       }).format(num);
     }
 
-    // Helper: Format raw string inputs dynamically into Indian comma format
+    // Helper: Format string input values dynamically
     function formatInputValue(str) {
       if (!str) return '0';
       const cleanStr = str.toString().replace(/,/g, '');
@@ -988,7 +1056,6 @@
       showToast(soundEnabled ? '🔊 Audio feedback enabled' : '🔇 Audio feedback muted');
     }
 
-    // Toast Notifications
     function showToast(msg) {
       const container = document.getElementById('toastContainer');
       if (!container) return;
@@ -999,7 +1066,6 @@
       setTimeout(() => toast.remove(), 2500);
     }
 
-    // Terminal Mode Switching
     function setTerminalMode(mode) {
       terminalMode = mode;
       const tabQuick = document.getElementById('tabQuickMode');
@@ -1014,8 +1080,8 @@
       const evaluatedNum = safeEvalCalc(calcExpression) || parseFloat(currentRawVal) || 0;
 
       if (mode === 'quick') {
-        tabQuick.className = "flex-1 py-1.5 rounded-lg text-xs font-bold transition-all flex items-center justify-center gap-1.5 theme-accent-btn text-white shadow-sm";
-        tabCalc.className = "flex-1 py-1.5 rounded-lg text-xs font-bold transition-all flex items-center justify-center gap-1.5 opacity-60 hover:opacity-100";
+        tabQuick.className = "flex-1 py-2 rounded-xl text-xs font-extrabold transition-all flex items-center justify-center gap-1.5 theme-accent-btn text-white shadow-md";
+        tabCalc.className = "flex-1 py-2 rounded-xl text-xs font-extrabold transition-all flex items-center justify-center gap-1.5 opacity-60 hover:opacity-100";
         quickPreset.classList.remove('hidden');
         quickNum.classList.remove('hidden');
         calcNum.classList.add('hidden');
@@ -1026,8 +1092,8 @@
           ? (evaluatedNum % 1 === 0 ? formatInputValue(evaluatedNum.toString()) : formatIndianCurrency(evaluatedNum))
           : '0';
       } else {
-        tabCalc.className = "flex-1 py-1.5 rounded-lg text-xs font-bold transition-all flex items-center justify-center gap-1.5 theme-accent-btn text-white shadow-sm";
-        tabQuick.className = "flex-1 py-1.5 rounded-lg text-xs font-bold transition-all flex items-center justify-center gap-1.5 opacity-60 hover:opacity-100";
+        tabCalc.className = "flex-1 py-2 rounded-xl text-xs font-extrabold transition-all flex items-center justify-center gap-1.5 theme-accent-btn text-white shadow-md";
+        tabQuick.className = "flex-1 py-2 rounded-xl text-xs font-extrabold transition-all flex items-center justify-center gap-1.5 opacity-60 hover:opacity-100";
         quickPreset.classList.add('hidden');
         quickNum.classList.add('hidden');
         calcNum.classList.remove('hidden');
@@ -1188,49 +1254,94 @@
         return;
       }
 
-      filtered.forEach(m => {
+      filtered.forEach((m, idx) => {
         const isSelected = selectedMerchant && selectedMerchant.id === m.id;
         const card = document.createElement('div');
-        card.className = `p-3 rounded-xl border transition flex items-center justify-between cursor-pointer ${
-          isSelected ? 'theme-card-bg border-indigo-500/60 shadow-md ring-1 ring-indigo-500/30' : 'theme-sub-bg/50 hover:theme-sub-bg'
+        
+        // Compact spacing & padding
+        card.className = `p-2 sm:p-2.5 rounded-xl border transition-all duration-200 flex items-center justify-between cursor-pointer relative ${
+          isSelected 
+            ? 'theme-card-bg border-indigo-500 shadow-sm ring-1 ring-indigo-500/40' 
+            : 'theme-card-bg hover:border-slate-400 dark:hover:border-slate-700'
         }`;
-        card.style.borderColor = isSelected ? 'var(--accent-primary)' : 'var(--border-color)';
+        
+        if (isSelected) {
+          card.style.borderColor = 'var(--accent-primary)';
+          card.style.backgroundColor = 'var(--badge-bg)';
+        } else {
+          card.style.borderColor = 'var(--border-color)';
+        }
+
         card.onclick = (e) => {
-          if (e.target.closest('.action-btn')) return;
+          if (e.target.closest('.card-action-btn') || e.target.closest('[id^="cardMenu-"]')) return;
           selectMerchant(m.id);
         };
 
         const initials = m.name.split(' ').map(n => n[0]).join('').slice(0, 2).toUpperCase() || 'P';
+        const avatarStyle = getAvatarBgStyle(idx, m.name);
 
         card.innerHTML = `
-          <div class="flex items-center gap-3 min-w-0 pr-2">
-            <div class="w-8 h-8 rounded-lg font-bold text-xs flex items-center justify-center shrink-0 border" style="background-color: var(--badge-bg); border-color: var(--border-color);">
+          <div class="flex items-center gap-2 sm:gap-2.5 min-w-0 pr-1">
+            <div class="w-8 h-8 sm:w-9 sm:h-9 rounded-xl font-black text-xs flex items-center justify-center shrink-0 shadow-sm" style="${avatarStyle}">
               ${initials}
             </div>
             <div class="truncate">
-              <div class="text-xs font-bold truncate flex items-center gap-1.5">
-                <span>${m.name}</span>
-                ${isSelected ? '<span class="text-[10px] theme-accent-text font-extrabold">✓</span>' : ''}
+              <div class="text-xs font-bold truncate flex items-center gap-1">
+                <span class="truncate">${m.name}</span>
+                ${isSelected ? '<span class="text-[10px] text-indigo-500 font-black">✓</span>' : ''}
               </div>
-              <div class="text-[10px] font-mono opacity-70 truncate">${m.upi}</div>
+              <div class="text-[10px] font-mono opacity-70 truncate mt-0.5">${m.upi}</div>
             </div>
           </div>
 
-          <div class="flex items-center gap-1 shrink-0">
-            <button onclick="openEditModal('${m.id}')" class="action-btn p-1.5 rounded-lg hover:bg-black/10 dark:hover:bg-white/10 opacity-70 hover:opacity-100 transition" title="Edit Payee">
-              <svg class="w-3.5 h-3.5 theme-accent-text" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-                <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M11 5H6a2 2 0 00-2 2v11a2 2 0 002 2h11a2 2 0 002-2v-5m-1.414-9.414a2 2 0 112.828 2.828L11.828 15H9v-2.828l8.586-8.586z"></path>
+          <div class="relative shrink-0 ml-1">
+            <button onclick="toggleCardMenu(event, '${m.id}')" class="card-action-btn p-1.5 rounded-lg hover:bg-black/10 dark:hover:bg-white/10 opacity-70 hover:opacity-100 transition" title="Options">
+              <svg class="w-4 h-4" fill="currentColor" viewBox="0 0 24 24">
+                <path d="M12 8c1.1 0 2-.9 2-2s-.9-2-2-2-2 .9-2 2 .9 2 2 2zm0 2c-1.1 0-2 .9-2 2s.9 2 2 2 2-.9 2-2-.9-2-2-2zm0 6c-1.1 0-2 .9-2 2s.9 2 2 2 2-.9 2-2-.9-2-2-2z"/>
               </svg>
             </button>
-            <button onclick="openDeletePayeeModal('${m.id}')" class="action-btn p-1.5 rounded-lg hover:bg-red-500/20 text-red-500 opacity-70 hover:opacity-100 transition" title="Delete Payee">
-              <svg class="w-3.5 h-3.5" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-                <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M19 7l-.867 12.142A2 2 0 0116.138 21H7.862a2 2 0 01-1.995-1.858L5 7m5 4v6m4-6v6m1-10V4a1 1 0 00-1-1h-4a1 1 0 00-1 1v3M4 7h16"></path>
-              </svg>
-            </button>
+            <div id="cardMenu-${m.id}" class="hidden absolute right-0 top-full mt-1 w-28 theme-card-bg border rounded-xl shadow-2xl z-30 p-1 space-y-0.5 text-xs" style="border-color: var(--border-color);">
+              <button onclick="handleCardEdit(event, '${m.id}')" class="w-full px-2.5 py-1.5 rounded-lg text-left hover:bg-black/5 dark:hover:bg-white/10 flex items-center gap-2 theme-accent-text font-semibold">
+                <svg class="w-3.5 h-3.5" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M11 5H6a2 2 0 00-2 2v11a2 2 0 002 2h11a2 2 0 002-2v-5m-1.414-9.414a2 2 0 112.828 2.828L11.828 15H9v-2.828l8.586-8.586z"/></svg>
+                Edit
+              </button>
+              <button onclick="handleCardDelete(event, '${m.id}')" class="w-full px-2.5 py-1.5 rounded-lg text-left hover:bg-red-500/10 text-red-500 flex items-center gap-2 font-semibold">
+                <svg class="w-3.5 h-3.5" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M19 7l-.867 12.142A2 2 0 0116.138 21H7.862a2 2 0 01-1.995-1.858L5 7m5 4v6m4-6v6m1-10V4a1 1 0 00-1-1h-4a1 1 0 00-1 1v3M4 7h16"/></svg>
+                Delete
+              </button>
+            </div>
           </div>
         `;
         container.appendChild(card);
       });
+    }
+
+    function toggleCardMenu(e, id) {
+      e.stopPropagation();
+      const targetMenu = document.getElementById(`cardMenu-${id}`);
+      const allMenus = document.querySelectorAll('[id^="cardMenu-"]');
+      allMenus.forEach(m => {
+        if (m !== targetMenu) m.classList.add('hidden');
+      });
+      if (targetMenu) {
+        targetMenu.classList.toggle('hidden');
+      }
+    }
+
+    function handleCardEdit(e, id) {
+      e.stopPropagation();
+      closeAllCardMenus();
+      openEditModal(id);
+    }
+
+    function handleCardDelete(e, id) {
+      e.stopPropagation();
+      closeAllCardMenus();
+      openDeletePayeeModal(id);
+    }
+
+    function closeAllCardMenus() {
+      document.querySelectorAll('[id^="cardMenu-"]').forEach(m => m.classList.add('hidden'));
     }
 
     function selectMerchant(id) {
@@ -1241,7 +1352,11 @@
       document.getElementById('activeName').innerText = found.name;
       document.getElementById('activeUpi').innerText = found.upi;
       const initials = found.name.split(' ').map(n => n[0]).join('').slice(0, 2).toUpperCase() || 'P';
-      document.getElementById('activeAvatar').innerText = initials;
+      const activeAvatar = document.getElementById('activeAvatar');
+      activeAvatar.innerText = initials;
+
+      const idx = merchants.findIndex(m => m.id === id);
+      activeAvatar.setAttribute('style', getAvatarBgStyle(idx, found.name));
 
       renderMerchantList(document.getElementById('merchantSearch')?.value || '');
 
@@ -1660,7 +1775,7 @@
 
         ctx.fillStyle = '#475569';
         ctx.font = '14px Inter, sans-serif';
-        ctx.fillText('Generated via Paypulse v7.7 POS Terminal', 360, 920);
+        ctx.fillText('Generated via Paypulse v8.0 POS Terminal', 360, 920);
 
         canvas.toBlob((blob) => {
           callback(blob, canvas.toDataURL('image/png'));
@@ -1703,13 +1818,20 @@
 
     function loadHistory() {
       try {
-        const saved = localStorage.getItem('paypulse_history_v7.7') || localStorage.getItem('paypulse_history_v7.6');
+        const saved = localStorage.getItem('paypulse_history_v8.0') || localStorage.getItem('paypulse_history_v7.7') || localStorage.getItem('paypulse_history_v7.6');
         if (saved) {
           history = JSON.parse(saved);
         }
       } catch (e) {
         history = [];
       }
+      populateHistoryUpiFilter();
+      renderHistoryList();
+      updateTodayTotal();
+    }
+
+    function saveHistory() {
+      localStorage.setItem('paypulse_history_v8.0', JSON.stringify(history));
       populateHistoryUpiFilter();
       renderHistoryList();
       updateTodayTotal();
@@ -1782,8 +1904,8 @@
             <div class="text-[9px] opacity-50 mt-1">${dateFormatted}</div>
           </div>
           <div class="text-right shrink-0">
-            <div class="text-sm font-extrabold font-mono text-emerald-500">₹${amt}</div>
-            <span class="text-[9px] font-semibold text-emerald-500/80 bg-emerald-500/10 px-2 py-0.5 rounded-full border border-emerald-500/20">Generated</span>
+            <div class="text-sm font-black font-mono text-emerald-500">₹${amt}</div>
+            <span class="text-[9px] font-bold text-emerald-500/80 bg-emerald-500/10 px-2.5 py-0.5 rounded-full border border-emerald-500/20">Generated</span>
           </div>
         `;
         listContainer.appendChild(card);
@@ -1872,10 +1994,6 @@
       });
     }
 
-    function populateUpiFilter() {
-      populateHistoryUpiFilter();
-    }
-
     function toggleCustomDropdown(targetId) {
       const menu = document.getElementById(targetId);
       if (!menu) return;
@@ -1898,6 +2016,7 @@
           el.classList.add('hidden', 'opacity-0', 'scale-95');
         }
       });
+      closeAllCardMenus();
     }
 
     function selectCustomTime(val, label) {
@@ -1932,7 +2051,6 @@
     function openAboutModal() { toggleModal('aboutModal', true); }
     function closeAboutModal() { toggleModal('aboutModal', false); }
 
-    // PWA Engine Integration Functions
     function checkStandaloneMode() {
       isStandaloneMode = window.matchMedia('(display-mode: standalone)').matches || 
                          window.navigator.standalone || 
@@ -2024,8 +2142,8 @@
     function initPWAInfrastructure() {
       let manifestLink = document.getElementById('appManifestLink');
       const manifestData = {
-        id: "paypulse-pos-v7.7",
-        name: "Paypulse v7.7 POS",
+        id: "paypulse-pos-v8.0",
+        name: "Paypulse v8.0 POS",
         short_name: "Paypulse",
         description: "Instant UPI Payment QR Terminal",
         start_url: ".",
@@ -2059,7 +2177,7 @@
       if ('serviceWorker' in navigator) {
         try {
           const swCode = `
-            const CACHE_NAME = 'paypulse-v7.7-sw';
+            const CACHE_NAME = 'paypulse-v8.0-sw';
             self.addEventListener('install', (e) => self.skipWaiting());
             self.addEventListener('activate', (e) => e.waitUntil(self.clients.claim()));
             self.addEventListener('fetch', (e) => {
@@ -2098,7 +2216,7 @@
       initPWAInfrastructure();
       checkStandaloneMode();
 
-      const savedTheme = localStorage.getItem('paypulse_theme') || 'sapphire';
+      const savedTheme = localStorage.getItem('paypulse_theme') || 'platinum';
       setTheme(savedTheme);
 
       loadMerchants();
