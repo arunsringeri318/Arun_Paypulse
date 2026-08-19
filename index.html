@@ -1680,7 +1680,21 @@
       toggleModal('qrModal', true);
     }
 
-    function closeQrModal() { toggleModal('qrModal', false); }
+    function closeQrModal() {
+      toggleModal('qrModal', false);
+      resetAmountToZero();
+      window.scrollTo({ top: 0, behavior: 'smooth' });
+    }
+
+    function resetAmountToZero() {
+      calcExpression = '';
+      const amountInput = document.getElementById('amount');
+      if (amountInput) amountInput.value = '0';
+      const displayExpr = document.getElementById('calcExpressionDisplay');
+      if (displayExpr) displayExpr.innerText = '0';
+      const errElem = document.getElementById('amountError');
+      if (errElem) errElem.classList.add('hidden');
+    }
 
     function copyQrLink() {
       if (!selectedMerchant) return;
