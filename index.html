@@ -1893,7 +1893,7 @@
         if (navigator.canShare && navigator.canShare({ files: [file] })) {
           navigator.share({
             title: `Payment QR - ${selectedMerchant.name}`,
-            text: `Scan to pay ₹${document.getElementById('modalAmountDisplay').innerText} to ${selectedMerchant.name}`,
+            text: `Scan to pay ${document.getElementById('modalAmountDisplay').innerText} to ${selectedMerchant.name}`,
             files: [file]
           }).catch(() => {});
         } else {
