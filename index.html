@@ -238,19 +238,8 @@
       background-color: var(--keypad-hover);
     }
 
-    @keyframes broadcastFlash {
-      0%, 100% {
-        box-shadow: 0 0 0 0 rgba(245, 158, 11, 0.35);
-        border-color: rgba(245, 158, 11, 0.65);
-      }
-      50% {
-        box-shadow: 0 0 18px 2px rgba(245, 158, 11, 0.55);
-        border-color: rgba(245, 158, 11, 1);
-      }
-    }
-
-    .broadcast-flash {
-      animation: broadcastFlash 1.8s infinite ease-in-out;
+    .broadcast-text {
+      color: #991b1b;
     }
   </style>
 </head>
@@ -459,14 +448,14 @@
     <main class="grid grid-cols-1 lg:grid-cols-12 gap-6 items-start mb-8">
       
       <div class="lg:col-span-5 flex flex-col gap-3">
-        <!-- Flashing Editable Broadcast Message Box -->
-        <div class="broadcast-flash theme-card-bg border-2 rounded-2xl p-3 shadow-sm flex items-center gap-2 transition-all">
-          <div class="w-8 h-8 rounded-xl bg-amber-500/15 text-amber-500 border border-amber-500/30 flex items-center justify-center shrink-0 animate-pulse" title="Live Notice for Users">
+        <!-- Editable Broadcast Message Box -->
+        <div class="theme-card-bg border-2 border-amber-500/70 rounded-2xl px-3 py-1.5 shadow-sm flex items-center gap-2 transition-all">
+          <div class="w-8 h-8 rounded-xl bg-amber-500/15 text-amber-500 border border-amber-500/30 flex items-center justify-center shrink-0" title="Live Notice for Users">
             <svg class="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24">
               <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2.2" d="M11 5.882V19.24a1.76 1.76 0 01-3.417.592l-2.147-6.15M18 13a3 3 0 100-6M5.436 13.683A4.001 4.001 0 017 6h1.832c4.1 0 7.625-1.234 9.168-3v14c-1.543-1.766-5.067-3-9.168-3H7a3.988 3.988 0 01-1.564-.317z"/>
             </svg>
           </div>
-          <input type="text" id="broadcastMessageInput" maxlength="140" onkeydown="if(event.key==='Enter'){event.preventDefault();saveBroadcastMessage();}" placeholder="Type notice message for all users..." class="flex-1 min-w-0 bg-transparent text-xs font-bold focus:outline-none placeholder:font-normal placeholder:opacity-60" style="color: var(--text-main);">
+          <textarea id="broadcastMessageInput" rows="3" maxlength="300" onkeydown="if(event.key==='Enter' && !event.shiftKey){event.preventDefault();saveBroadcastMessage();}" placeholder="Type notice message for all users..." class="broadcast-text flex-1 min-w-0 bg-transparent text-xs font-bold leading-snug resize-none focus:outline-none placeholder:font-normal placeholder:opacity-60"></textarea>
           <button type="button" onclick="saveBroadcastMessage()" class="px-3 py-1.5 rounded-xl bg-amber-500 hover:bg-amber-600 text-slate-950 text-[11px] font-extrabold shrink-0 shadow-sm active:scale-95 transition">
             Save
           </button>
@@ -1259,412 +1248,170 @@
     let unsubHistory = null;
     let useRestFallback = !app;
     let restPollTimer = null;
+    let isSavingMerchants = false;
+    let lastMerchantSaveAt = 0;
 
-    let merchants = [];
-    let selectedMerchant = null;
-    let pendingDeletePayeeId = null;
-    let pendingDeleteLogId = null;
-    let pendingEditLogId = null;
-    let history = [];
-    let terminalMode = 'quick'; // 'quick' | 'calc'
-    let calcExpression = '';
-    let soundEnabled = true;
-    let deferredPrompt = null;
-    let qrInstance = null;
-    let isStandaloneMode = false;
+    const LOCAL_MERCHANTS_KEY = 'paypulse_merchants_order_v11c';
+    const LOCAL_HISTORY_KEY = 'paypulse_history_v11c';
+    const LOCAL_SETTINGS_KEY = 'paypulse_settings_v11c';
 
     const DEFAULT_MERCHANTS = [
-      { id: '1', name: 'S C ARUN KUMAR', upi: '8105104599@ybl', phone: '8105104599' },
-      { id: '2', name: 'ARUN TRADERS', upi: 'Q065025025@ybl', phone: '8105104599' },
-      { id: '3', name: 'THALLAM Traders', upi: 'paytmqr2810050501011nnseug7k3xi@paytm', phone: '9448769469' },
-      { id: '4', name: 'SP VENKATESH', upi: '7981375276@ybl', phone: '7981375276' },
-      { id: '5', name: 'SUSHMITHA SALES CO', upi: '303805429039165@cnrb', phone: '9035442508' },
-      { id: '6', name: 'THALLAM General Stores', upi: '6362005814@kbl', phone: '9036334454' },
-      { id: '7', name: 'Vijayalakshmi M', upi: '9945764810@Kotak', phone: '9945764810' },
-      { id: '8', name: 'ASHWIN MARKETING', upi: 'Q31960982@ybl', phone: '9986132310' },
-      { id: '9', name: 'KAVYA LM', upi: '9620504256@ybl', phone: '9620504256' }
+      { id: 'm1', name: 'Arun Traders Main', upi: 'aruntraders@okicici', phone: '8105104599', order: 0 },
+      { id: 'm2', name: 'Counter 2 Express', upi: 'aruncounter2@ybl', phone: '8105104599', order: 1 }
     ];
 
-    const AVATAR_PALETTE = [
-      { bgStyle: 'background-color: #2563eb; color: #ffffff;' },
-      { bgStyle: 'background-color: #059669; color: #ffffff;' },
-      { bgStyle: 'background-color: #7c3aed; color: #ffffff;' },
-      { bgStyle: 'background-color: #f97316; color: #ffffff;' },
-      { bgStyle: 'background-color: #db2777; color: #ffffff;' },
-      { bgStyle: 'background-color: #0d9488; color: #ffffff;' },
-      { bgStyle: 'background-color: #d97706; color: #ffffff;' },
-      { bgStyle: 'background-color: #e11d48; color: #ffffff;' },
-      { bgStyle: 'background-color: #4f46e5; color: #ffffff;' }
+    let merchants = [];
+    let historyLogs = [];
+    let selectedMerchantId = null;
+    let currentAmountStr = '';
+    let calcExpression = '';
+    let terminalMode = 'quick';
+    let currentTimeFilter = 'all';
+    let currentUpiFilter = 'all';
+    let currentUpiFilterLabel = 'All Accounts';
+    let soundEnabled = true;
+    let deferredInstallPrompt = null;
+    let pendingDeletePayeeId = null;
+    let pendingDeleteLogId = null;
+    let lastGeneratedQrData = null;
+
+    const AVATAR_GRADIENTS = [
+      'from-indigo-500 to-blue-600 border-indigo-400',
+      'from-emerald-500 to-teal-600 border-emerald-400',
+      'from-amber-500 to-orange-600 border-amber-400',
+      'from-rose-500 to-pink-600 border-rose-400',
+      'from-purple-500 to-violet-600 border-purple-400',
+      'from-cyan-500 to-sky-600 border-cyan-400'
     ];
 
-    function getAvatarBgStyle(index, name) {
-      if (index !== undefined && index >= 0) {
-        return AVATAR_PALETTE[index % AVATAR_PALETTE.length].bgStyle;
-      }
-      let hash = 0;
-      for (let i = 0; i < (name || '').length; i++) {
-        hash = name.charCodeAt(i) + ((hash << 5) - hash);
-      }
-      return AVATAR_PALETTE[Math.abs(hash) % AVATAR_PALETTE.length].bgStyle;
+    function getAvatarGradient(index) {
+      return AVATAR_GRADIENTS[Math.abs(index) % AVATAR_GRADIENTS.length];
     }
 
-    function formatIndianCurrency(num) {
-      if (isNaN(num) || num === null || num === undefined) return '0.00';
-      return new Intl.NumberFormat('en-IN', {
-        minimumFractionDigits: 2,
-        maximumFractionDigits: 2
-      }).format(num);
+    function getInitials(name) {
+      if (!name) return '--';
+      const parts = name.trim().split(/\s+/);
+      if (parts.length === 1) return parts[0].substring(0, 2).toUpperCase();
+      return (parts[0][0] + parts[1][0]).toUpperCase();
     }
 
-    function formatInputValue(str) {
-      if (!str) return '0';
-      const cleanStr = str.toString().replace(/,/g, '');
-      const parts = cleanStr.split('.');
-      let integerPart = parts[0];
-      const decimalPart = parts.length > 1 ? '.' + parts[1] : '';
-      
-      if (integerPart) {
-        let lastThree = integerPart.substring(integerPart.length - 3);
-        let otherDigits = integerPart.substring(0, integerPart.length - 3);
-        if (otherDigits !== '') {
-          lastThree = ',' + lastThree;
-        }
-        integerPart = otherDigits.replace(/\B(?=(\d{2})+(?!\d))/g, ",") + lastThree;
-      }
-      return (integerPart || '0') + decimalPart;
+    function escapeHtml(str) {
+      if (str === null || str === undefined) return '';
+      return String(str)
+        .replace(/&/g, '&amp;')
+        .replace(/</g, '&lt;')
+        .replace(/>/g, '&gt;')
+        .replace(/"/g, '&quot;')
+        .replace(/'/g, '&#39;');
     }
 
-    function playBeep() {
+    function formatRupees(val) {
+      const num = parseFloat(val) || 0;
+      return '₹' + num.toLocaleString('en-IN', { minimumFractionDigits: 2, maximumFractionDigits: 2 });
+    }
+
+    function formatDisplayNumber(str) {
+      if (!str) return '';
+      const parts = str.split('.');
+      const intPart = parts[0].replace(/\B(?=(\d{3})+(?!\d))/g, ',');
+      return parts.length > 1 ? `${intPart}.${parts[1]}` : intPart;
+    }
+
+    window.showToast = function (msg) {
+      const container = document.getElementById('toastContainer');
+      if (!container) return;
+      const el = document.createElement('div');
+      el.className = 'theme-card-bg border px-4 py-2.5 rounded-2xl shadow-xl text-xs font-bold flex items-center gap-2 pointer-events-auto transition-all duration-300 transform translate-y-0 opacity-100';
+      el.style.borderColor = 'var(--border-color)';
+      el.textContent = msg;
+      container.appendChild(el);
+      setTimeout(() => {
+        el.style.opacity = '0';
+        el.style.transform = 'translateY(-8px)';
+        setTimeout(() => el.remove(), 300);
+      }, 2600);
+    };
+
+    window.playBeep = function () {
       if (!soundEnabled) return;
       try {
-        const ctx = new (window.AudioContext || window.webkitAudioContext)();
+        const AudioCtx = window.AudioContext || window.webkitAudioContext;
+        if (!AudioCtx) return;
+        const ctx = new AudioCtx();
         const osc = ctx.createOscillator();
         const gain = ctx.createGain();
         osc.type = 'sine';
-        osc.frequency.setValueAtTime(800, ctx.currentTime);
-        gain.gain.setValueAtTime(0.05, ctx.currentTime);
-        gain.gain.exponentialRampToValueAtTime(0.00001, ctx.currentTime + 0.08);
+        osc.frequency.setValueAtTime(660, ctx.currentTime);
+        gain.gain.setValueAtTime(0.03, ctx.currentTime);
+        gain.gain.exponentialRampToValueAtTime(0.0001, ctx.currentTime + 0.06);
         osc.connect(gain);
         gain.connect(ctx.destination);
         osc.start();
-        osc.stop(ctx.currentTime + 0.08);
+        osc.stop(ctx.currentTime + 0.06);
       } catch (e) {}
-    }
+    };
 
     window.toggleSound = function () {
       soundEnabled = !soundEnabled;
       showToast(soundEnabled ? '🔊 Audio feedback enabled' : '🔇 Audio feedback muted');
+      if (soundEnabled) playBeep();
     };
 
-    function showToast(msg) {
-      const container = document.getElementById('toastContainer');
-      if (!container) return;
-      const toast = document.createElement('div');
-      toast.className = 'px-4 py-2.5 rounded-xl bg-slate-900/90 text-white text-xs font-semibold shadow-xl backdrop-blur-md border border-slate-700/50 pointer-events-auto animate-bounce';
-      toast.innerText = msg;
-      container.appendChild(toast);
-      setTimeout(() => toast.remove(), 2500);
-    }
-
-    function updateCloudStatusUI(text, isOnline) {
-      const headerDot = document.getElementById('headerCloudDot');
+    function updateCloudStatusUI(label, isOk) {
+      const dot = document.getElementById('headerCloudDot');
       const menuStatus = document.getElementById('cloudSyncMenuStatus');
       const modalStatus = document.getElementById('cloudModalStatusText');
-      const userIdDisplay = document.getElementById('cloudUserIdDisplay');
-      const payeeCountEl = document.getElementById('cloudPayeeCount');
-      const logsCountEl = document.getElementById('cloudLogsCount');
+      const payeeCount = document.getElementById('cloudPayeeCount');
+      const logsCount = document.getElementById('cloudLogsCount');
 
-      if (headerDot) {
-        headerDot.className = `absolute top-1.5 right-1.5 w-1.5 h-1.5 rounded-full ${isOnline ? 'bg-emerald-400' : 'bg-amber-400 animate-pulse'}`;
+      if (dot) {
+        dot.className = `absolute top-1.5 right-1.5 w-1.5 h-1.5 rounded-full ${isOk ? 'bg-emerald-400' : 'bg-amber-400 animate-pulse'}`;
       }
       if (menuStatus) {
-        menuStatus.innerText = text;
-        menuStatus.className = `text-[9px] font-bold ${isOnline ? 'text-emerald-500' : 'text-amber-500'}`;
+        menuStatus.textContent = label;
+        menuStatus.className = `text-[9px] font-bold ${isOk ? 'text-emerald-500' : 'text-amber-500'}`;
       }
       if (modalStatus) {
-        modalStatus.innerHTML = `<span class="w-2 h-2 rounded-full ${isOnline ? 'bg-emerald-500 animate-pulse' : 'bg-amber-500'}"></span> ${text}`;
-        modalStatus.className = `text-xs font-extrabold mt-0.5 flex items-center gap-1.5 ${isOnline ? 'text-emerald-500' : 'text-amber-500'}`;
+        modalStatus.innerHTML = `<span class="w-2 h-2 rounded-full ${isOk ? 'bg-emerald-500' : 'bg-amber-500 animate-pulse'}"></span> ${escapeHtml(label)}`;
       }
-      if (userIdDisplay) {
-        userIdDisplay.innerText = currentUser ? currentUser.uid : (useRestFallback ? 'paypulse-a855a-shared' : 'Authenticating...');
-      }
-      if (payeeCountEl) payeeCountEl.innerText = merchants.length;
-      if (logsCountEl) logsCountEl.innerText = history.length;
+      if (payeeCount) payeeCount.textContent = merchants.length;
+      if (logsCount) logsCount.textContent = historyLogs.length;
     }
 
-    function applyThemeUI(t) {
-      currentTheme = t;
-      document.documentElement.setAttribute('data-theme', t);
-      document.querySelectorAll('.theme-indicator').forEach(el => el.innerText = '');
-      const activeInd = document.getElementById(`theme-indicator-${t}`);
-      if (activeInd) activeInd.innerText = '✓ Active';
-    }
-
-    function applySearchVisibilityUI(hidden) {
-      hideSearchPayee = !!hidden;
-      const wrapper = document.getElementById('merchantSearchWrapper');
-      const input = document.getElementById('merchantSearch');
-      const label = document.getElementById('toggleSearchMenuLabel');
-
-      if (wrapper) {
-        wrapper.classList.toggle('hidden', hideSearchPayee);
-      }
-      if (label) {
-        label.innerText = hideSearchPayee ? 'Show Search Payee' : 'Hide Search Payee';
-      }
-      if (hideSearchPayee && input && input.value.trim() !== '') {
-        input.value = '';
-        renderMerchantList('');
-      }
-    }
-
-    window.toggleSearchPayee = function () {
-      const nextState = !hideSearchPayee;
-      applySearchVisibilityUI(nextState);
-      showToast(nextState ? '🙈 Search payee hidden' : '🔍 Search payee shown');
-
-      if (useRestFallback || !currentUser) {
-        fetch(`${RTDB_URL}/artifacts/${appId}/public/data/settings.json`, {
-          method: 'PATCH',
-          headers: { 'Content-Type': 'application/json' },
-          body: JSON.stringify({ hideSearchPayee: nextState })
-        }).catch(() => {});
-      } else {
-        const settingsRef = ref(db, `artifacts/${appId}/public/data/settings`);
-        set(settingsRef, { theme: currentTheme, hideSearchPayee: nextState, broadcastMessage: broadcastMessage }).catch(() => {
-          useRestFallback = true;
-          window.toggleSearchPayee();
+    function normalizeMerchantOrder(list) {
+      if (!Array.isArray(list)) return [];
+      const hasOrderProp = list.some(item => typeof item?.order === 'number');
+      const copy = [...list];
+      if (hasOrderProp) {
+        copy.sort((a, b) => {
+          const oa = typeof a.order === 'number' ? a.order : Number.MAX_SAFE_INTEGER;
+          const ob = typeof b.order === 'number' ? b.order : Number.MAX_SAFE_INTEGER;
+          return oa - ob;
         });
       }
-    };
-
-    function applyBroadcastMessageUI(msg) {
-      broadcastMessage = typeof msg === 'string' ? msg : '';
-      const input = document.getElementById('broadcastMessageInput');
-      if (input && document.activeElement !== input) {
-        input.value = broadcastMessage;
-      }
+      return copy.map((item, idx) => ({ ...item, order: idx }));
     }
-
-    window.saveBroadcastMessage = function () {
-      const input = document.getElementById('broadcastMessageInput');
-      const nextMsg = input ? input.value.trim() : '';
-      if (input) {
-        input.value = nextMsg;
-        input.blur();
-      }
-      broadcastMessage = nextMsg;
-      updateCloudStatusUI('Syncing...', true);
-
-      const broadcastPayload = {
-        message: nextMsg,
-        updatedAt: new Date().toISOString()
-      };
-
-      if (useRestFallback || !currentUser) {
-        Promise.all([
-          fetch(`${RTDB_URL}/artifacts/${appId}/public/data/broadcast.json`, {
-            method: 'PUT',
-            headers: { 'Content-Type': 'application/json' },
-            body: JSON.stringify(broadcastPayload)
-          }),
-          fetch(`${RTDB_URL}/artifacts/${appId}/public/data/settings.json`, {
-            method: 'PATCH',
-            headers: { 'Content-Type': 'application/json' },
-            body: JSON.stringify({ broadcastMessage: nextMsg })
-          })
-        ])
-          .then(([bRes]) => {
-            if (!bRes.ok) throw new Error('HTTP ' + bRes.status);
-            updateCloudStatusUI('Synced ✓', true);
-            showToast(nextMsg ? '📢 Notice broadcasted to all users' : '🧹 Broadcast notice cleared');
-          })
-          .catch(() => {
-            updateCloudStatusUI('Sync Error', false);
-            showToast('⚠️ Failed to save broadcast message');
-          });
-      } else {
-        const broadcastRef = ref(db, `artifacts/${appId}/public/data/broadcast`);
-        const settingsRef = ref(db, `artifacts/${appId}/public/data/settings`);
-        Promise.all([
-          set(broadcastRef, broadcastPayload),
-          set(settingsRef, { theme: currentTheme, hideSearchPayee: hideSearchPayee, broadcastMessage: nextMsg })
-        ])
-          .then(() => {
-            updateCloudStatusUI('Synced ✓', true);
-            showToast(nextMsg ? '📢 Notice broadcasted to all users' : '🧹 Broadcast notice cleared');
-          })
-          .catch(() => {
-            useRestFallback = true;
-            window.saveBroadcastMessage();
-          });
-      }
-      playBeep();
-    };
-
-    window.setTerminalMode = function (mode) {
-      terminalMode = mode;
-      const tabQuick = document.getElementById('tabQuickMode');
-      const tabCalc = document.getElementById('tabCalcMode');
-      const quickPreset = document.getElementById('quickPresetRow');
-      const quickNum = document.getElementById('quickNumpad');
-      const calcNum = document.getElementById('calcNumpad');
-      const calcExprDisplay = document.getElementById('calcExpressionDisplay');
-      const amountInput = document.getElementById('amount');
-
-      const currentRawVal = amountInput.value.replace(/,/g, '');
-      const evaluatedNum = safeEvalCalc(calcExpression) || parseFloat(currentRawVal) || 0;
-
-      if (mode === 'quick') {
-        tabQuick.className = "flex-1 py-2 rounded-xl text-xs font-extrabold transition-all flex items-center justify-center gap-1.5 theme-accent-btn text-white shadow-md";
-        tabCalc.className = "flex-1 py-2 rounded-xl text-xs font-extrabold transition-all flex items-center justify-center gap-1.5 opacity-60 hover:opacity-100";
-        quickPreset.classList.remove('hidden');
-        quickNum.classList.remove('hidden');
-        calcNum.classList.add('hidden');
-        calcExprDisplay.classList.add('hidden');
-        
-        calcExpression = evaluatedNum > 0 ? evaluatedNum.toString() : '';
-        amountInput.value = evaluatedNum > 0 
-          ? (evaluatedNum % 1 === 0 ? formatInputValue(evaluatedNum.toString()) : formatIndianCurrency(evaluatedNum))
-          : '0';
-      } else {
-        tabCalc.className = "flex-1 py-2 rounded-xl text-xs font-extrabold transition-all flex items-center justify-center gap-1.5 theme-accent-btn text-white shadow-md";
-        tabQuick.className = "flex-1 py-2 rounded-xl text-xs font-extrabold transition-all flex items-center justify-center gap-1.5 opacity-60 hover:opacity-100";
-        quickPreset.classList.add('hidden');
-        quickNum.classList.add('hidden');
-        calcNum.classList.remove('hidden');
-        calcExprDisplay.classList.remove('hidden');
-        
-        if (evaluatedNum > 0 && !calcExpression) {
-          calcExpression = evaluatedNum.toString();
-        }
-        updateCalcUI();
-      }
-      playBeep();
-    };
-
-    window.numpadPress = function (digit) {
-      playBeep();
-      const amountInput = document.getElementById('amount');
-      let currentVal = amountInput.value.replace(/,/g, '');
-
-      if (currentVal === '0' && digit !== '.') {
-        currentVal = digit;
-      } else {
-        if (digit === '.' && currentVal.includes('.')) return;
-        currentVal += digit;
-      }
-
-      amountInput.value = formatInputValue(currentVal);
-      document.getElementById('amountError').classList.add('hidden');
-    };
-
-    window.addPresetAmount = function (preset) {
-      playBeep();
-      const amountInput = document.getElementById('amount');
-      let currentVal = parseFloat(amountInput.value.replace(/,/g, '')) || 0;
-      currentVal += preset;
-      amountInput.value = formatInputValue(currentVal.toString());
-      document.getElementById('amountError').classList.add('hidden');
-    };
-
-    window.clearAmount = function () {
-      playBeep();
-      const amountInput = document.getElementById('amount');
-      let rawStr = amountInput.value.replace(/,/g, '');
-      if (rawStr.length > 1) {
-        rawStr = rawStr.slice(0, -1);
-      } else {
-        rawStr = '0';
-      }
-      amountInput.value = formatInputValue(rawStr);
-    };
-
-    function resetAmountToZero() {
-      const amountInput = document.getElementById('amount');
-      if (amountInput) amountInput.value = '0';
-      calcExpression = '';
-      const displayExpr = document.getElementById('calcExpressionDisplay');
-      if (displayExpr) displayExpr.innerText = '0';
-      const err = document.getElementById('amountError');
-      if (err) err.classList.add('hidden');
-    }
-
-    window.calcPress = function (val) {
-      playBeep();
-      const operators = ['+', '-', '×', '÷'];
-      if (operators.includes(val) && operators.includes(calcExpression.slice(-1))) {
-        calcExpression = calcExpression.slice(0, -1) + val;
-      } else {
-        calcExpression += val;
-      }
-      updateCalcUI();
-    };
-
-    window.calcClear = function () {
-      playBeep();
-      calcExpression = '';
-      document.getElementById('amount').value = '0';
-      updateCalcUI();
-    };
-
-    window.calcBackspace = function () {
-      playBeep();
-      if (calcExpression.length > 0) {
-        calcExpression = calcExpression.slice(0, -1);
-      }
-      updateCalcUI();
-    };
-
-    function safeEvalCalc(expr) {
-      try {
-        if (!expr) return 0;
-        let sanitized = expr.replace(/×/g, '*').replace(/÷/g, '/');
-        sanitized = sanitized.replace(/(\b)0+(?=\d)/g, '$1');
-        sanitized = sanitized.replace(/[+\-*\/.]+$/, '');
-        if (!sanitized) return 0;
-        
-        const openParen = (sanitized.match(/\(/g) || []).length;
-        const closeParen = (sanitized.match(/\)/g) || []).length;
-        if (openParen > closeParen) {
-          sanitized += ')'.repeat(openParen - closeParen);
-        }
-        
-        const result = Function('"use strict"; return (' + sanitized + ')')();
-        return isNaN(result) || !isFinite(result) ? 0 : result;
-      } catch (e) {
-        return 0;
-      }
-    }
-
-    function updateCalcUI() {
-      const displayExpr = document.getElementById('calcExpressionDisplay');
-      const amountInput = document.getElementById('amount');
-      displayExpr.innerText = calcExpression || '0';
-
-      const total = safeEvalCalc(calcExpression);
-      if (total === 0) {
-        amountInput.value = '0';
-      } else {
-        const isInteger = total % 1 === 0;
-        amountInput.value = isInteger ? formatInputValue(total.toString()) : formatIndianCurrency(total);
-      }
-    }
-
-    window.calcEquals = function () {
-      playBeep();
-      const total = safeEvalCalc(calcExpression);
-      calcExpression = total.toString();
-      updateCalcUI();
-    };
 
     function saveMerchants(data) {
+      const orderedData = (data || []).map((item, idx) => ({
+        ...item,
+        order: idx
+      }));
+      merchants = orderedData;
+
+      try {
+        localStorage.setItem(LOCAL_MERCHANTS_KEY, JSON.stringify(orderedData));
+      } catch (e) {}
+
+      isSavingMerchants = true;
+      lastMerchantSaveAt = Date.now();
       updateCloudStatusUI('Syncing...', true);
+
       if (useRestFallback || !currentUser) {
         fetch(`${RTDB_URL}/artifacts/${appId}/public/data/merchants.json`, {
           method: 'PUT',
           headers: { 'Content-Type': 'application/json' },
-          body: JSON.stringify({ list: data, updatedAt: new Date().toISOString() })
+          body: JSON.stringify({ list: orderedData, updatedAt: new Date().toISOString() })
         })
           .then((res) => {
             if (!res.ok) throw new Error('HTTP ' + res.status);
@@ -1672,137 +1419,300 @@
           })
           .catch((err) => {
             console.error('REST sync error:', err);
-            updateCloudStatusUI('Sync Error', false);
+            updateCloudStatusUI('Local Saved', false);
+          })
+          .finally(() => {
+            isSavingMerchants = false;
           });
         return;
       }
+
       const dbRef = ref(db, `artifacts/${appId}/public/data/merchants`);
-      set(dbRef, { list: data, updatedAt: new Date().toISOString() })
+      set(dbRef, { list: orderedData, updatedAt: new Date().toISOString() })
         .then(() => updateCloudStatusUI('Synced ✓', true))
         .catch((err) => {
           console.error('Error syncing payees to cloud:', err);
           useRestFallback = true;
-          saveMerchants(data);
+          saveMerchants(orderedData);
+        })
+        .finally(() => {
+          isSavingMerchants = false;
         });
     }
 
-    function loadMerchants() {
-      return merchants;
+    function saveHistory(logs) {
+      historyLogs = Array.isArray(logs) ? logs : [];
+      try {
+        localStorage.setItem(LOCAL_HISTORY_KEY, JSON.stringify(historyLogs));
+      } catch (e) {}
+
+      updateCloudStatusUI('Syncing...', true);
+      if (useRestFallback || !currentUser) {
+        fetch(`${RTDB_URL}/artifacts/${appId}/public/data/history.json`, {
+          method: 'PUT',
+          headers: { 'Content-Type': 'application/json' },
+          body: JSON.stringify({ list: historyLogs, updatedAt: new Date().toISOString() })
+        })
+          .then((res) => {
+            if (!res.ok) throw new Error('HTTP ' + res.status);
+            updateCloudStatusUI('Synced ✓', true);
+          })
+          .catch(() => updateCloudStatusUI('Local Saved', false));
+        return;
+      }
+
+      const dbRef = ref(db, `artifacts/${appId}/public/data/history`);
+      set(dbRef, { list: historyLogs, updatedAt: new Date().toISOString() })
+        .then(() => updateCloudStatusUI('Synced ✓', true))
+        .catch(() => {
+          useRestFallback = true;
+          saveHistory(historyLogs);
+        });
     }
 
-    function renderMerchantList(filter = '') {
-      const container = document.getElementById('upiList');
-      if (!container) return;
-      container.innerHTML = '';
+    function loadHistory() {
+      try {
+        const cached = JSON.parse(localStorage.getItem(LOCAL_HISTORY_KEY) || 'null');
+        if (Array.isArray(cached)) {
+          historyLogs = cached;
+        }
+      } catch (e) {}
+      renderHistory();
+      updateTodayTotal();
+      updateFilteredUpiEarningsCard();
+    }
 
-      const query = (filter || '').toLowerCase().trim();
-      const filtered = merchants.filter(m => 
-        m.name.toLowerCase().includes(query) || 
-        m.upi.toLowerCase().includes(query)
+    function saveCloudSettings() {
+      const payload = {
+        theme: currentTheme,
+        hideSearchPayee,
+        broadcastMessage,
+        updatedAt: new Date().toISOString()
+      };
+      try {
+        localStorage.setItem(LOCAL_SETTINGS_KEY, JSON.stringify(payload));
+      } catch (e) {}
+
+      if (useRestFallback || !currentUser) {
+        fetch(`${RTDB_URL}/artifacts/${appId}/public/data/settings.json`, {
+          method: 'PUT',
+          headers: { 'Content-Type': 'application/json' },
+          body: JSON.stringify(payload)
+        }).catch(() => {});
+        return;
+      }
+
+      set(ref(db, `artifacts/${appId}/public/data/settings`), payload).catch(() => {});
+    }
+
+    window.saveBroadcastMessage = function () {
+      const input = document.getElementById('broadcastMessageInput');
+      if (!input) return;
+      broadcastMessage = input.value.trim();
+      saveCloudSettings();
+      showToast('📢 Notice message saved & broadcast');
+      playBeep();
+    };
+
+    function applyThemeUI(themeName) {
+      currentTheme = themeName || 'platinum';
+      document.documentElement.setAttribute('data-theme', currentTheme);
+      if (currentTheme === 'platinum') {
+        document.documentElement.classList.remove('dark');
+      } else {
+        document.documentElement.classList.add('dark');
+      }
+      document.querySelectorAll('.theme-indicator').forEach(el => { el.textContent = ''; });
+      const activeInd = document.getElementById(`theme-indicator-${currentTheme}`);
+      if (activeInd) activeInd.textContent = '✓ Active';
+    }
+
+    window.setTheme = function (themeName) {
+      applyThemeUI(themeName);
+      saveCloudSettings();
+      playBeep();
+    };
+
+    function applySearchVisibilityUI(hidden) {
+      hideSearchPayee = !!hidden;
+      const wrapper = document.getElementById('merchantSearchWrapper');
+      const label = document.getElementById('toggleSearchMenuLabel');
+      const input = document.getElementById('merchantSearch');
+      if (wrapper) {
+        if (hideSearchPayee) {
+          wrapper.classList.add('hidden');
+          if (input) input.value = '';
+        } else {
+          wrapper.classList.remove('hidden');
+        }
+      }
+      if (label) {
+        label.textContent = hideSearchPayee ? 'Show Search Payee' : 'Hide Search Payee';
+      }
+      renderMerchantList('');
+    }
+
+    window.toggleSearchPayee = function () {
+      applySearchVisibilityUI(!hideSearchPayee);
+      saveCloudSettings();
+      playBeep();
+    };
+
+    // Dropdown & Menu Helpers
+    function animateOpenDropdown(el) {
+      if (!el) return;
+      el.classList.remove('hidden');
+      requestAnimationFrame(() => {
+        el.classList.remove('opacity-0', 'scale-95');
+        el.classList.add('opacity-100', 'scale-100');
+      });
+    }
+
+    function animateCloseDropdown(el) {
+      if (!el || el.classList.contains('hidden')) return;
+      el.classList.remove('opacity-100', 'scale-100');
+      el.classList.add('opacity-0', 'scale-95');
+      setTimeout(() => el.classList.add('hidden'), 150);
+    }
+
+    window.toggleThemeMenu = function () {
+      closeSystemMenu();
+      const menu = document.getElementById('themeMenuDropdown');
+      if (menu.classList.contains('hidden')) animateOpenDropdown(menu);
+      else animateCloseDropdown(menu);
+    };
+
+    window.closeThemeMenu = function () {
+      animateCloseDropdown(document.getElementById('themeMenuDropdown'));
+    };
+
+    window.toggleSystemMenu = function () {
+      closeThemeMenu();
+      const menu = document.getElementById('systemMenuDropdown');
+      if (menu.classList.contains('hidden')) animateOpenDropdown(menu);
+      else animateCloseDropdown(menu);
+    };
+
+    window.closeSystemMenu = function () {
+      animateCloseDropdown(document.getElementById('systemMenuDropdown'));
+    };
+
+    window.toggleCustomDropdown = function (menuId) {
+      const target = document.getElementById(menuId);
+      const otherId = menuId === 'customDropdownTimeMenu' ? 'customDropdownUpiMenu' : 'customDropdownTimeMenu';
+      animateCloseDropdown(document.getElementById(otherId));
+      if (target.classList.contains('hidden')) animateOpenDropdown(target);
+      else animateCloseDropdown(target);
+    };
+
+    function closeAllCardMenus() {
+      document.querySelectorAll('.payee-card-menu').forEach(m => m.classList.add('hidden'));
+    }
+
+    window.toggleCardMenu = function (e, id) {
+      e.stopPropagation();
+      const menu = document.getElementById(`card-menu-${id}`);
+      const wasHidden = menu ? menu.classList.contains('hidden') : true;
+      closeAllCardMenus();
+      if (menu && wasHidden) menu.classList.remove('hidden');
+    };
+
+    document.addEventListener('click', (e) => {
+      if (!e.target.closest('#themeMenuWrapper')) closeThemeMenu();
+      if (!e.target.closest('#systemMenuWrapper')) closeSystemMenu();
+      if (!e.target.closest('#customDropdownTime')) animateCloseDropdown(document.getElementById('customDropdownTimeMenu'));
+      if (!e.target.closest('#customDropdownUpi')) animateCloseDropdown(document.getElementById('customDropdownUpiMenu'));
+      if (!e.target.closest('.payee-menu-container')) closeAllCardMenus();
+    });
+
+    // Payee List Rendering & Selection
+    window.renderMerchantList = function (filter = '') {
+      const listEl = document.getElementById('upiList');
+      if (!listEl) return;
+      const q = filter.trim().toLowerCase();
+      const filtered = merchants.filter(m =>
+        m.name.toLowerCase().includes(q) || m.upi.toLowerCase().includes(q)
       );
 
       if (filtered.length === 0) {
-        container.innerHTML = `
-          <div class="text-center py-6 opacity-60 text-xs">
-            No payee accounts match your search.
+        listEl.innerHTML = `
+          <div class="text-center py-8 opacity-60 text-xs">
+            No payee accounts found. Click <strong>+ Add New</strong> to create one.
           </div>
         `;
         return;
       }
 
-      const isSearching = query.length > 0;
+      listEl.innerHTML = filtered.map((m, idx) => {
+        const realIdx = merchants.findIndex(item => item.id === m.id);
+        const isSelected = m.id === selectedMerchantId;
+        const grad = getAvatarGradient(realIdx);
+        const openUpward = idx >= filtered.length - 2 && filtered.length > 2;
 
-      filtered.forEach((m, idx) => {
-        const isSelected = selectedMerchant && selectedMerchant.id === m.id;
-        const card = document.createElement('div');
-        
-        card.className = `p-2 sm:p-2.5 rounded-xl border transition-all duration-200 flex items-center justify-between cursor-pointer relative ${
-          isSelected 
-            ? 'theme-card-bg border-indigo-500 shadow-sm ring-1 ring-indigo-500/40' 
-            : 'theme-card-bg hover:border-slate-400 dark:hover:border-slate-700'
-        }`;
-        
-        if (isSelected) {
-          card.style.borderColor = 'var(--accent-primary)';
-          card.style.backgroundColor = 'var(--badge-bg)';
-        } else {
-          card.style.borderColor = 'var(--border-color)';
-        }
-
-        card.onclick = (e) => {
-          if (e.target.closest('.card-action-btn') || e.target.closest('[id^="cardMenu-"]')) return;
-          selectMerchant(m.id);
-        };
-
-        const initials = m.name.split(' ').map(n => n[0]).join('').slice(0, 2).toUpperCase() || 'P';
-        const avatarStyle = getAvatarBgStyle(idx, m.name);
-
-        const openUpwards = filtered.length > 2 && idx >= filtered.length - 2;
-        const menuPositionClass = openUpwards ? 'bottom-full mb-1' : 'top-full mt-1';
-
-        const realIndex = merchants.findIndex(item => item.id === m.id);
-        const canMoveUp = !isSearching && realIndex > 0;
-        const canMoveDown = !isSearching && realIndex < merchants.length - 1;
-
-        card.innerHTML = `
-          <div class="flex items-center gap-2 sm:gap-2.5 min-w-0 pr-1">
-            <div class="w-8 h-8 sm:w-9 sm:h-9 rounded-xl font-black text-xs flex items-center justify-center shrink-0 shadow-sm" style="${avatarStyle}">
-              ${initials}
-            </div>
-            <div class="truncate">
-              <div class="text-xs font-bold truncate flex items-center gap-1">
-                <span class="truncate">${m.name}</span>
-                ${isSelected ? '<span class="text-[10px] text-indigo-500 font-black">✓</span>' : ''}
+        return `
+          <div onclick="selectMerchant('${escapeHtml(m.id)}')" class="p-2.5 rounded-2xl border transition-all cursor-pointer flex items-center justify-between gap-2.5 ${isSelected ? 'ring-2 ring-indigo-500 shadow-md' : 'hover:bg-black/5 dark:hover:bg-white/5'}" style="background-color: ${isSelected ? 'var(--active-payee-bg)' : 'var(--bg-card-sub)'}; border-color: ${isSelected ? 'var(--accent-primary)' : 'var(--border-color)'};">
+            <div class="flex items-center gap-2.5 min-w-0">
+              <div class="w-9 h-9 rounded-xl bg-gradient-to-br ${grad} text-white font-black text-xs flex items-center justify-center shrink-0 border shadow-sm">
+                ${escapeHtml(getInitials(m.name))}
               </div>
-              <div class="text-[10px] font-mono opacity-70 truncate mt-0.5">${m.upi}</div>
+              <div class="min-w-0">
+                <div class="text-xs font-extrabold truncate">${escapeHtml(m.name)}</div>
+                <div class="text-[10px] font-mono opacity-70 truncate">${escapeHtml(m.upi)}</div>
+              </div>
             </div>
-          </div>
 
-          <div class="relative shrink-0 ml-1">
-            <button onclick="toggleCardMenu(event, '${m.id}')" class="card-action-btn p-1.5 rounded-lg hover:bg-black/10 dark:hover:bg-white/10 opacity-70 hover:opacity-100 transition" title="Options">
-              <svg class="w-4 h-4" fill="currentColor" viewBox="0 0 24 24">
-                <path d="M12 8c1.1 0 2-.9 2-2s-.9-2-2-2-2 .9-2 2 .9 2 2 2zm0 2c-1.1 0-2 .9-2 2s.9 2 2 2 2-.9 2-2-.9-2-2-2zm0 6c-1.1 0-2 .9-2 2s.9 2 2 2 2-.9 2-2-.9-2-2-2z"/>
-              </svg>
-            </button>
-            <div id="cardMenu-${m.id}" class="hidden absolute right-0 ${menuPositionClass} w-32 theme-card-bg border rounded-xl shadow-2xl z-40 p-1 space-y-0.5 text-xs" style="border-color: var(--border-color);">
-              ${canMoveUp ? `
-                <button onclick="moveMerchantOrder(event, '${m.id}', -1)" class="w-full px-2.5 py-1.5 rounded-lg text-left hover:bg-black/5 dark:hover:bg-white/10 flex items-center gap-2 font-semibold">
-                  <svg class="w-3.5 h-3.5 opacity-75" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M5 15l7-7 7 7"/></svg>
-                  Move Up
-                </button>
-              ` : ''}
-              ${canMoveDown ? `
-                <button onclick="moveMerchantOrder(event, '${m.id}', 1)" class="w-full px-2.5 py-1.5 rounded-lg text-left hover:bg-black/5 dark:hover:bg-white/10 flex items-center gap-2 font-semibold">
-                  <svg class="w-3.5 h-3.5 opacity-75" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M19 9l-7 7-7-7"/></svg>
-                  Move Down
-                </button>
-              ` : ''}
-              ${(canMoveUp || canMoveDown) ? '<div class="border-t my-0.5 opacity-20" style="border-color: var(--border-color);"></div>' : ''}
-              <button onclick="handleCardEdit(event, '${m.id}')" class="w-full px-2.5 py-1.5 rounded-lg text-left hover:bg-black/5 dark:hover:bg-white/10 flex items-center gap-2 theme-accent-text font-semibold">
-                <svg class="w-3.5 h-3.5" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M11 5H6a2 2 0 00-2 2v11a2 2 0 002 2h11a2 2 0 002-2v-5m-1.414-9.414a2 2 0 112.828 2.828L11.828 15H9v-2.828l8.586-8.586z"/></svg>
-                Edit
+            <div class="flex items-center gap-1 shrink-0 relative payee-menu-container">
+              ${isSelected ? '<span class="text-[10px] font-extrabold theme-accent-text px-2 py-0.5 rounded-lg bg-indigo-500/10">Active</span>' : ''}
+              <button type="button" onclick="toggleCardMenu(event, '${escapeHtml(m.id)}')" class="p-1.5 rounded-lg hover:bg-black/10 dark:hover:bg-white/10 opacity-70 hover:opacity-100 transition" title="Account Actions">
+                <svg class="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                  <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M12 5v.01M12 12v.01M12 19v.01"/>
+                </svg>
               </button>
-              <button onclick="handleCardDelete(event, '${m.id}')" class="w-full px-2.5 py-1.5 rounded-lg text-left hover:bg-red-500/10 text-red-500 flex items-center gap-2 font-semibold">
-                <svg class="w-3.5 h-3.5" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M19 7l-.867 12.142A2 2 0 0116.138 21H7.862a2 2 0 01-1.995-1.858L5 7m5 4v6m4-6v6m1-10V4a1 1 0 00-1-1h-4a1 1 0 00-1 1v3M4 7h16"/></svg>
-                Delete
-              </button>
+
+              <div id="card-menu-${escapeHtml(m.id)}" class="payee-card-menu hidden absolute right-0 ${openUpward ? 'bottom-full mb-1' : 'top-full mt-1'} w-40 theme-card-bg border rounded-xl shadow-2xl z-40 py-1 text-xs" style="border-color: var(--border-color);">
+                <button type="button" onclick="moveMerchantOrder(event, '${escapeHtml(m.id)}', -1)" ${realIdx <= 0 ? 'disabled' : ''} class="w-full px-3 py-1.5 text-left hover:bg-black/5 dark:hover:bg-white/5 flex items-center gap-2 disabled:opacity-30">
+                  <span>⬆️</span> Move Up
+                </button>
+                <button type="button" onclick="moveMerchantOrder(event, '${escapeHtml(m.id)}', 1)" ${realIdx >= merchants.length - 1 ? 'disabled' : ''} class="w-full px-3 py-1.5 text-left hover:bg-black/5 dark:hover:bg-white/5 flex items-center gap-2 disabled:opacity-30">
+                  <span>⬇️</span> Move Down
+                </button>
+                <button type="button" onclick="openEditModal(event, '${escapeHtml(m.id)}')" class="w-full px-3 py-1.5 text-left hover:bg-black/5 dark:hover:bg-white/5 flex items-center gap-2">
+                  <span>✏️</span> Edit
+                </button>
+                <button type="button" onclick="openDeletePayeeModal(event, '${escapeHtml(m.id)}')" class="w-full px-3 py-1.5 text-left hover:bg-black/5 dark:hover:bg-white/5 text-red-500 flex items-center gap-2">
+                  <span>🗑️</span> Delete
+                </button>
+              </div>
             </div>
           </div>
         `;
-        container.appendChild(card);
-      });
-    }
+      }).join('');
+    };
 
-    window.toggleCardMenu = function (e, id) {
-      e.stopPropagation();
-      const targetMenu = document.getElementById(`cardMenu-${id}`);
-      const allMenus = document.querySelectorAll('[id^="cardMenu-"]');
-      allMenus.forEach(m => {
-        if (m !== targetMenu) m.classList.add('hidden');
-      });
-      if (targetMenu) {
-        targetMenu.classList.toggle('hidden');
+    window.filterMerchants = function () {
+      const q = document.getElementById('merchantSearch')?.value || '';
+      renderMerchantList(q);
+    };
+
+    window.selectMerchant = function (id) {
+      const m = merchants.find(item => item.id === id);
+      if (!m) return;
+      selectedMerchantId = id;
+      const idx = merchants.findIndex(item => item.id === id);
+
+      const avatar = document.getElementById('activeAvatar');
+      const nameEl = document.getElementById('activeName');
+      const upiEl = document.getElementById('activeUpi');
+
+      if (avatar) {
+        avatar.textContent = getInitials(m.name);
+        avatar.className = `w-11 h-11 rounded-2xl font-black text-sm flex items-center justify-center shrink-0 border text-white shadow-md bg-gradient-to-br ${getAvatarGradient(idx)}`;
       }
+      if (nameEl) nameEl.textContent = m.name;
+      if (upiEl) upiEl.textContent = m.upi;
+
+      renderMerchantList(document.getElementById('merchantSearch')?.value || '');
+      playBeep();
     };
 
     window.moveMerchantOrder = function (e, id, direction) {
@@ -1813,1561 +1723,1178 @@
       const targetIdx = idx + direction;
       if (targetIdx < 0 || targetIdx >= merchants.length) return;
 
-      const temp = merchants[idx];
-      merchants[idx] = merchants[targetIdx];
-      merchants[targetIdx] = temp;
+      const updated = [...merchants];
+      const temp = updated[idx];
+      updated[idx] = updated[targetIdx];
+      updated[targetIdx] = temp;
 
-      saveMerchants(merchants);
+      saveMerchants(updated);
       renderMerchantList(document.getElementById('merchantSearch')?.value || '');
       populateHistoryUpiFilter();
+      showToast(direction < 0 ? '⬆️ Moved up & position saved' : '⬇️ Moved down & position saved');
       playBeep();
     };
 
-    window.handleCardEdit = function (e, id) {
-      e.stopPropagation();
-      closeAllCardMenus();
-      openEditModal(id);
-    };
-
-    window.handleCardDelete = function (e, id) {
-      e.stopPropagation();
-      closeAllCardMenus();
-      openDeletePayeeModal(id);
-    };
-
-    function closeAllCardMenus() {
-      document.querySelectorAll('[id^="cardMenu-"]').forEach(m => m.classList.add('hidden'));
+    // Modal Open / Close Helpers
+    function openModalById(modalId, cardId) {
+      const modal = document.getElementById(modalId);
+      const card = document.getElementById(cardId);
+      if (!modal) return;
+      modal.classList.remove('hidden');
+      requestAnimationFrame(() => {
+        modal.classList.remove('opacity-0');
+        if (card) {
+          card.classList.remove('scale-95');
+          card.classList.add('scale-100');
+        }
+      });
     }
 
-    function selectMerchant(id) {
-      const found = merchants.find(m => m.id === id);
-      if (!found) return;
-      selectedMerchant = found;
-
-      document.getElementById('activeName').innerText = found.name;
-      document.getElementById('activeUpi').innerText = found.upi;
-      const initials = found.name.split(' ').map(n => n[0]).join('').slice(0, 2).toUpperCase() || 'P';
-      const activeAvatar = document.getElementById('activeAvatar');
-      activeAvatar.innerText = initials;
-
-      const idx = merchants.findIndex(m => m.id === id);
-      activeAvatar.setAttribute('style', getAvatarBgStyle(idx, found.name));
-
-      renderMerchantList(document.getElementById('merchantSearch')?.value || '');
-
-      const activeCard = document.getElementById('activeMerchantCard');
-      if (activeCard) {
-        activeCard.scrollIntoView({ behavior: 'smooth', block: 'start' });
-        activeCard.classList.add('ring-2', 'ring-indigo-500', 'scale-[1.01]');
-        setTimeout(() => activeCard.classList.remove('ring-2', 'ring-indigo-500', 'scale-[1.01]'), 1200);
+    function closeModalById(modalId, cardId) {
+      const modal = document.getElementById(modalId);
+      const card = document.getElementById(cardId);
+      if (!modal) return;
+      modal.classList.add('opacity-0');
+      if (card) {
+        card.classList.remove('scale-100');
+        card.classList.add('scale-95');
       }
-      playBeep();
+      setTimeout(() => modal.classList.add('hidden'), 200);
     }
 
-    window.filterMerchants = function () {
-      const q = document.getElementById('merchantSearch').value;
-      renderMerchantList(q);
+    // Payee CRUD Modals
+    window.openAddModal = function () {
+      document.getElementById('newName').value = '';
+      document.getElementById('newUpi').value = '';
+      document.getElementById('newPhone').value = '';
+      openModalById('addModal', 'addModalCard');
+    };
+    window.closeAddModal = () => closeModalById('addModal', 'addModalCard');
+
+    window.saveNewMerchant = function () {
+      const name = document.getElementById('newName').value.trim();
+      const upi = document.getElementById('newUpi').value.trim();
+      const phone = document.getElementById('newPhone').value.trim();
+      if (!name || !upi || !upi.includes('@')) {
+        showToast('⚠️ Enter valid Business Name and UPI ID');
+        return;
+      }
+      const newEntry = {
+        id: 'm_' + Date.now(),
+        name,
+        upi,
+        phone,
+        order: merchants.length
+      };
+      const updated = [...merchants, newEntry];
+      saveMerchants(updated);
+      renderMerchantList(document.getElementById('merchantSearch')?.value || '');
+      populateHistoryUpiFilter();
+      selectMerchant(newEntry.id);
+      closeAddModal();
+      showToast('✅ Payee added successfully');
     };
 
-    window.openEditModal = function (id) {
+    window.openEditModal = function (e, id) {
+      e.stopPropagation();
+      closeAllCardMenus();
       const m = merchants.find(item => item.id === id);
       if (!m) return;
       document.getElementById('editMerchantId').value = m.id;
       document.getElementById('editName').value = m.name;
       document.getElementById('editUpi').value = m.upi;
       document.getElementById('editPhone').value = m.phone || '';
-      toggleModal('editModal', true);
+      openModalById('editModal', 'editModalCard');
     };
-
-    window.closeEditModal = function () { toggleModal('editModal', false); };
+    window.closeEditModal = () => closeModalById('editModal', 'editModalCard');
 
     window.saveEditMerchant = function () {
       const id = document.getElementById('editMerchantId').value;
       const name = document.getElementById('editName').value.trim();
       const upi = document.getElementById('editUpi').value.trim();
       const phone = document.getElementById('editPhone').value.trim();
-
-      if (!name || !upi) {
-        showToast('⚠️ Please enter Name and UPI ID');
+      if (!name || !upi || !upi.includes('@')) {
+        showToast('⚠️ Enter valid Business Name and UPI ID');
         return;
       }
-
-      const idx = merchants.findIndex(m => m.id === id);
-      if (idx !== -1) {
-        merchants[idx] = { ...merchants[idx], name, upi, phone };
-        saveMerchants(merchants);
-        renderMerchantList(document.getElementById('merchantSearch')?.value || '');
-        populateHistoryUpiFilter();
-
-        if (selectedMerchant && selectedMerchant.id === id) {
-          selectMerchant(id);
-        }
-        showToast('✅ Payee account updated');
-      }
+      const updated = merchants.map(m => m.id === id ? { ...m, name, upi, phone } : m);
+      saveMerchants(updated);
+      renderMerchantList(document.getElementById('merchantSearch')?.value || '');
+      populateHistoryUpiFilter();
+      if (selectedMerchantId === id) selectMerchant(id);
       closeEditModal();
+      showToast('✅ Payee updated');
     };
 
-    window.openDeletePayeeModal = function (id) {
+    window.openDeletePayeeModal = function (e, id) {
+      e.stopPropagation();
+      closeAllCardMenus();
       const m = merchants.find(item => item.id === id);
       if (!m) return;
       pendingDeletePayeeId = id;
-      document.getElementById('deletePayeeName').innerText = m.name;
-      document.getElementById('deletePayeeUpi').innerText = m.upi;
-      toggleModal('deletePayeeModal', true);
+      document.getElementById('deletePayeeName').textContent = m.name;
+      document.getElementById('deletePayeeUpi').textContent = m.upi;
+      openModalById('deletePayeeModal', 'deletePayeeModalCard');
     };
-
-    window.closeDeletePayeeModal = function () {
+    window.closeDeletePayeeModal = () => {
       pendingDeletePayeeId = null;
-      toggleModal('deletePayeeModal', false);
+      closeModalById('deletePayeeModal', 'deletePayeeModalCard');
     };
-
     window.confirmDeletePayee = function () {
       if (!pendingDeletePayeeId) return;
-      const id = pendingDeletePayeeId;
-      merchants = merchants.filter(m => m.id !== id);
-      saveMerchants(merchants);
+      const updated = merchants.filter(m => m.id !== pendingDeletePayeeId);
+      if (selectedMerchantId === pendingDeletePayeeId) {
+        selectedMerchantId = null;
+        document.getElementById('activeAvatar').textContent = '--';
+        document.getElementById('activeName').textContent = 'Select a merchant';
+        document.getElementById('activeUpi').textContent = '--';
+      }
+      saveMerchants(updated);
       renderMerchantList(document.getElementById('merchantSearch')?.value || '');
       populateHistoryUpiFilter();
-
-      if (selectedMerchant && selectedMerchant.id === id) {
-        selectedMerchant = null;
-        document.getElementById('activeName').innerText = 'Select a merchant';
-        document.getElementById('activeUpi').innerText = '--';
-        document.getElementById('activeAvatar').innerText = '--';
-      }
       closeDeletePayeeModal();
-      showToast('🗑️ Payee account deleted');
+      showToast('🗑️ Payee removed');
     };
 
-    window.exportUpiAccounts = function () {
-      const list = loadMerchants();
-      if (!list || list.length === 0) {
-        showToast('⚠️ No payee accounts to export');
-        return;
-      }
-      const dataStr = "data:text/json;charset=utf-8," + encodeURIComponent(JSON.stringify(list, null, 2));
-      const dlAnchor = document.createElement('a');
-      dlAnchor.setAttribute("href", dataStr);
-      dlAnchor.setAttribute("download", `Paypulse_UPI_Accounts_${Date.now()}.json`);
-      document.body.appendChild(dlAnchor);
-      dlAnchor.click();
-      dlAnchor.remove();
-      showToast('📥 UPI IDs exported successfully');
-    };
-
-    window.triggerImportUpiFile = function () {
-      const input = document.getElementById('upiFileInput');
-      if (input) {
-        input.value = '';
-        input.click();
-      }
-    };
-
-    window.handleUpiFileImport = function (event) {
-      const file = event.target.files[0];
-      if (!file) return;
-
-      const reader = new FileReader();
-      reader.onload = function(e) {
-        try {
-          const content = e.target.result;
-          let importedList = [];
-
-          if (file.name.endsWith('.json')) {
-            const parsed = JSON.parse(content);
-            if (Array.isArray(parsed)) {
-              importedList = parsed.map(item => ({
-                id: item.id || Date.now().toString() + Math.random().toString().slice(2, 5),
-                name: item.name || item.payeeName || 'Merchant',
-                upi: item.upi || item.upiId || '',
-                phone: item.phone || item.mobile || ''
-              })).filter(item => item.upi && item.upi.includes('@'));
-            }
-          } else if (file.name.endsWith('.csv')) {
-            const lines = content.split('\n');
-            lines.forEach((line, idx) => {
-              if (idx === 0 && (line.toLowerCase().includes('upi') || line.toLowerCase().includes('name'))) return;
-              const parts = line.split(',').map(s => s.trim().replace(/^"|"$/g, ''));
-              if (parts.length >= 2 && parts[0] && parts[1]) {
-                let upi = parts[0].includes('@') ? parts[0] : parts[1];
-                let name = parts[0].includes('@') ? parts[1] : parts[0];
-                let phone = parts[2] || '';
-                if (upi && upi.includes('@')) {
-                  importedList.push({
-                    id: Date.now().toString() + Math.random().toString().slice(2, 5),
-                    upi, name, phone
-                  });
-                }
-              }
-            });
-          }
-
-          if (importedList.length > 0) {
-            const currentList = loadMerchants();
-            const upiMap = new Map();
-            currentList.forEach(m => upiMap.set(m.upi.toLowerCase(), m));
-            
-            let addedCount = 0;
-            importedList.forEach(m => {
-              if (!upiMap.has(m.upi.toLowerCase())) {
-                currentList.push(m);
-                upiMap.set(m.upi.toLowerCase(), m);
-                addedCount++;
-              }
-            });
-
-            saveMerchants(currentList);
-            merchants = currentList;
-            renderMerchantList();
-            populateHistoryUpiFilter();
-            showToast(`✅ Imported ${addedCount} new UPI account(s)`);
-          } else {
-            showToast('⚠️ No valid UPI accounts found in file');
-          }
-        } catch (err) {
-          console.error('Import error:', err);
-          showToast('⚠️ Failed to parse import file');
-        }
-      };
-      reader.readAsText(file);
-    };
-
-    window.openAddModal = function () {
-      document.getElementById('newName').value = '';
-      document.getElementById('newUpi').value = '';
-      document.getElementById('newPhone').value = '';
-      toggleModal('addModal', true);
-    };
-    window.closeAddModal = function () { toggleModal('addModal', false); };
-
-    window.saveNewMerchant = function () {
-      const name = document.getElementById('newName').value.trim();
-      const upi = document.getElementById('newUpi').value.trim();
-      const phone = document.getElementById('newPhone').value.trim();
-
-      if (!name || !upi) {
-        showToast('⚠️ Please enter Name and UPI ID');
-        return;
-      }
-
-      const newM = { id: Date.now().toString(), name, upi, phone };
-      merchants.push(newM);
-      saveMerchants(merchants);
-      selectMerchant(newM.id);
-      closeAddModal();
-      showToast('✅ Payee account added');
-    };
-
-    window.openBulkAddModal = function () {
+    window.openBulkAddModal = () => {
       document.getElementById('bulkTextarea').value = '';
-      toggleModal('bulkAddModal', true);
+      openModalById('bulkAddModal', 'bulkAddModalCard');
     };
-    window.closeBulkAddModal = function () { toggleModal('bulkAddModal', false); };
+    window.closeBulkAddModal = () => closeModalById('bulkAddModal', 'bulkAddModalCard');
 
     window.saveBulkMerchants = function () {
       const raw = document.getElementById('bulkTextarea').value.trim();
       if (!raw) return;
-
-      const lines = raw.split('\n');
-      let count = 0;
-      lines.forEach(line => {
+      const lines = raw.split(/\r?\n/);
+      const added = [];
+      lines.forEach((line, idx) => {
         const parts = line.split(',').map(s => s.trim());
-        if (parts.length >= 2 && parts[0] && parts[1]) {
-          merchants.push({
-            id: (Date.now() + Math.random()).toString(),
+        if (parts.length >= 2 && parts[0].includes('@')) {
+          added.push({
+            id: 'm_' + Date.now() + '_' + idx,
             upi: parts[0],
             name: parts[1],
-            phone: parts[2] || ''
+            phone: parts[2] || '',
+            order: merchants.length + added.length
           });
-          count++;
         }
       });
-
-      if (count > 0) {
-        saveMerchants(merchants);
-        renderMerchantList();
-        populateHistoryUpiFilter();
-        showToast(`✅ Imported ${count} payee accounts`);
-        closeBulkAddModal();
-      } else {
-        showToast('⚠️ Invalid format. Use: upi, name, phone');
+      if (added.length === 0) {
+        showToast('⚠️ No valid UPI entries found');
+        return;
       }
+      saveMerchants([...merchants, ...added]);
+      renderMerchantList(document.getElementById('merchantSearch')?.value || '');
+      populateHistoryUpiFilter();
+      closeBulkAddModal();
+      showToast(`✅ Imported ${added.length} payee accounts`);
     };
 
-    window.openResetUpiModal = function () { toggleModal('resetUpiModal', true); };
-    window.closeResetUpiModal = function () { toggleModal('resetUpiModal', false); };
+    window.exportUpiAccounts = function () {
+      const blob = new Blob([JSON.stringify(merchants, null, 2)], { type: 'application/json' });
+      const url = URL.createObjectURL(blob);
+      const a = document.createElement('a');
+      a.href = url;
+      a.download = `paypulse_upi_accounts_${new Date().toISOString().slice(0, 10)}.json`;
+      a.click();
+      URL.revokeObjectURL(url);
+      showToast('📥 UPI accounts exported');
+    };
 
+    window.triggerImportUpiFile = () => document.getElementById('upiFileInput')?.click();
+
+    window.handleUpiFileImport = function (event) {
+      const file = event.target.files?.[0];
+      if (!file) return;
+      const reader = new FileReader();
+      reader.onload = (e) => {
+        try {
+          const text = String(e.target?.result || '');
+          let imported = [];
+          if (file.name.endsWith('.json')) {
+            const parsed = JSON.parse(text);
+            if (Array.isArray(parsed)) {
+              imported = parsed.filter(item => item && item.upi && item.name).map((item, i) => ({
+                id: item.id || ('m_' + Date.now() + '_' + i),
+                name: String(item.name),
+                upi: String(item.upi),
+                phone: String(item.phone || ''),
+                order: merchants.length + i
+              }));
+            }
+          } else {
+            text.split(/\r?\n/).forEach((line, i) => {
+              const cols = line.split(',').map(s => s.trim());
+              if (cols.length >= 2 && cols[0].includes('@')) {
+                imported.push({
+                  id: 'm_' + Date.now() + '_' + i,
+                  upi: cols[0],
+                  name: cols[1],
+                  phone: cols[2] || '',
+                  order: merchants.length + i
+                });
+              }
+            });
+          }
+          if (imported.length > 0) {
+            saveMerchants([...merchants, ...imported]);
+            renderMerchantList();
+            populateHistoryUpiFilter();
+            showToast(`✅ Imported ${imported.length} accounts`);
+          } else {
+            showToast('⚠️ No valid records in file');
+          }
+        } catch (err) {
+          showToast('⚠️ Failed to parse file');
+        }
+        event.target.value = '';
+      };
+      reader.readAsText(file);
+    };
+
+    window.openResetUpiModal = () => openModalById('resetUpiModal', 'resetUpiModalCard');
+    window.closeResetUpiModal = () => closeModalById('resetUpiModal', 'resetUpiModalCard');
     window.confirmResetAllMerchants = function () {
-      merchants = [];
+      selectedMerchantId = null;
+      document.getElementById('activeAvatar').textContent = '--';
+      document.getElementById('activeName').textContent = 'Select a merchant';
+      document.getElementById('activeUpi').textContent = '--';
       saveMerchants([]);
-      selectedMerchant = null;
-      document.getElementById('activeName').innerText = 'Select a merchant';
-      document.getElementById('activeUpi').innerText = '--';
-      document.getElementById('activeAvatar').innerText = '--';
       renderMerchantList();
       populateHistoryUpiFilter();
       closeResetUpiModal();
-      showToast('🧹 All payee accounts reset');
+      showToast('🗑️ All payee accounts reset');
     };
 
-    let lastGeneratedTimestamp = '';
+    // Terminal Mode & Keypad Input
+    window.setTerminalMode = function (mode) {
+      terminalMode = mode;
+      const tabQuick = document.getElementById('tabQuickMode');
+      const tabCalc = document.getElementById('tabCalcMode');
+      const quickPad = document.getElementById('quickNumpad');
+      const calcPad = document.getElementById('calcNumpad');
+      const presetRow = document.getElementById('quickPresetRow');
+      const exprDisplay = document.getElementById('calcExpressionDisplay');
 
+      if (mode === 'quick') {
+        tabQuick.className = 'flex-1 py-2 rounded-xl text-xs font-extrabold transition-all flex items-center justify-center gap-1.5 theme-accent-btn text-white shadow-md';
+        tabCalc.className = 'flex-1 py-2 rounded-xl text-xs font-extrabold transition-all flex items-center justify-center gap-1.5 opacity-60 hover:opacity-100';
+        quickPad.classList.remove('hidden');
+        presetRow.classList.remove('hidden');
+        calcPad.classList.add('hidden');
+        exprDisplay.classList.add('hidden');
+      } else {
+        tabCalc.className = 'flex-1 py-2 rounded-xl text-xs font-extrabold transition-all flex items-center justify-center gap-1.5 theme-accent-btn text-white shadow-md';
+        tabQuick.className = 'flex-1 py-2 rounded-xl text-xs font-extrabold transition-all flex items-center justify-center gap-1.5 opacity-60 hover:opacity-100';
+        quickPad.classList.add('hidden');
+        presetRow.classList.add('hidden');
+        calcPad.classList.remove('hidden');
+        exprDisplay.classList.remove('hidden');
+        calcExpression = currentAmountStr || '';
+        exprDisplay.textContent = calcExpression;
+      }
+      playBeep();
+    };
+
+    function updateAmountInputDisplay() {
+      const amountEl = document.getElementById('amount');
+      const errEl = document.getElementById('amountError');
+      if (errEl) errEl.classList.add('hidden');
+      if (amountEl) {
+        amountEl.value = formatDisplayNumber(currentAmountStr);
+      }
+    }
+
+    window.numpadPress = function (key) {
+      playBeep();
+      if (key === '.') {
+        if (currentAmountStr.includes('.')) return;
+        currentAmountStr = currentAmountStr === '' ? '0.' : currentAmountStr + '.';
+      } else {
+        if (currentAmountStr.includes('.')) {
+          const decimals = currentAmountStr.split('.')[1];
+          if (decimals.length >= 2) return;
+        }
+        if (currentAmountStr === '0' && key === '0') return;
+        if (currentAmountStr === '0' && key !== '.') {
+          currentAmountStr = key;
+        } else if (currentAmountStr.length < 10) {
+          currentAmountStr += key;
+        }
+      }
+      updateAmountInputDisplay();
+    };
+
+    window.addPresetAmount = function (val) {
+      playBeep();
+      const curr = parseFloat(currentAmountStr) || 0;
+      const next = curr + val;
+      currentAmountStr = Number.isInteger(next) ? String(next) : next.toFixed(2);
+      updateAmountInputDisplay();
+    };
+
+    window.clearAmount = function () {
+      playBeep();
+      if (currentAmountStr.length > 0) {
+        currentAmountStr = currentAmountStr.slice(0, -1);
+      }
+      updateAmountInputDisplay();
+    };
+
+    function safeEvalArithmetic(expr) {
+      const sanitized = expr.replace(/×/g, '*').replace(/÷/g, '/').replace(/[^0-9+\-*/().]/g, '');
+      if (!sanitized) return null;
+      try {
+        const result = Function('"use strict"; return (' + sanitized + ')')();
+        if (typeof result === 'number' && isFinite(result)) {
+          return Math.round(result * 100) / 100;
+        }
+      } catch (e) {}
+      return null;
+    }
+
+    window.calcPress = function (ch) {
+      playBeep();
+      calcExpression += ch;
+      const exprDisplay = document.getElementById('calcExpressionDisplay');
+      if (exprDisplay) exprDisplay.textContent = calcExpression;
+      const evaluated = safeEvalArithmetic(calcExpression);
+      if (evaluated !== null && evaluated >= 0) {
+        currentAmountStr = String(evaluated);
+        updateAmountInputDisplay();
+      }
+    };
+
+    window.calcBackspace = function () {
+      playBeep();
+      calcExpression = calcExpression.slice(0, -1);
+      const exprDisplay = document.getElementById('calcExpressionDisplay');
+      if (exprDisplay) exprDisplay.textContent = calcExpression;
+      const evaluated = safeEvalArithmetic(calcExpression);
+      currentAmountStr = evaluated !== null && evaluated >= 0 ? String(evaluated) : '';
+      updateAmountInputDisplay();
+    };
+
+    window.calcClear = function () {
+      playBeep();
+      calcExpression = '';
+      currentAmountStr = '';
+      const exprDisplay = document.getElementById('calcExpressionDisplay');
+      if (exprDisplay) exprDisplay.textContent = '';
+      updateAmountInputDisplay();
+    };
+
+    window.calcEquals = function () {
+      playBeep();
+      const evaluated = safeEvalArithmetic(calcExpression);
+      if (evaluated !== null && evaluated >= 0) {
+        currentAmountStr = String(evaluated);
+        calcExpression = String(evaluated);
+        const exprDisplay = document.getElementById('calcExpressionDisplay');
+        if (exprDisplay) exprDisplay.textContent = calcExpression;
+        updateAmountInputDisplay();
+      }
+    };
+
+    // QR Generation & Sharing
     window.generateQR = function () {
-      if (!selectedMerchant) {
+      if (!selectedMerchantId) {
         showToast('⚠️ Please select a payee account first');
         return;
       }
+      const merchant = merchants.find(m => m.id === selectedMerchantId);
+      if (!merchant) return;
 
-      const rawVal = document.getElementById('amount').value.replace(/,/g, '');
-      const numVal = parseFloat(rawVal);
-
-      if (isNaN(numVal) || numVal <= 0) {
-        document.getElementById('amountError').classList.remove('hidden');
+      const numericAmount = parseFloat(currentAmountStr);
+      const errEl = document.getElementById('amountError');
+      if (!numericAmount || numericAmount <= 0) {
+        if (errEl) errEl.classList.remove('hidden');
+        showToast('⚠️ Enter an amount greater than ₹0');
         return;
       }
-
-      document.getElementById('amountError').classList.add('hidden');
-      const formattedAmount = formatIndianCurrency(numVal);
+      if (errEl) errEl.classList.add('hidden');
 
       const now = new Date();
-      lastGeneratedTimestamp = now.toLocaleDateString('en-IN', {
-        day: '2-digit',
-        month: 'short',
-        year: 'numeric',
-        hour: '2-digit',
-        minute: '2-digit',
-        hour12: true
-      });
+      const dateStr = now.toLocaleDateString('en-IN', { day: '2-digit', month: 'short', year: 'numeric' });
+      const timeStr = now.toLocaleTimeString('en-IN', { hour: '2-digit', minute: '2-digit', hour12: true });
+      const formattedStamp = `${dateStr}, ${timeStr}`;
 
-      document.getElementById('modalPayeeName').innerText = selectedMerchant.name;
-      document.getElementById('modalPayeeUpi').innerText = selectedMerchant.upi;
-      document.getElementById('modalAmountDisplay').innerText = `₹${formattedAmount}`;
-      const modalDateText = document.getElementById('modalDateTimeText');
-      if (modalDateText) {
-        modalDateText.innerText = lastGeneratedTimestamp;
-      }
+      const upiLink = `upi://pay?pa=${encodeURIComponent(merchant.upi)}&pn=${encodeURIComponent(merchant.name)}&am=${numericAmount.toFixed(2)}&cu=INR`;
 
-      const upiUrl = `upi://pay?pa=${encodeURIComponent(selectedMerchant.upi)}&pn=${encodeURIComponent(selectedMerchant.name)}&am=${numVal.toFixed(2)}&cu=INR`;
+      lastGeneratedQrData = {
+        merchantName: merchant.name,
+        merchantUpi: merchant.upi,
+        merchantPhone: merchant.phone || '',
+        amount: numericAmount,
+        upiLink,
+        timestamp: now.toISOString(),
+        formattedStamp
+      };
+
+      document.getElementById('modalPayeeName').textContent = merchant.name;
+      document.getElementById('modalPayeeUpi').textContent = merchant.upi;
+      document.getElementById('modalDateTimeText').textContent = formattedStamp;
+      document.getElementById('modalAmountDisplay').textContent = formatRupees(numericAmount);
 
       const qrContainer = document.getElementById('qrcode');
       qrContainer.innerHTML = '';
-      qrInstance = new QRCode(qrContainer, {
-        text: upiUrl,
-        width: 200,
-        height: 200,
-        colorDark: "#000000",
-        colorLight: "#ffffff",
-        correctLevel: QRCode.CorrectLevel.H
-      });
+      if (typeof QRCode !== 'undefined') {
+        new QRCode(qrContainer, {
+          text: upiLink,
+          width: 200,
+          height: 200,
+          colorDark: '#0f172a',
+          colorLight: '#ffffff',
+          correctLevel: QRCode.CorrectLevel.H
+        });
+      }
 
-      addHistoryRecord({
-        id: Date.now().toString(),
-        merchantName: selectedMerchant.name,
-        merchantUpi: selectedMerchant.upi,
-        amount: numVal,
-        formattedAmount: formattedAmount,
+      const logEntry = {
+        id: 'tx_' + Date.now(),
+        merchantId: merchant.id,
+        merchantName: merchant.name,
+        merchantUpi: merchant.upi,
+        amount: numericAmount,
         timestamp: now.toISOString()
-      });
-
-      playBeep();
-      toggleModal('qrModal', true);
-    };
-
-    window.closeQrModal = function () {
-      toggleModal('qrModal', false);
-      resetAmountToZero();
-      window.scrollTo({ top: 0, behavior: 'smooth' });
-    };
-
-    window.copyQrLink = function () {
-      if (!selectedMerchant) return;
-      const rawVal = parseFloat(document.getElementById('amount').value.replace(/,/g, '')) || 0;
-      const upiUrl = `upi://pay?pa=${encodeURIComponent(selectedMerchant.upi)}&pn=${encodeURIComponent(selectedMerchant.name)}&am=${rawVal.toFixed(2)}&cu=INR`;
-      
-      const el = document.createElement('textarea');
-      el.value = upiUrl;
-      document.body.appendChild(el);
-      el.select();
-      document.execCommand('copy');
-      document.body.removeChild(el);
-      showToast('📋 Payment link copied to clipboard');
-    };
-
-    window.shareViaWhatsapp = function () {
-      if (!selectedMerchant) return;
-      const phone = (selectedMerchant.phone || '').replace(/[^0-9]/g, '');
-      if (phone.length >= 10) {
-        const fullPhone = phone.length === 10 ? '91' + phone : phone;
-        window.open(`https://api.whatsapp.com/send?phone=${fullPhone}`, '_blank');
-      } else {
-        window.open('https://api.whatsapp.com/send', '_blank');
-      }
-    };
-
-    function generateCardCanvas(callback) {
-      if (!selectedMerchant) return;
-      const rawVal = parseFloat(document.getElementById('amount').value.replace(/,/g, '')) || 0;
-      const formattedAmount = formatIndianCurrency(rawVal);
-
-      const canvas = document.createElement('canvas');
-      canvas.width = 720;
-      canvas.height = 1040;
-      const ctx = canvas.getContext('2d');
-
-      const grad = ctx.createLinearGradient(0, 0, 720, 1040);
-      grad.addColorStop(0, '#0f172a');
-      grad.addColorStop(1, '#1e1b4b');
-      ctx.fillStyle = grad;
-      ctx.fillRect(0, 0, 720, 1040);
-
-      ctx.strokeStyle = 'rgba(99, 102, 241, 0.4)';
-      ctx.lineWidth = 6;
-      ctx.strokeRect(30, 30, 660, 980);
-
-      ctx.fillStyle = '#818cf8';
-      ctx.font = 'bold 24px Inter, sans-serif';
-      ctx.textAlign = 'center';
-      ctx.fillText('OFFICIAL UPI PAYMENT CARD', 360, 85);
-
-      ctx.fillStyle = '#ffffff';
-      ctx.font = 'bold 36px Inter, sans-serif';
-      ctx.fillText(selectedMerchant.name, 360, 145);
-
-      ctx.fillStyle = '#94a3b8';
-      ctx.font = '22px JetBrains Mono, monospace';
-      ctx.fillText(selectedMerchant.upi, 360, 185);
-
-      const cardTimestamp = lastGeneratedTimestamp || new Date().toLocaleDateString('en-IN', {
-        day: '2-digit',
-        month: 'short',
-        year: 'numeric',
-        hour: '2-digit',
-        minute: '2-digit',
-        hour12: true
-      });
-      ctx.fillStyle = '#a5b4fc';
-      ctx.font = '600 18px JetBrains Mono, monospace';
-      ctx.fillText(`DATE & TIME: ${cardTimestamp}`, 360, 222);
-
-      ctx.fillStyle = '#ffffff';
-      ctx.beginPath();
-      if (ctx.roundRect) {
-        ctx.roundRect(180, 250, 360, 360, 24);
-      } else {
-        ctx.rect(180, 250, 360, 360);
-      }
-      ctx.fill();
-
-      const drawQRAndFinish = () => {
-        const qrCanvas = document.querySelector('#qrcode canvas');
-        const qrImg = document.querySelector('#qrcode img');
-
-        if (qrCanvas && qrCanvas.width > 0) {
-          ctx.drawImage(qrCanvas, 195, 265, 330, 330);
-          finishCanvas();
-        } else if (qrImg && qrImg.src && qrImg.src.length > 10) {
-          if (qrImg.complete && qrImg.naturalWidth > 0) {
-            ctx.drawImage(qrImg, 195, 265, 330, 330);
-            finishCanvas();
-          } else {
-            const img = new Image();
-            img.onload = () => {
-              ctx.drawImage(img, 195, 265, 330, 330);
-              finishCanvas();
-            };
-            img.onerror = () => finishCanvas();
-            img.src = qrImg.src;
-          }
-        } else {
-          finishCanvas();
-        }
       };
+      saveHistory([logEntry, ...historyLogs]);
+      renderHistory();
+      updateTodayTotal();
+      updateFilteredUpiEarningsCard();
 
-      function finishCanvas() {
-        ctx.fillStyle = 'rgba(255, 255, 255, 0.08)';
-        ctx.beginPath();
-        if (ctx.roundRect) {
-          ctx.roundRect(100, 650, 520, 140, 20);
-        } else {
-          ctx.rect(100, 650, 520, 140);
-        }
-        ctx.fill();
+      openModalById('qrModal', 'qrModalCard');
+      playBeep();
+    };
+
+    window.closeQrModal = () => closeModalById('qrModal', 'qrModalCard');
+
+    function buildReceiptCanvas() {
+      return new Promise((resolve) => {
+        const canvas = document.createElement('canvas');
+        canvas.width = 720;
+        canvas.height = 1040;
+        const ctx = canvas.getContext('2d');
+
+        ctx.fillStyle = '#0f172a';
+        ctx.fillRect(0, 0, canvas.width, canvas.height);
+
+        ctx.fillStyle = '#4f46e5';
+        ctx.fillRect(0, 0, canvas.width, 160);
+
+        ctx.fillStyle = '#ffffff';
+        ctx.font = 'bold 34px Inter, sans-serif';
+        ctx.textAlign = 'center';
+        ctx.fillText('Paypulse POS Payment Request', 360, 75);
+        ctx.font = '20px Inter, sans-serif';
+        ctx.fillStyle = '#e0e7ff';
+        ctx.fillText(lastGeneratedQrData?.formattedStamp || '', 360, 118);
+
+        ctx.fillStyle = '#ffffff';
+        ctx.font = 'bold 36px Inter, sans-serif';
+        ctx.fillText(lastGeneratedQrData?.merchantName || 'Merchant', 360, 235);
 
         ctx.fillStyle = '#94a3b8';
-        ctx.font = 'bold 20px Inter, sans-serif';
-        ctx.fillText('PAYABLE AMOUNT', 360, 690);
+        ctx.font = '24px monospace';
+        ctx.fillText(lastGeneratedQrData?.merchantUpi || '', 360, 278);
+
+        ctx.fillStyle = '#ffffff';
+        ctx.beginPath();
+        ctx.roundRect(160, 320, 400, 400, 28);
+        ctx.fill();
+
+        const qrImg = document.querySelector('#qrcode img') || document.querySelector('#qrcode canvas');
+        if (qrImg) {
+          ctx.drawImage(qrImg, 190, 350, 340, 340);
+        }
 
         ctx.fillStyle = '#34d399';
-        ctx.font = 'bold 56px JetBrains Mono, monospace';
-        ctx.fillText(`₹${formattedAmount}`, 360, 755);
+        ctx.font = 'bold 64px monospace';
+        ctx.fillText(formatRupees(lastGeneratedQrData?.amount || 0), 360, 815);
+
+        ctx.fillStyle = '#94a3b8';
+        ctx.font = '22px Inter, sans-serif';
+        ctx.fillText('Scan with GPay, PhonePe, Paytm or any UPI App', 360, 880);
 
         ctx.fillStyle = '#64748b';
         ctx.font = '18px Inter, sans-serif';
-        ctx.fillText('Scan with GPay, PhonePe, Paytm, BHIM, Cred or Any UPI App', 360, 860);
+        ctx.fillText('Generated via Paypulse v11c POS Terminal', 360, 980);
 
-        ctx.fillStyle = '#475569';
-        ctx.font = '14px Inter, sans-serif';
-        ctx.fillText('Generated via Paypulse v11c POS Terminal', 360, 950);
-
-        canvas.toBlob((blob) => {
-          callback(blob, canvas.toDataURL('image/png'));
-        }, 'image/png');
-      }
-
-      drawQRAndFinish();
+        resolve(canvas);
+      });
     }
 
-    window.shareQrCardImage = function () {
-      generateCardCanvas((blob) => {
-        if (!blob) return;
-        const file = new File([blob], `Payment_QR_${Date.now()}.png`, { type: 'image/png' });
-
-        if (navigator.canShare && navigator.canShare({ files: [file] })) {
-          navigator.share({
-            title: `Payment QR - ${selectedMerchant.name}`,
-            text: `Scan to pay ₹${document.getElementById('modalAmountDisplay').innerText} to ${selectedMerchant.name}`,
-            files: [file]
-          }).catch(() => {});
-        } else {
-          downloadQrImage();
-        }
-      });
+    window.downloadQrImage = async function () {
+      const canvas = await buildReceiptCanvas();
+      const a = document.createElement('a');
+      a.href = canvas.toDataURL('image/png');
+      a.download = `Paypulse_QR_${Date.now()}.png`;
+      a.click();
+      showToast('📥 Payment QR Card saved');
     };
 
-    window.downloadQrImage = function () {
-      generateCardCanvas((blob, dataUrl) => {
-        const a = document.createElement('a');
-        a.href = dataUrl;
-        a.download = `Paypulse_QR_${selectedMerchant ? selectedMerchant.name.replace(/\s+/g, '_') : 'Receipt'}.png`;
-        document.body.appendChild(a);
-        a.click();
-        document.body.removeChild(a);
-        showToast('📥 Payment card saved to downloads');
-      });
+    window.shareQrCardImage = async function () {
+      try {
+        const canvas = await buildReceiptCanvas();
+        canvas.toBlob(async (blob) => {
+          if (!blob) return;
+          const file = new File([blob], 'Paypulse_Payment_QR.png', { type: 'image/png' });
+          if (navigator.canShare && navigator.canShare({ files: [file] })) {
+            await navigator.share({
+              title: 'UPI Payment Request',
+              text: `Pay ${formatRupees(lastGeneratedQrData?.amount || 0)} to ${lastGeneratedQrData?.merchantName} (${lastGeneratedQrData?.merchantUpi})`,
+              files: [file]
+            });
+          } else {
+            downloadQrImage();
+          }
+        });
+      } catch (e) {
+        downloadQrImage();
+      }
+    };
+
+    window.shareViaWhatsapp = function () {
+      if (!lastGeneratedQrData) return;
+      const msg = `Payment Request from *${lastGeneratedQrData.merchantName}*\nUPI ID: ${lastGeneratedQrData.merchantUpi}\nAmount: *${formatRupees(lastGeneratedQrData.amount)}*\nPay Link: ${lastGeneratedQrData.upiLink}`;
+      const phone = (lastGeneratedQrData.merchantPhone || '').replace(/\D/g, '');
+      const url = phone.length >= 10
+        ? `https://wa.me/91${phone.slice(-10)}?text=${encodeURIComponent(msg)}`
+        : `https://wa.me/?text=${encodeURIComponent(msg)}`;
+      window.open(url, '_blank');
+    };
+
+    window.copyQrLink = function () {
+      if (!lastGeneratedQrData) return;
+      const temp = document.createElement('textarea');
+      temp.value = lastGeneratedQrData.upiLink;
+      document.body.appendChild(temp);
+      temp.select();
+      document.execCommand('copy');
+      temp.remove();
+      showToast('📋 UPI payment link copied');
     };
 
     window.printReceipt = function () {
       window.print();
     };
 
-    function loadHistory() {
-      populateHistoryUpiFilter();
-      renderHistoryList();
-      updateTodayTotal();
-    }
-
-    function addHistoryRecord(rec) {
-      history.unshift(rec);
-      saveHistory();
-    }
-
-    window.reuseTransaction = function (id) {
-      const rec = history.find(h => h.id === id);
-      if (!rec) return;
-
-      const upi = rec.merchantUpi || rec.upiId || rec.upi;
-      const name = rec.merchantName || rec.payeeName || 'Payee Account';
-      const amt = rec.amount;
-
-      let found = merchants.find(m => m.upi.toLowerCase() === (upi || '').toLowerCase());
-      if (!found) {
-        found = {
-          id: Date.now().toString(),
-          name: name,
-          upi: upi || '',
-          phone: ''
-        };
-        merchants.push(found);
-        saveMerchants(merchants);
-        renderMerchantList();
-      }
-
-      selectMerchant(found.id);
-
-      if (amt && amt > 0) {
-        const isInteger = amt % 1 === 0;
-        const formatted = isInteger ? formatInputValue(amt.toString()) : formatIndianCurrency(amt);
-        document.getElementById('amount').value = formatted;
-        calcExpression = amt.toString();
-        if (terminalMode === 'calc') {
-          updateCalcUI();
-        }
-        document.getElementById('amountError').classList.add('hidden');
-      }
-
-      window.scrollTo({ top: 0, behavior: 'smooth' });
-      showToast(`🔄 Reused: ₹${formatIndianCurrency(amt || 0)} for ${found.name}`);
-      playBeep();
-    };
-
-    window.openDeleteLogModal = function (id) {
-      const rec = history.find(h => h.id === id);
-      if (!rec) return;
-      pendingDeleteLogId = id;
-
-      const name = rec.merchantName || rec.payeeName || 'Payee Account';
-      const amt = rec.formattedAmount || formatIndianCurrency(rec.amount || 0);
-
-      const label = document.getElementById('deleteLogLabel');
-      if (label) {
-        label.innerText = `${name} (₹${amt})`;
-      }
-      toggleModal('deleteLogModal', true);
-    };
-
-    window.closeDeleteLogModal = function () {
-      pendingDeleteLogId = null;
-      toggleModal('deleteLogModal', false);
-    };
-
-    window.confirmDeleteLog = function () {
-      if (!pendingDeleteLogId) return;
-      history = history.filter(h => h.id !== pendingDeleteLogId);
-      saveHistory();
-      closeDeleteLogModal();
-      showToast('🗑️ Transaction log entry deleted');
-    };
-
-    function getLocalDateStr(dateInput) {
-      const d = new Date(dateInput);
-      const year = d.getFullYear();
-      const month = String(d.getMonth() + 1).padStart(2, '0');
-      const day = String(d.getDate()).padStart(2, '0');
-      return `${year}-${month}-${day}`;
-    }
-
+    // Transaction History Filtering & Analytics
     function getFilteredHistory() {
-      const timeFilter = document.getElementById('filterTime')?.value || 'all';
-      const upiFilter = document.getElementById('filterUpi')?.value || 'all';
-      const fromDateVal = document.getElementById('customFromDate')?.value || '';
-      const toDateVal = document.getElementById('customToDate')?.value || '';
-
       const now = new Date();
-      const todayStr = getLocalDateStr(now);
+      const startOfToday = new Date(now.getFullYear(), now.getMonth(), now.getDate()).getTime();
+      const startOfWeek = startOfToday - (now.getDay() * 86400000);
+      const fromVal = document.getElementById('customFromDate')?.value;
+      const toVal = document.getElementById('customToDate')?.value;
 
-      return history.filter(item => {
-        const itemDate = new Date(item.timestamp);
-        const itemDateStr = getLocalDateStr(itemDate);
-        const itemUpi = item.merchantUpi || item.upiId || item.upi;
-
-        if (timeFilter === 'today' && itemDateStr !== todayStr) return false;
-        if (timeFilter === 'week') {
-          const diffDays = (now - itemDate) / (1000 * 3600 * 24);
-          if (diffDays > 7) return false;
+      return historyLogs.filter(tx => {
+        if (currentUpiFilter !== 'all' && tx.merchantUpi !== currentUpiFilter) {
+          return false;
         }
-        if (timeFilter === 'custom') {
-          if (fromDateVal && itemDateStr < fromDateVal) return false;
-          if (toDateVal && itemDateStr > toDateVal) return false;
+        const txTime = new Date(tx.timestamp).getTime();
+        if (currentTimeFilter === 'today') {
+          return txTime >= startOfToday;
         }
-
-        if (upiFilter !== 'all' && itemUpi !== upiFilter) return false;
-
+        if (currentTimeFilter === 'week') {
+          return txTime >= startOfWeek;
+        }
+        if (currentTimeFilter === 'custom') {
+          if (fromVal) {
+            const fromTs = new Date(fromVal + 'T00:00:00').getTime();
+            if (txTime < fromTs) return false;
+          }
+          if (toVal) {
+            const toTs = new Date(toVal + 'T23:59:59').getTime();
+            if (txTime > toTs) return false;
+          }
+        }
         return true;
       });
     }
 
+    function updateTodayTotal() {
+      const now = new Date();
+      const startOfToday = new Date(now.getFullYear(), now.getMonth(), now.getDate()).getTime();
+      const total = historyLogs
+        .filter(tx => new Date(tx.timestamp).getTime() >= startOfToday)
+        .reduce((sum, tx) => sum + (parseFloat(tx.amount) || 0), 0);
+      const el = document.getElementById('headerTodayTotal');
+      if (el) el.textContent = formatRupees(total);
+    }
+
+    window.selectCustomTime = function (val, label) {
+      currentTimeFilter = val;
+      animateCloseDropdown(document.getElementById('customDropdownTimeMenu'));
+      const dateBox = document.getElementById('customDateInputContainer');
+      const labelEl = document.getElementById('customDropdownTimeLabel');
+
+      if (val === 'custom') {
+        dateBox?.classList.remove('hidden');
+        const todayIso = new Date().toISOString().slice(0, 10);
+        const fromInput = document.getElementById('customFromDate');
+        const toInput = document.getElementById('customToDate');
+        if (fromInput && !fromInput.value) fromInput.value = todayIso;
+        if (toInput && !toInput.value) toInput.value = todayIso;
+        onCustomDateRangeChanged();
+        return;
+      } else {
+        dateBox?.classList.add('hidden');
+        if (labelEl) labelEl.textContent = label;
+      }
+      renderHistory();
+      updateFilteredUpiEarningsCard();
+    };
+
+    window.onCustomDateRangeChanged = function () {
+      const fromVal = document.getElementById('customFromDate')?.value;
+      const toVal = document.getElementById('customToDate')?.value;
+      const labelEl = document.getElementById('customDropdownTimeLabel');
+      if (labelEl && fromVal && toVal) {
+        const fShort = fromVal.split('-').reverse().slice(0, 2).join('/');
+        const tShort = toVal.split('-').reverse().slice(0, 2).join('/');
+        labelEl.textContent = `${fShort} → ${tShort}`;
+      }
+      renderHistory();
+      updateFilteredUpiEarningsCard();
+      if (!document.getElementById('filteredEarningsDetailsModal')?.classList.contains('hidden')) {
+        renderCompactTransactionList();
+      }
+    };
+
+    window.selectCustomUpi = function (upi, label) {
+      currentUpiFilter = upi;
+      currentUpiFilterLabel = label;
+      animateCloseDropdown(document.getElementById('customDropdownUpiMenu'));
+      const labelEl = document.getElementById('customDropdownUpiLabel');
+      if (labelEl) labelEl.textContent = label;
+      renderHistory();
+      updateFilteredUpiEarningsCard();
+    };
+
+    window.populateHistoryUpiFilter = function () {
+      const menu = document.getElementById('customDropdownUpiMenu');
+      if (!menu) return;
+      const uniqueMap = new Map();
+      merchants.forEach(m => uniqueMap.set(m.upi, m.name));
+      historyLogs.forEach(tx => {
+        if (!uniqueMap.has(tx.merchantUpi)) uniqueMap.set(tx.merchantUpi, tx.merchantName);
+      });
+
+      let html = `
+        <div onclick="selectCustomUpi('all', 'All Accounts')" class="px-3 py-2 text-xs font-semibold hover:bg-black/5 dark:hover:bg-white/5 cursor-pointer flex items-center justify-between">
+          <span>All Accounts</span>
+        </div>
+      `;
+      uniqueMap.forEach((name, upi) => {
+        html += `
+          <div onclick="selectCustomUpi('${escapeHtml(upi)}', '${escapeHtml(name)}')" class="px-3 py-2 text-xs hover:bg-black/5 dark:hover:bg-white/5 cursor-pointer border-t border-slate-200/30 dark:border-slate-800/40">
+            <div class="font-bold truncate">${escapeHtml(name)}</div>
+            <div class="text-[10px] font-mono opacity-60 truncate">${escapeHtml(upi)}</div>
+          </div>
+        `;
+      });
+      menu.innerHTML = html;
+    };
+
     function updateFilteredUpiEarningsCard() {
       const card = document.getElementById('filteredUpiEarningsCard');
       if (!card) return;
-
-      const upiFilter = document.getElementById('filterUpi')?.value || 'all';
-      if (upiFilter === 'all') {
+      if (currentUpiFilter === 'all') {
         card.classList.add('hidden');
         return;
       }
+      const filtered = getFilteredHistory();
+      const total = filtered.reduce((sum, tx) => sum + (parseFloat(tx.amount) || 0), 0);
+      const m = merchants.find(item => item.upi === currentUpiFilter);
+      const displayName = m ? m.name : (filtered[0]?.merchantName || currentUpiFilterLabel);
+      const mIdx = merchants.findIndex(item => item.upi === currentUpiFilter);
 
-      const filteredLogs = getFilteredHistory();
-      const totalAmount = filteredLogs.reduce((sum, item) => sum + (item.amount || 0), 0);
-
-      let merchantName = upiFilter;
-      let merchantIndex = -1;
-      const foundMerchant = merchants.find((m, idx) => {
-        if (m.upi === upiFilter) {
-          merchantIndex = idx;
-          return true;
-        }
-        return false;
-      });
-
-      if (foundMerchant) {
-        merchantName = foundMerchant.name;
-      } else if (filteredLogs.length > 0) {
-        merchantName = filteredLogs[0].merchantName || filteredLogs[0].payeeName || upiFilter;
-      }
-
-      const initials = merchantName.split(' ').map(n => n[0]).join('').slice(0, 2).toUpperCase() || 'P';
-      const avatarEl = document.getElementById('filteredUpiAvatar');
-      if (avatarEl) {
-        avatarEl.innerText = initials;
-        avatarEl.setAttribute('style', getAvatarBgStyle(merchantIndex, merchantName));
-      }
-
-      const timeLabelEl = document.getElementById('customDropdownTimeLabel');
-      const timeBadgeEl = document.getElementById('filteredUpiTimeBadge');
-      if (timeBadgeEl && timeLabelEl) {
-        timeBadgeEl.innerText = timeLabelEl.innerText || 'All Time';
-      }
-
-      document.getElementById('filteredUpiName').innerText = merchantName;
-      document.getElementById('filteredUpiHandle').innerText = upiFilter;
-      document.getElementById('filteredUpiTotal').innerText = `₹${formatIndianCurrency(totalAmount)}`;
-      document.getElementById('filteredUpiCount').innerText = `${filteredLogs.length} ${filteredLogs.length === 1 ? 'payment' : 'payments'}`;
+      document.getElementById('filteredUpiAvatar').textContent = getInitials(displayName);
+      document.getElementById('filteredUpiAvatar').className = `w-11 h-11 rounded-2xl font-black text-sm flex items-center justify-center shrink-0 border text-white shadow-md bg-gradient-to-br ${getAvatarGradient(mIdx >= 0 ? mIdx : 0)}`;
+      document.getElementById('filteredUpiName').textContent = displayName;
+      document.getElementById('filteredUpiHandle').textContent = currentUpiFilter;
+      document.getElementById('filteredUpiTimeBadge').textContent = document.getElementById('customDropdownTimeLabel')?.textContent || 'All Time';
+      document.getElementById('filteredUpiCount').textContent = `${filtered.length} payment${filtered.length === 1 ? '' : 's'}`;
+      document.getElementById('filteredUpiTotal').textContent = formatRupees(total);
 
       card.classList.remove('hidden');
-
-      const compactModal = document.getElementById('filteredEarningsDetailsModal');
-      if (compactModal && !compactModal.classList.contains('hidden')) {
-        renderCompactFilteredTransactions();
-      }
     }
 
-    window.openFilteredEarningsDetailsModal = function () {
-      const upiFilter = document.getElementById('filterUpi')?.value || 'all';
-      if (upiFilter === 'all') return;
-      renderCompactFilteredTransactions();
-      toggleModal('filteredEarningsDetailsModal', true);
-    };
+    function renderHistory() {
+      const listEl = document.getElementById('historyList');
+      if (!listEl) return;
+      const items = getFilteredHistory();
 
-    window.closeFilteredEarningsDetailsModal = function () {
-      toggleModal('filteredEarningsDetailsModal', false);
-    };
-
-    window.shareFilteredEarningsSummary = function () {
-      const upiFilter = document.getElementById('filterUpi')?.value || 'all';
-      if (upiFilter === 'all') return;
-
-      const filteredLogs = getFilteredHistory();
-      const totalAmount = filteredLogs.reduce((sum, item) => sum + (item.amount || 0), 0);
-
-      let merchantName = upiFilter;
-      const foundMerchant = merchants.find(m => m.upi === upiFilter);
-      if (foundMerchant) {
-        merchantName = foundMerchant.name;
-      } else if (filteredLogs.length > 0) {
-        merchantName = filteredLogs[0].merchantName || filteredLogs[0].payeeName || upiFilter;
-      }
-
-      const periodLabel = document.getElementById('customDropdownTimeLabel')?.innerText || 'All Time';
-
-      let summaryText = `📊 *Paypulse Payee Earnings Summary*\n`;
-      summaryText += `👤 Payee: *${merchantName}*\n`;
-      summaryText += `🏦 UPI ID: ${upiFilter}\n`;
-      summaryText += `📅 Filter: ${periodLabel}\n`;
-      summaryText += `💰 Total Earnings: *₹${formatIndianCurrency(totalAmount)}* (${filteredLogs.length} ${filteredLogs.length === 1 ? 'tx' : 'txns'})\n`;
-
-      if (filteredLogs.length > 0) {
-        summaryText += `\n🧾 *Transactions:*\n`;
-        filteredLogs.slice(0, 15).forEach((rec, i) => {
-          const d = new Date(rec.timestamp);
-          const dateFmt = d.toLocaleDateString('en-IN', { day: '2-digit', month: 'short', hour: '2-digit', minute: '2-digit' });
-          const amtFmt = rec.formattedAmount || formatIndianCurrency(rec.amount || 0);
-          summaryText += `${i + 1}. ${dateFmt} — ₹${amtFmt}\n`;
-        });
-        if (filteredLogs.length > 15) {
-          summaryText += `...and ${filteredLogs.length - 15} more transaction(s)\n`;
-        }
-      }
-
-      if (navigator.share) {
-        navigator.share({
-          title: `${merchantName} - Paypulse Earnings`,
-          text: summaryText
-        }).catch(() => {});
-      } else {
-        const el = document.createElement('textarea');
-        el.value = summaryText;
-        document.body.appendChild(el);
-        el.select();
-        document.execCommand('copy');
-        document.body.removeChild(el);
-        showToast('📋 Earnings report copied to clipboard');
-      }
-    };
-
-    function renderCompactFilteredTransactions() {
-      const upiFilter = document.getElementById('filterUpi')?.value || 'all';
-      if (upiFilter === 'all') {
-        closeFilteredEarningsDetailsModal();
-        return;
-      }
-
-      const filteredLogs = getFilteredHistory();
-      const totalAmount = filteredLogs.reduce((sum, item) => sum + (item.amount || 0), 0);
-
-      let merchantName = upiFilter;
-      let merchantIndex = -1;
-      const foundMerchant = merchants.find((m, idx) => {
-        if (m.upi === upiFilter) {
-          merchantIndex = idx;
-          return true;
-        }
-        return false;
-      });
-      if (foundMerchant) {
-        merchantName = foundMerchant.name;
-      } else if (filteredLogs.length > 0) {
-        merchantName = filteredLogs[0].merchantName || filteredLogs[0].payeeName || upiFilter;
-      }
-
-      const initials = merchantName.split(' ').map(n => n[0]).join('').slice(0, 2).toUpperCase() || 'P';
-      const avatarEl = document.getElementById('compactModalAvatar');
-      if (avatarEl) {
-        avatarEl.innerText = initials;
-        avatarEl.setAttribute('style', getAvatarBgStyle(merchantIndex, merchantName));
-      }
-
-      document.getElementById('compactModalPayeeName').innerText = merchantName;
-      document.getElementById('compactModalPayeeUpi').innerText = upiFilter;
-      document.getElementById('compactModalCount').innerText = `${filteredLogs.length} ${filteredLogs.length === 1 ? 'transaction' : 'transactions'}`;
-      document.getElementById('compactModalTotal').innerText = `₹${formatIndianCurrency(totalAmount)}`;
-
-      const listEl = document.getElementById('compactTransactionList');
-      listEl.innerHTML = '';
-
-      if (filteredLogs.length === 0) {
-        listEl.innerHTML = `<div class="text-center py-6 opacity-60 text-xs">No transactions found in this period.</div>`;
-        return;
-      }
-
-      filteredLogs.forEach(rec => {
-        const d = new Date(rec.timestamp);
-        const dateFormatted = d.toLocaleDateString('en-IN', {
-          day: '2-digit',
-          month: 'short',
-          year: 'numeric',
-          hour: '2-digit',
-          minute: '2-digit'
-        });
-        const amt = rec.formattedAmount || formatIndianCurrency(rec.amount || 0);
-
-        const row = document.createElement('div');
-        row.className = 'theme-sub-bg border rounded-xl px-3 py-2 flex items-center justify-between gap-2 text-xs';
-        row.style.borderColor = 'var(--border-color)';
-
-        row.innerHTML = `
-          <div class="min-w-0">
-            <div class="font-mono text-[11px] font-semibold opacity-90 truncate">${dateFormatted}</div>
+      if (items.length === 0) {
+        listEl.innerHTML = `
+          <div class="col-span-full text-center py-10 opacity-60 text-xs">
+            No transaction logs match the current filter.
           </div>
-          <div class="flex items-center gap-2.5 shrink-0">
-            <span class="font-mono font-black text-emerald-500 text-xs sm:text-sm">₹${amt}</span>
-            <div class="flex items-center gap-1 border-l pl-2 border-slate-200/40 dark:border-slate-700/60">
-              <button onclick="openEditLogModal('${rec.id}')" class="p-1.5 rounded-lg hover:bg-black/10 dark:hover:bg-white/10 theme-accent-text transition" title="Edit Amount">
+        `;
+        return;
+      }
+
+      listEl.innerHTML = items.map(tx => {
+        const d = new Date(tx.timestamp);
+        const dtLabel = d.toLocaleDateString('en-IN', { day: '2-digit', month: 'short' }) + ' • ' + d.toLocaleTimeString('en-IN', { hour: '2-digit', minute: '2-digit', hour12: true });
+        return `
+          <div class="theme-sub-bg border rounded-2xl p-3.5 flex items-center justify-between gap-3 transition hover:border-indigo-500/40" style="border-color: var(--border-color);">
+            <div class="min-w-0">
+              <div class="text-xs font-extrabold truncate">${escapeHtml(tx.merchantName)}</div>
+              <div class="text-[10px] font-mono opacity-65 truncate">${escapeHtml(tx.merchantUpi)}</div>
+              <div class="text-[10px] opacity-55 mt-1 font-mono">${dtLabel}</div>
+            </div>
+            <div class="text-right shrink-0 flex flex-col items-end gap-1.5">
+              <span class="text-sm font-black font-mono text-emerald-500">${formatRupees(tx.amount)}</span>
+              <div class="flex items-center gap-1">
+                <button onclick="reuseHistoryTx('${escapeHtml(tx.id)}')" class="px-2 py-1 rounded-lg theme-keypad border text-[10px] font-bold" style="border-color: var(--border-color);" title="Reuse Amount & Payee">Reuse</button>
+                <button onclick="openDeleteLogModal('${escapeHtml(tx.id)}')" class="p-1 rounded-lg bg-red-500/10 text-red-500 hover:bg-red-500/20" title="Delete Log">
+                  <svg class="w-3.5 h-3.5" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M19 7l-.867 12.142A2 2 0 0116.138 21H7.862a2 2 0 01-1.995-1.858L5 7m5 4v6m4-6v6m1-10V4a1 1 0 00-1-1h-4a1 1 0 00-1 1v3M4 7h16"/></svg>
+                </button>
+              </div>
+            </div>
+          </div>
+        `;
+      }).join('');
+    }
+
+    window.reuseHistoryTx = function (id) {
+      const tx = historyLogs.find(item => item.id === id);
+      if (!tx) return;
+      const m = merchants.find(item => item.upi === tx.merchantUpi);
+      if (m) selectMerchant(m.id);
+      currentAmountStr = Number.isInteger(tx.amount) ? String(tx.amount) : Number(tx.amount).toFixed(2);
+      updateAmountInputDisplay();
+      window.scrollTo({ top: 0, behavior: 'smooth' });
+      showToast('⚡ Transaction loaded into terminal');
+    };
+
+    window.openDeleteLogModal = function (id) {
+      const tx = historyLogs.find(item => item.id === id);
+      if (!tx) return;
+      pendingDeleteLogId = id;
+      document.getElementById('deleteLogLabel').textContent = `${tx.merchantName} (${formatRupees(tx.amount)})`;
+      openModalById('deleteLogModal', 'deleteLogModalCard');
+    };
+    window.closeDeleteLogModal = () => {
+      pendingDeleteLogId = null;
+      closeModalById('deleteLogModal', 'deleteLogModalCard');
+    };
+    window.confirmDeleteLog = function () {
+      if (!pendingDeleteLogId) return;
+      saveHistory(historyLogs.filter(tx => tx.id !== pendingDeleteLogId));
+      renderHistory();
+      updateTodayTotal();
+      updateFilteredUpiEarningsCard();
+      if (!document.getElementById('filteredEarningsDetailsModal')?.classList.contains('hidden')) {
+        renderCompactTransactionList();
+      }
+      closeDeleteLogModal();
+      showToast('🗑️ Log entry deleted');
+    };
+
+    window.openClearHistoryModal = () => openModalById('clearHistoryModal', 'clearHistoryModalCard');
+    window.closeClearHistoryModal = () => closeModalById('clearHistoryModal', 'clearHistoryModalCard');
+    window.confirmClearHistory = function () {
+      saveHistory([]);
+      renderHistory();
+      updateTodayTotal();
+      updateFilteredUpiEarningsCard();
+      closeClearHistoryModal();
+      showToast('🗑️ Transaction history cleared');
+    };
+
+    window.exportHistoryCSV = function () {
+      const rows = [['Date & Time', 'Payee Name', 'UPI ID', 'Amount (INR)']];
+      getFilteredHistory().forEach(tx => {
+        rows.push([
+          new Date(tx.timestamp).toLocaleString('en-IN'),
+          `"${(tx.merchantName || '').replace(/"/g, '""')}"`,
+          tx.merchantUpi,
+          Number(tx.amount).toFixed(2)
+        ]);
+      });
+      const csv = rows.map(r => r.join(',')).join('\n');
+      const blob = new Blob([csv], { type: 'text/csv;charset=utf-8;' });
+      const url = URL.createObjectURL(blob);
+      const a = document.createElement('a');
+      a.href = url;
+      a.download = `paypulse_transactions_${new Date().toISOString().slice(0, 10)}.csv`;
+      a.click();
+      URL.revokeObjectURL(url);
+      showToast('📥 CSV report downloaded');
+    };
+
+    // Compact Filtered Earnings Modal & Edit Log
+    function renderCompactTransactionList() {
+      const items = getFilteredHistory();
+      const total = items.reduce((sum, tx) => sum + (parseFloat(tx.amount) || 0), 0);
+      const m = merchants.find(item => item.upi === currentUpiFilter);
+      const displayName = m ? m.name : (items[0]?.merchantName || currentUpiFilterLabel);
+      const mIdx = merchants.findIndex(item => item.upi === currentUpiFilter);
+
+      document.getElementById('compactModalAvatar').textContent = getInitials(displayName);
+      document.getElementById('compactModalAvatar').className = `w-9 h-9 rounded-xl font-black text-xs flex items-center justify-center shrink-0 border text-white shadow bg-gradient-to-br ${getAvatarGradient(mIdx >= 0 ? mIdx : 0)}`;
+      document.getElementById('compactModalPayeeName').textContent = displayName;
+      document.getElementById('compactModalPayeeUpi').textContent = currentUpiFilter;
+      document.getElementById('compactModalCount').textContent = `${items.length} transaction${items.length === 1 ? '' : 's'}`;
+      document.getElementById('compactModalTotal').textContent = formatRupees(total);
+
+      const container = document.getElementById('compactTransactionList');
+      if (!container) return;
+      if (items.length === 0) {
+        container.innerHTML = `<div class="text-center py-6 text-xs opacity-60">No transactions found in this range.</div>`;
+        return;
+      }
+
+      container.innerHTML = items.map(tx => {
+        const d = new Date(tx.timestamp);
+        const stamp = d.toLocaleDateString('en-IN', { day: '2-digit', month: 'short', year: '2-digit' }) + ' ' + d.toLocaleTimeString('en-IN', { hour: '2-digit', minute: '2-digit', hour12: true });
+        return `
+          <div class="theme-sub-bg border rounded-xl px-3 py-2 flex items-center justify-between gap-2" style="border-color: var(--border-color);">
+            <span class="text-[11px] font-mono opacity-80">${stamp}</span>
+            <div class="flex items-center gap-2 shrink-0">
+              <span class="text-xs font-black font-mono text-emerald-500">${formatRupees(tx.amount)}</span>
+              <button onclick="openEditLogModal('${escapeHtml(tx.id)}')" class="p-1 rounded-lg hover:bg-black/10 dark:hover:bg-white/10 theme-accent-text" title="Edit Amount">
                 <svg class="w-3.5 h-3.5" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M11 5H6a2 2 0 00-2 2v11a2 2 0 002 2h11a2 2 0 002-2v-5m-1.414-9.414a2 2 0 112.828 2.828L11.828 15H9v-2.828l8.586-8.586z"/></svg>
               </button>
-              <button onclick="openDeleteLogModal('${rec.id}')" class="p-1.5 rounded-lg hover:bg-red-500/20 text-red-500 transition" title="Delete Entry">
+              <button onclick="openDeleteLogModal('${escapeHtml(tx.id)}')" class="p-1 rounded-lg hover:bg-red-500/15 text-red-500" title="Delete Entry">
                 <svg class="w-3.5 h-3.5" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M19 7l-.867 12.142A2 2 0 0116.138 21H7.862a2 2 0 01-1.995-1.858L5 7m5 4v6m4-6v6m1-10V4a1 1 0 00-1-1h-4a1 1 0 00-1 1v3M4 7h16"/></svg>
               </button>
             </div>
           </div>
         `;
-        listEl.appendChild(row);
-      });
+      }).join('');
     }
 
+    window.openFilteredEarningsDetailsModal = function () {
+      if (currentUpiFilter === 'all') return;
+      renderCompactTransactionList();
+      openModalById('filteredEarningsDetailsModal', 'filteredEarningsDetailsModalCard');
+    };
+    window.closeFilteredEarningsDetailsModal = () => closeModalById('filteredEarningsDetailsModal', 'filteredEarningsDetailsModalCard');
+
+    window.shareFilteredEarningsSummary = async function () {
+      const items = getFilteredHistory();
+      const total = items.reduce((sum, tx) => sum + (parseFloat(tx.amount) || 0), 0);
+      const name = document.getElementById('compactModalPayeeName')?.textContent || currentUpiFilterLabel;
+      const period = document.getElementById('customDropdownTimeLabel')?.textContent || 'All Time';
+
+      const lines = [
+        `*Paypulse Earnings Report*`,
+        `Payee: ${name} (${currentUpiFilter})`,
+        `Filter: ${period}`,
+        `Transactions: ${items.length}`,
+        `Total: ${formatRupees(total)}`,
+        `---`,
+        ...items.slice(0, 20).map(tx => {
+          const d = new Date(tx.timestamp);
+          return `• ${d.toLocaleDateString('en-IN', { day: '2-digit', month: 'short' })} ${d.toLocaleTimeString('en-IN', { hour: '2-digit', minute: '2-digit', hour12: true })}: ${formatRupees(tx.amount)}`;
+        })
+      ];
+      const summaryText = lines.join('\n');
+
+      if (navigator.share) {
+        try {
+          await navigator.share({ title: `${name} Earnings Summary`, text: summaryText });
+          return;
+        } catch (e) {}
+      }
+      const temp = document.createElement('textarea');
+      temp.value = summaryText;
+      document.body.appendChild(temp);
+      temp.select();
+      document.execCommand('copy');
+      temp.remove();
+      showToast('📋 Earnings summary copied to clipboard');
+    };
+
     window.openEditLogModal = function (id) {
-      const rec = history.find(h => h.id === id);
-      if (!rec) return;
-      pendingEditLogId = id;
-
-      document.getElementById('editLogId').value = id;
-      document.getElementById('editLogPayeeName').innerText = rec.merchantName || rec.payeeName || 'Payee Account';
-      document.getElementById('editLogPayeeUpi').innerText = rec.merchantUpi || rec.upiId || rec.upi || '--';
-      document.getElementById('editLogAmount').value = rec.amount || 0;
-
-      toggleModal('editLogModal', true);
+      const tx = historyLogs.find(item => item.id === id);
+      if (!tx) return;
+      document.getElementById('editLogId').value = tx.id;
+      document.getElementById('editLogPayeeName').textContent = tx.merchantName;
+      document.getElementById('editLogPayeeUpi').textContent = tx.merchantUpi;
+      document.getElementById('editLogAmount').value = tx.amount;
+      openModalById('editLogModal', 'editLogModalCard');
     };
-
-    window.closeEditLogModal = function () {
-      pendingEditLogId = null;
-      toggleModal('editLogModal', false);
-    };
+    window.closeEditLogModal = () => closeModalById('editLogModal', 'editLogModalCard');
 
     window.saveEditLog = function () {
       const id = document.getElementById('editLogId').value;
       const newAmt = parseFloat(document.getElementById('editLogAmount').value);
-
-      if (isNaN(newAmt) || newAmt <= 0) {
-        showToast('⚠️ Please enter a valid amount greater than ₹0');
+      if (!newAmt || newAmt <= 0) {
+        showToast('⚠️ Enter a valid amount greater than ₹0');
         return;
       }
-
-      const idx = history.findIndex(h => h.id === id);
-      if (idx !== -1) {
-        history[idx].amount = newAmt;
-        history[idx].formattedAmount = formatIndianCurrency(newAmt);
-        saveHistory();
-        showToast('✅ Transaction amount updated');
-      }
-
-      closeEditLogModal();
-    };
-
-    function renderHistoryList() {
-      const listContainer = document.getElementById('historyList');
-      if (!listContainer) return;
-      listContainer.innerHTML = '';
-
-      const filtered = getFilteredHistory();
-
-      if (filtered.length === 0) {
-        listContainer.innerHTML = `
-          <div class="col-span-full text-center py-8 opacity-60 text-xs">
-            <p>No transaction logs match current filter.</p>
-          </div>
-        `;
-        updateFilteredUpiEarningsCard();
-        return;
-      }
-
-      filtered.forEach(rec => {
-        const dateObj = new Date(rec.timestamp);
-        const dateFormatted = dateObj.toLocaleDateString('en-IN', { day: '2-digit', month: 'short', hour: '2-digit', minute: '2-digit' });
-
-        const name = rec.merchantName || rec.payeeName || 'Payee Account';
-        const upi = rec.merchantUpi || rec.upiId || rec.upi || '--';
-        const amt = rec.formattedAmount || formatIndianCurrency(rec.amount || 0);
-
-        const card = document.createElement('div');
-        card.className = 'theme-sub-bg border rounded-2xl p-3 flex flex-col justify-between shadow-sm gap-2.5';
-        card.style.borderColor = 'var(--border-color)';
-
-        card.innerHTML = `
-          <div class="flex items-start justify-between gap-2 min-w-0">
-            <div class="min-w-0">
-              <div class="text-xs font-bold truncate">${name}</div>
-              <div class="text-[10px] font-mono opacity-70 truncate mt-0.5">${upi}</div>
-              <div class="text-[9px] opacity-50 mt-1">${dateFormatted}</div>
-            </div>
-            <div class="text-right shrink-0">
-              <div class="text-sm font-black font-mono text-emerald-500">₹${amt}</div>
-            </div>
-          </div>
-
-          <div class="flex items-center justify-between pt-2 border-t border-slate-200/40 dark:border-slate-800/60">
-            <span class="text-[9px] font-bold text-emerald-500/80 bg-emerald-500/10 px-2 py-0.5 rounded-full border border-emerald-500/20">Generated</span>
-            <div class="flex items-center gap-1.5">
-              <button onclick="reuseTransaction('${rec.id}')" class="px-2.5 py-1 rounded-lg theme-accent-btn text-white text-[10px] font-bold flex items-center gap-1 shadow-sm transition active:scale-95" title="Reuse Transaction">
-                <svg class="w-3 h-3" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-                  <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M4 4v5h.582m15.356 2A8.001 8.001 0 004.582 9m0 0H9m11 11v-5h-.581m0 0a8.003 8.003 0 01-15.357-2m15.357 2H15"></path>
-                </svg>
-                Reuse
-              </button>
-              <button onclick="openEditLogModal('${rec.id}')" class="p-1 rounded-lg theme-keypad border hover:border-indigo-500/50 transition text-[10px] theme-accent-text" style="border-color: var(--border-color);" title="Edit Amount">
-                <svg class="w-3.5 h-3.5" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-                  <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M11 5H6a2 2 0 00-2 2v11a2 2 0 002 2h11a2 2 0 002-2v-5m-1.414-9.414a2 2 0 112.828 2.828L11.828 15H9v-2.828l8.586-8.586z"></path>
-                </svg>
-              </button>
-              <button onclick="openDeleteLogModal('${rec.id}')" class="p-1 rounded-lg bg-red-500/10 hover:bg-red-500/20 text-red-500 border border-red-500/20 transition text-[10px]" title="Delete Log">
-                <svg class="w-3.5 h-3.5" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-                  <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M19 7l-.867 12.142A2 2 0 0116.138 21H7.862a2 2 0 01-1.995-1.858L5 7m5 4v6m4-6v6m1-10V4a1 1 0 00-1-1h-4a1 1 0 00-1 1v3M4 7h16"></path>
-                </svg>
-              </button>
-            </div>
-          </div>
-        `;
-        listContainer.appendChild(card);
-      });
-
+      const updated = historyLogs.map(tx => tx.id === id ? { ...tx, amount: newAmt } : tx);
+      saveHistory(updated);
+      renderHistory();
+      updateTodayTotal();
       updateFilteredUpiEarningsCard();
-    }
-
-    function updateTodayTotal() {
-      const todayStr = getLocalDateStr(new Date());
-      const todaySum = history
-        .filter(item => getLocalDateStr(item.timestamp) === todayStr)
-        .reduce((sum, item) => sum + (item.amount || 0), 0);
-
-      const todayElem = document.getElementById('headerTodayTotal');
-      if (todayElem) {
-        todayElem.innerText = `₹${formatIndianCurrency(todaySum)}`;
+      if (!document.getElementById('filteredEarningsDetailsModal')?.classList.contains('hidden')) {
+        renderCompactTransactionList();
       }
-    }
-
-    window.exportHistoryCSV = function () {
-      if (history.length === 0) {
-        showToast('⚠️ No history records to export');
-        return;
-      }
-
-      let csv = 'Timestamp,Payee Name,UPI ID,Amount (INR)\n';
-      history.forEach(r => {
-        const name = r.merchantName || r.payeeName || '';
-        const upi = r.merchantUpi || r.upiId || '';
-        csv += `"${r.timestamp}","${name}","${upi}",${r.amount || 0}\n`;
-      });
-
-      const blob = new Blob([csv], { type: 'text/csv' });
-      const url = window.URL.createObjectURL(blob);
-      const a = document.createElement('a');
-      a.href = url;
-      a.download = `Paypulse_Transactions_${Date.now()}.csv`;
-      document.body.appendChild(a);
-      a.click();
-      document.body.removeChild(a);
-      showToast('📊 CSV Export downloaded');
+      closeEditLogModal();
+      showToast('✅ Transaction amount updated');
     };
 
-    window.openClearHistoryModal = function () { toggleModal('clearHistoryModal', true); };
-    window.closeClearHistoryModal = function () { toggleModal('clearHistoryModal', false); };
-
-    window.confirmClearHistory = function () {
-      history = [];
-      saveHistory();
-      closeClearHistoryModal();
-      showToast('🧹 History logs cleared');
-    };
-
-    function populateHistoryUpiFilter() {
-      const dropdownMenu = document.getElementById('customDropdownUpiMenu');
-      const selectHidden = document.getElementById('filterUpi');
-      if (!dropdownMenu || !selectHidden) return;
-
-      const currentVal = selectHidden.value || 'all';
-      dropdownMenu.innerHTML = '';
-      selectHidden.innerHTML = '<option value="all">All Merchant Accounts</option>';
-
-      const upiMap = new Map();
-      merchants.forEach(m => upiMap.set(m.upi, m.name));
-      history.forEach(h => {
-        const u = h.merchantUpi || h.upiId || h.upi;
-        const n = h.merchantName || h.payeeName || u;
-        if (u && !upiMap.has(u)) upiMap.set(u, n);
-      });
-
-      const allOpt = document.createElement('div');
-      allOpt.className = 'px-3 py-2 text-xs font-medium hover:bg-black/5 dark:hover:bg-white/5 cursor-pointer flex items-center justify-between';
-      allOpt.onclick = () => selectCustomUpi('all', 'All Accounts');
-      allOpt.innerHTML = '<span>All Accounts</span>';
-      dropdownMenu.appendChild(allOpt);
-
-      upiMap.forEach((name, upi) => {
-        const item = document.createElement('div');
-        item.className = 'px-3 py-2 text-xs font-medium hover:bg-black/5 dark:hover:bg-white/5 cursor-pointer flex items-center justify-between';
-        item.onclick = () => selectCustomUpi(upi, name);
-        item.innerHTML = `<span class="truncate">${name} (${upi})</span>`;
-        dropdownMenu.appendChild(item);
-
-        const opt = document.createElement('option');
-        opt.value = upi;
-        opt.innerText = `${name} (${upi})`;
-        selectHidden.appendChild(opt);
-      });
-
-      if (currentVal !== 'all' && upiMap.has(currentVal)) {
-        selectHidden.value = currentVal;
-      }
-    }
-
-    window.toggleCustomDropdown = function (targetId) {
-      const menu = document.getElementById(targetId);
-      if (!menu) return;
-
-      const isHidden = menu.classList.contains('hidden');
-      closeAllDropdowns();
-
-      if (isHidden) {
-        menu.classList.remove('hidden');
-        requestAnimationFrame(() => {
-          menu.classList.remove('opacity-0', 'scale-95');
-        });
-      }
-    };
-
-    function closeAllDropdowns() {
-      ['customDropdownTimeMenu', 'customDropdownUpiMenu', 'themeMenuDropdown', 'systemMenuDropdown'].forEach(id => {
-        const el = document.getElementById(id);
-        if (el) {
-          el.classList.add('hidden', 'opacity-0', 'scale-95');
-        }
-      });
-      closeAllCardMenus();
-    }
-
-    window.selectCustomTime = function (val, label) {
-      const filterTimeEl = document.getElementById('filterTime');
-      if (filterTimeEl && !filterTimeEl.querySelector('option[value="custom"]')) {
-        const opt = document.createElement('option');
-        opt.value = 'custom';
-        opt.innerText = 'Date Range';
-        filterTimeEl.appendChild(opt);
-      }
-      filterTimeEl.value = val;
-
-      const dateContainer = document.getElementById('customDateInputContainer');
-      const fromInput = document.getElementById('customFromDate');
-      const toInput = document.getElementById('customToDate');
-
-      if (val === 'custom') {
-        if (dateContainer) dateContainer.classList.remove('hidden');
-        const todayStr = getLocalDateStr(new Date());
-        if (fromInput && !fromInput.value) fromInput.value = todayStr;
-        if (toInput && !toInput.value) toInput.value = todayStr;
-        updateCustomDateRangeLabel();
-      } else {
-        if (dateContainer) dateContainer.classList.add('hidden');
-        document.getElementById('customDropdownTimeLabel').innerText = label;
-      }
-
-      closeAllDropdowns();
-      renderHistoryList();
-    };
-
-    function formatShortDate(dateStr) {
-      if (!dateStr) return '';
-      const parts = dateStr.split('-');
-      if (parts.length !== 3) return dateStr;
-      return `${parts[2]}/${parts[1]}`;
-    }
-
-    function updateCustomDateRangeLabel() {
-      const fromVal = document.getElementById('customFromDate')?.value || '';
-      const toVal = document.getElementById('customToDate')?.value || '';
-      const labelEl = document.getElementById('customDropdownTimeLabel');
-      if (!labelEl) return;
-
-      if (fromVal && toVal) {
-        labelEl.innerText = `${formatShortDate(fromVal)} → ${formatShortDate(toVal)}`;
-      } else if (fromVal) {
-        labelEl.innerText = `From ${formatShortDate(fromVal)}`;
-      } else if (toVal) {
-        labelEl.innerText = `To ${formatShortDate(toVal)}`;
-      } else {
-        labelEl.innerText = 'Date Range';
-      }
-    }
-
-    window.onCustomDateRangeChanged = function () {
-      const fromInput = document.getElementById('customFromDate');
-      const toInput = document.getElementById('customToDate');
-      if (fromInput && toInput && fromInput.value && toInput.value && fromInput.value > toInput.value) {
-        toInput.value = fromInput.value;
-      }
-      updateCustomDateRangeLabel();
-      renderHistoryList();
-    };
-
-    window.selectCustomUpi = function (val, label) {
-      document.getElementById('filterUpi').value = val;
-      document.getElementById('customDropdownUpiLabel').innerText = label;
-      closeAllDropdowns();
-      renderHistoryList();
-    };
-
-    window.toggleThemeMenu = function () { toggleCustomDropdown('themeMenuDropdown'); };
-    window.closeThemeMenu = function () { closeAllDropdowns(); };
-
-    window.setTheme = function (t) {
-      applyThemeUI(t);
-      if (useRestFallback || !currentUser) {
-        fetch(`${RTDB_URL}/artifacts/${appId}/public/data/settings.json`, {
-          method: 'PATCH',
-          headers: { 'Content-Type': 'application/json' },
-          body: JSON.stringify({ theme: t, hideSearchPayee: hideSearchPayee, broadcastMessage: broadcastMessage })
-        }).catch(() => {});
-      } else {
-        const settingsRef = ref(db, `artifacts/${appId}/public/data/settings`);
-        set(settingsRef, { theme: t, hideSearchPayee: hideSearchPayee, broadcastMessage: broadcastMessage }).catch(() => {
-          useRestFallback = true;
-          window.setTheme(t);
-        });
-      }
-    };
-
-    window.toggleSystemMenu = function () { toggleCustomDropdown('systemMenuDropdown'); };
-    window.closeSystemMenu = function () { closeAllDropdowns(); };
-
-    window.openAboutModal = function () { toggleModal('aboutModal', true); };
-    window.closeAboutModal = function () { toggleModal('aboutModal', false); };
-
-    function checkStandaloneMode() {
-      isStandaloneMode = window.matchMedia('(display-mode: standalone)').matches || 
-                         window.navigator.standalone || 
-                         document.referrer.includes('android-app://');
-      
-      const titleElem = document.getElementById('pwaInstallTitle');
-      const subElem = document.getElementById('pwaInstallSub');
-      if (isStandaloneMode) {
-        if (titleElem) titleElem.textContent = 'App Installed ✓';
-        if (subElem) subElem.textContent = 'Running in POS Mode';
-      }
-    }
-
-    window.triggerPwaInstall = function () {
-      closeSystemMenu();
-      if (isStandaloneMode) {
-        showToast('Paypulse is already running as an installed PWA');
-        return;
-      }
-      if (deferredPrompt) {
-        execNativePwaInstall();
-      } else {
-        openInstallGuideModal();
-      }
-    };
-
-    window.execNativePwaInstall = function () {
-      if (!deferredPrompt) return;
-      deferredPrompt.prompt();
-      deferredPrompt.userChoice.then((choiceResult) => {
-        if (choiceResult.outcome === 'accepted') {
-          showToast('Installing Paypulse POS App...');
-        }
-        deferredPrompt = null;
-        closeInstallGuideModal();
-      });
-    };
-
-    window.openInstallGuideModal = function () {
-      const promptBox = document.getElementById('installNativePromptContainer');
-      const iframeNotice = document.getElementById('iframeNoticeContainer');
-
-      if (promptBox) {
-        promptBox.classList.toggle('hidden', !deferredPrompt);
-      }
-      if (iframeNotice) {
-        iframeNotice.classList.toggle('hidden', !isInIframe());
-      }
-
-      toggleModal('installGuideModal', true);
-    };
-
-    window.closeInstallGuideModal = function () { toggleModal('installGuideModal', false); };
-
-    function isInIframe() {
-      try {
-        return window.self !== window.top;
-      } catch (e) {
-        return true;
-      }
-    }
-
-    window.openInFullWindow = function () {
-      try {
-        window.open(window.location.href, '_blank');
-      } catch (e) {
-        showToast('Unable to open new window');
-      }
-    };
-
-    function toggleModal(id, show) {
-      const modal = document.getElementById(id);
-      if (!modal) return;
-      const card = document.getElementById(id + 'Card') || modal.firstElementChild;
-
-      if (show) {
-        modal.classList.remove('hidden');
-        setTimeout(() => {
-          modal.classList.remove('opacity-0');
-          if (card) card.classList.remove('scale-95');
-        }, 10);
-      } else {
-        modal.classList.add('opacity-0');
-        if (card) card.classList.add('scale-95');
-        setTimeout(() => modal.classList.add('hidden'), 200);
-      }
-    }
-
-    function initPWAInfrastructure() {
-      if (window.location.protocol === 'file:') {
-        return;
-      }
-
-      let manifestLink = document.getElementById('appManifestLink');
-      const baseUrl = window.location.href.split('#')[0].split('?')[0];
-      const manifestData = {
-        id: "paypulse-pos-v11c",
-        name: "Paypulse v11c POS",
-        short_name: "Paypulse",
-        description: "Instant UPI Payment QR Terminal",
-        start_url: baseUrl,
-        scope: "./",
-        display: "standalone",
-        orientation: "portrait",
-        background_color: "#0f172a",
-        theme_color: "#4f46e5",
-        icons: [
-          {
-            src: "https://cdn-icons-png.flaticon.com/512/2313/2313039.png",
-            sizes: "192x192",
-            type: "image/png",
-            purpose: "any maskable"
-          },
-          {
-            src: "https://cdn-icons-png.flaticon.com/512/2313/2313039.png",
-            sizes: "512x512",
-            type: "image/png",
-            purpose: "any maskable"
-          }
-        ]
-      };
-
-      const manifestBlob = new Blob([JSON.stringify(manifestData)], { type: 'application/manifest+json' });
-      const manifestUrl = URL.createObjectURL(manifestBlob);
-      if (manifestLink) {
-        manifestLink.href = manifestUrl;
-      }
-
-      if ('serviceWorker' in navigator && (window.location.protocol === 'https:' || window.location.hostname === 'localhost')) {
-        try {
-          const swCode = `
-            const CACHE_NAME = 'paypulse-v11c-sw';
-            self.addEventListener('install', (e) => self.skipWaiting());
-            self.addEventListener('activate', (e) => e.waitUntil(self.clients.claim()));
-            self.addEventListener('fetch', (e) => {
-              e.respondWith(fetch(e.request).catch(() => caches.match(e.request)));
-            });
-          `;
-          const swBlob = new Blob([swCode], { type: 'application/javascript' });
-          const swUrl = URL.createObjectURL(swBlob);
-          navigator.serviceWorker.register(swUrl).catch(() => {});
-        } catch (err) {}
-      }
-    }
-
-    window.addEventListener('beforeinstallprompt', (e) => {
-      e.preventDefault();
-      deferredPrompt = e;
-      checkStandaloneMode();
-    });
-
-    window.addEventListener('appinstalled', () => {
-      deferredPrompt = null;
-      checkStandaloneMode();
-      showToast('🎉 Paypulse POS installed successfully');
-    });
-
-    window.addEventListener('click', (e) => {
-      if (!e.target.closest('#customDropdownTime') && 
-          !e.target.closest('#customDropdownUpi') && 
-          !e.target.closest('#themeMenuWrapper') && 
-          !e.target.closest('#systemMenuWrapper')) {
-        closeAllDropdowns();
-      }
-    });
+    // About, PWA & Cloud Backup Modals
+    window.openAboutModal = () => openModalById('aboutModal', 'aboutModalCard');
+    window.closeAboutModal = () => closeModalById('aboutModal', 'aboutModalCard');
 
     window.openCloudBackupModal = function () {
-      const isOnline = !!currentUser || useRestFallback;
-      updateCloudStatusUI(isOnline ? 'Cloud Sync Active' : 'Connecting...', isOnline);
-      toggleModal('cloudBackupModal', true);
+      const uidEl = document.getElementById('cloudUserIdDisplay');
+      if (uidEl) uidEl.textContent = currentUser ? currentUser.uid : `RTDB-Shared (${appId})`;
+      updateCloudStatusUI(useRestFallback ? 'Direct RTDB Sync ✓' : 'Live SDK Sync ✓', true);
+      openModalById('cloudBackupModal', 'cloudBackupModalCard');
     };
-
-    window.closeCloudBackupModal = function () {
-      toggleModal('cloudBackupModal', false);
-    };
-
-    window.forceCloudSyncNow = function () {
-      if (!currentUser && !useRestFallback) {
-        showToast('⚠️ Waiting for cloud connection...');
-        return;
-      }
-      saveMerchants(merchants);
-      saveHistory();
-      updateCloudStatusUI('Synced Just Now ✓', true);
-      showToast('☁️ Cloud backup synchronized');
-    };
+    window.closeCloudBackupModal = () => closeModalById('cloudBackupModal', 'cloudBackupModalCard');
 
     window.copyCloudUserId = function () {
-      const idToCopy = currentUser ? currentUser.uid : 'paypulse-a855a-shared';
-      const el = document.createElement('textarea');
-      el.value = idToCopy;
-      document.body.appendChild(el);
-      el.select();
+      const text = document.getElementById('cloudUserIdDisplay')?.textContent || appId;
+      const temp = document.createElement('textarea');
+      temp.value = text;
+      document.body.appendChild(temp);
+      temp.select();
       document.execCommand('copy');
-      document.body.removeChild(el);
+      temp.remove();
       showToast('📋 Cloud Terminal ID copied');
     };
 
-    async function fetchRestCloudData(showStatus = true) {
+    window.forceCloudSyncNow = async function () {
+      updateCloudStatusUI('Syncing...', true);
+      await fetchRestCloudData();
+      showToast('☁️ Cloud data synchronized');
+    };
+
+    window.triggerPwaInstall = function () {
+      closeSystemMenu();
+      if (deferredInstallPrompt) {
+        document.getElementById('installNativePromptContainer')?.classList.remove('hidden');
+      }
+      if (window.self !== window.top) {
+        document.getElementById('iframeNoticeContainer')?.classList.remove('hidden');
+      }
+      openModalById('installGuideModal', 'installGuideModalCard');
+    };
+    window.closeInstallGuideModal = () => closeModalById('installGuideModal', 'installGuideModalCard');
+
+    window.execNativePwaInstall = async function () {
+      if (!deferredInstallPrompt) return;
+      deferredInstallPrompt.prompt();
+      await deferredInstallPrompt.userChoice;
+      deferredInstallPrompt = null;
+      closeInstallGuideModal();
+    };
+
+    window.openInFullWindow = () => window.open(window.location.href, '_blank');
+
+    window.addEventListener('beforeinstallprompt', (e) => {
+      e.preventDefault();
+      deferredInstallPrompt = e;
+    });
+
+    function initPWAInfrastructure() {
+      if (window.location.protocol === 'file:') return;
       try {
-        const [mRes, hRes, sRes, bRes] = await Promise.all([
+        const manifest = {
+          id: 'paypulse-pos-v11c',
+          name: 'Paypulse v11c POS Terminal',
+          short_name: 'Paypulse',
+          start_url: window.location.href,
+          display: 'standalone',
+          background_color: '#0b0f19',
+          theme_color: '#4f46e5',
+          icons: [{
+            src: 'https://cdn-icons-png.flaticon.com/512/2313/2313039.png',
+            sizes: '512x512',
+            type: 'image/png'
+          }]
+        };
+        const blob = new Blob([JSON.stringify(manifest)], { type: 'application/json' });
+        const link = document.getElementById('appManifestLink');
+        if (link) link.href = URL.createObjectURL(blob);
+      } catch (e) {}
+    }
+
+    // Cloud Fetch & Realtime Listeners
+    async function fetchRestCloudData() {
+      try {
+        const [mRes, hRes, sRes] = await Promise.all([
           fetch(`${RTDB_URL}/artifacts/${appId}/public/data/merchants.json`),
           fetch(`${RTDB_URL}/artifacts/${appId}/public/data/history.json`),
-          fetch(`${RTDB_URL}/artifacts/${appId}/public/data/settings.json`),
-          fetch(`${RTDB_URL}/artifacts/${appId}/public/data/broadcast.json`)
+          fetch(`${RTDB_URL}/artifacts/${appId}/public/data/settings.json`)
         ]);
 
-        if (!mRes.ok || !hRes.ok) {
-          throw new Error('Database fetch failed');
-        }
-
-        const mData = await mRes.json();
-        if (mData && Array.isArray(mData.list)) {
-          merchants = mData.list;
-        } else if (merchants.length === 0) {
-          merchants = [...DEFAULT_MERCHANTS];
-          saveMerchants(merchants);
-        }
-        renderMerchantList(document.getElementById('merchantSearch')?.value || '');
-
-        const hData = await hRes.json();
-        if (hData && Array.isArray(hData.logs)) {
-          history = hData.logs;
-        }
-        populateHistoryUpiFilter();
-        renderHistoryList();
-        updateTodayTotal();
-
-        const sData = await sRes.json();
-        if (sData) {
-          if (sData.theme && sData.theme !== currentTheme) {
-            applyThemeUI(sData.theme);
-          }
-          if (typeof sData.hideSearchPayee === 'boolean' && sData.hideSearchPayee !== hideSearchPayee) {
-            applySearchVisibilityUI(sData.hideSearchPayee);
-          }
-          if (typeof sData.broadcastMessage === 'string' && sData.broadcastMessage !== broadcastMessage) {
-            applyBroadcastMessageUI(sData.broadcastMessage);
+        if (mRes.ok) {
+          const mData = await mRes.json();
+          if (!isSavingMerchants && (Date.now() - lastMerchantSaveAt > 3000)) {
+            if (mData && Array.isArray(mData.list)) {
+              merchants = normalizeMerchantOrder(mData.list);
+              try {
+                localStorage.setItem(LOCAL_MERCHANTS_KEY, JSON.stringify(merchants));
+              } catch (e) {}
+            } else if (merchants.length === 0) {
+              merchants = normalizeMerchantOrder(DEFAULT_MERCHANTS);
+              saveMerchants(merchants);
+            }
+            renderMerchantList(document.getElementById('merchantSearch')?.value || '');
+            populateHistoryUpiFilter();
           }
         }
 
-        const bData = await bRes.json();
-        if (bData && typeof bData.message === 'string' && bData.message !== broadcastMessage) {
-          applyBroadcastMessageUI(bData.message);
+        if (hRes.ok) {
+          const hData = await hRes.json();
+          if (hData && Array.isArray(hData.list)) {
+            historyLogs = hData.list;
+            try {
+              localStorage.setItem(LOCAL_HISTORY_KEY, JSON.stringify(historyLogs));
+            } catch (e) {}
+            renderHistory();
+            updateTodayTotal();
+            updateFilteredUpiEarningsCard();
+            populateHistoryUpiFilter();
+          }
         }
 
-        if (showStatus) updateCloudStatusUI('Synced ✓', true);
-      } catch (e) {
-        console.error('REST sync error:', e);
-        if (showStatus) updateCloudStatusUI('Sync Error', false);
+        if (sRes.ok) {
+          const sData = await sRes.json();
+          if (sData) {
+            if (sData.theme) applyThemeUI(sData.theme);
+            if (typeof sData.hideSearchPayee === 'boolean') applySearchVisibilityUI(sData.hideSearchPayee);
+            if (typeof sData.broadcastMessage === 'string') {
+              broadcastMessage = sData.broadcastMessage;
+              const bInput = document.getElementById('broadcastMessageInput');
+              if (bInput && document.activeElement !== bInput) {
+                bInput.value = broadcastMessage;
+              }
+            }
+          }
+        }
+
+        updateCloudStatusUI('Synced ✓', true);
+      } catch (err) {
+        updateCloudStatusUI('Offline / Local', false);
       }
     }
 
-    async function initRestFallbackSync() {
-      useRestFallback = true;
-      updateCloudStatusUI('Syncing...', true);
-      const userIdDisplay = document.getElementById('cloudUserIdDisplay');
-      if (userIdDisplay) userIdDisplay.innerText = 'paypulse-a855a-shared';
-
-      await fetchRestCloudData(true);
-
-      if (restPollTimer) clearInterval(restPollTimer);
-      restPollTimer = setInterval(() => {
-        fetchRestCloudData(false);
-      }, 15000);
-    }
-
-    async function initCloudListeners(user) {
-      if (!user || !db) return;
-      useRestFallback = false;
-      updateCloudStatusUI('Syncing...', true);
+    function attachRealtimeListeners() {
+      if (!db || useRestFallback) {
+        fetchRestCloudData();
+        if (restPollTimer) clearInterval(restPollTimer);
+        restPollTimer = setInterval(fetchRestCloudData, 15000);
+        return;
+      }
 
       const merchantsRef = ref(db, `artifacts/${appId}/public/data/merchants`);
       const historyRef = ref(db, `artifacts/${appId}/public/data/history`);
       const settingsRef = ref(db, `artifacts/${appId}/public/data/settings`);
-      const broadcastRef = ref(db, `artifacts/${appId}/public/data/broadcast`);
 
-      onValue(broadcastRef, (snapshot) => {
-        if (snapshot.exists() && typeof snapshot.val().message === 'string') {
-          applyBroadcastMessageUI(snapshot.val().message);
+      if (unsubMerchants) unsubMerchants();
+      unsubMerchants = onValue(merchantsRef, (snapshot) => {
+        if (isSavingMerchants) return;
+        if (snapshot.exists() && Array.isArray(snapshot.val().list)) {
+          merchants = normalizeMerchantOrder(snapshot.val().list);
+          try {
+            localStorage.setItem(LOCAL_MERCHANTS_KEY, JSON.stringify(merchants));
+          } catch (e) {}
+        } else {
+          merchants = normalizeMerchantOrder(DEFAULT_MERCHANTS);
+          saveMerchants(merchants);
+        }
+        renderMerchantList(document.getElementById('merchantSearch')?.value || '');
+        populateHistoryUpiFilter();
+        updateCloudStatusUI('Synced ✓', true);
+      }, () => {
+        useRestFallback = true;
+        attachRealtimeListeners();
+      });
+
+      if (unsubHistory) unsubHistory();
+      unsubHistory = onValue(historyRef, (snapshot) => {
+        if (snapshot.exists() && Array.isArray(snapshot.val().list)) {
+          historyLogs = snapshot.val().list;
+          try {
+            localStorage.setItem(LOCAL_HISTORY_KEY, JSON.stringify(historyLogs));
+          } catch (e) {}
+          renderHistory();
+          updateTodayTotal();
+          updateFilteredUpiEarningsCard();
+          populateHistoryUpiFilter();
         }
       }, () => {});
 
       onValue(settingsRef, (snapshot) => {
         if (snapshot.exists()) {
-          const val = snapshot.val();
-          if (val.theme) applyThemeUI(val.theme);
-          if (typeof val.hideSearchPayee === 'boolean') applySearchVisibilityUI(val.hideSearchPayee);
-          if (typeof val.broadcastMessage === 'string') applyBroadcastMessageUI(val.broadcastMessage);
+          const s = snapshot.val();
+          if (s.theme) applyThemeUI(s.theme);
+          if (typeof s.hideSearchPayee === 'boolean') applySearchVisibilityUI(s.hideSearchPayee);
+          if (typeof s.broadcastMessage === 'string') {
+            broadcastMessage = s.broadcastMessage;
+            const bInput = document.getElementById('broadcastMessageInput');
+            if (bInput && document.activeElement !== bInput) {
+              bInput.value = broadcastMessage;
+            }
+          }
         }
       }, () => {});
-
-      if (unsubMerchants) unsubMerchants();
-      unsubMerchants = onValue(merchantsRef, (snapshot) => {
-        if (snapshot.exists() && Array.isArray(snapshot.val().list)) {
-          merchants = snapshot.val().list;
-        } else {
-          merchants = [...DEFAULT_MERCHANTS];
-          saveMerchants(merchants);
-        }
-        renderMerchantList(document.getElementById('merchantSearch')?.value || '');
-        populateHistoryUpiFilter();
-        updateCloudStatusUI('Synced ✓', true);
-      }, (err) => {
-        console.error('Database merchants listener error:', err);
-        initRestFallbackSync();
-      });
-
-      if (unsubHistory) unsubHistory();
-      unsubHistory = onValue(historyRef, (snapshot) => {
-        if (snapshot.exists() && Array.isArray(snapshot.val().logs)) {
-          history = snapshot.val().logs;
-        } else {
-          history = [];
-        }
-        populateHistoryUpiFilter();
-        renderHistoryList();
-        updateTodayTotal();
-        updateCloudStatusUI('Synced ✓', true);
-      }, (err) => {
-        console.error('Database history listener error:', err);
-        initRestFallbackSync();
-      });
     }
 
-    function saveHistory() {
-      updateCloudStatusUI('Syncing...', true);
-      if (useRestFallback || !currentUser) {
-        fetch(`${RTDB_URL}/artifacts/${appId}/public/data/history.json`, {
-          method: 'PUT',
-          headers: { 'Content-Type': 'application/json' },
-          body: JSON.stringify({ logs: history, updatedAt: new Date().toISOString() })
-        })
-          .then((res) => {
-            if (!res.ok) throw new Error('HTTP ' + res.status);
-            updateCloudStatusUI('Synced ✓', true);
-          })
-          .catch((err) => {
-            console.error('REST history sync error:', err);
-            updateCloudStatusUI('Sync Error', false);
-          });
-      } else {
-        const dbRef = ref(db, `artifacts/${appId}/public/data/history`);
-        set(dbRef, { logs: history, updatedAt: new Date().toISOString() })
-          .then(() => updateCloudStatusUI('Synced ✓', true))
-          .catch((err) => {
-            console.error('Error syncing history to cloud:', err);
-            useRestFallback = true;
-            saveHistory();
-          });
-      }
-      populateHistoryUpiFilter();
-      renderHistoryList();
-      updateTodayTotal();
-    }
-
-    window.onload = async function () {
+    async function initApp() {
       initPWAInfrastructure();
-      checkStandaloneMode();
-
       applyThemeUI('platinum');
       applySearchVisibilityUI(true);
-      merchants = [...DEFAULT_MERCHANTS];
-      renderMerchantList();
-      loadHistory();
-
-      if (!auth || !db) {
-        await initRestFallbackSync();
-        return;
-      }
 
       try {
-        if (typeof __initial_auth_token !== 'undefined' && __initial_auth_token) {
-          await signInWithCustomToken(auth, __initial_auth_token);
-        } else {
-          await signInAnonymously(auth);
+        const cachedSettings = JSON.parse(localStorage.getItem(LOCAL_SETTINGS_KEY) || 'null');
+        if (cachedSettings) {
+          if (cachedSettings.theme) applyThemeUI(cachedSettings.theme);
+          if (typeof cachedSettings.hideSearchPayee === 'boolean') applySearchVisibilityUI(cachedSettings.hideSearchPayee);
+          if (typeof cachedSettings.broadcastMessage === 'string') {
+            broadcastMessage = cachedSettings.broadcastMessage;
+            const bInput = document.getElementById('broadcastMessageInput');
+            if (bInput) bInput.value = broadcastMessage;
+          }
         }
-      } catch (err) {
-        console.warn('Auth unavailable, switching to direct database sync:', err);
-        await initRestFallbackSync();
+      } catch (e) {}
+
+      try {
+        const cachedMerchants = JSON.parse(localStorage.getItem(LOCAL_MERCHANTS_KEY) || 'null');
+        if (Array.isArray(cachedMerchants) && cachedMerchants.length > 0) {
+          merchants = normalizeMerchantOrder(cachedMerchants);
+        } else {
+          merchants = normalizeMerchantOrder(DEFAULT_MERCHANTS);
+        }
+      } catch (e) {
+        merchants = normalizeMerchantOrder(DEFAULT_MERCHANTS);
       }
 
-      onAuthStateChanged(auth, (user) => {
-        if (user) {
+      renderMerchantList();
+      loadHistory();
+      populateHistoryUpiFilter();
+
+      if (auth) {
+        onAuthStateChanged(auth, (user) => {
           currentUser = user;
-          initCloudListeners(user);
+          attachRealtimeListeners();
+        });
+        try {
+          if (typeof __initial_auth_token !== 'undefined' && __initial_auth_token) {
+            await signInWithCustomToken(auth, __initial_auth_token);
+          } else {
+            await signInAnonymously(auth);
+          }
+        } catch (err) {
+          useRestFallback = true;
+          attachRealtimeListeners();
         }
-      });
-    };
+      } else {
+        useRestFallback = true;
+        attachRealtimeListeners();
+      }
+    }
+
+    window.addEventListener('load', initApp);
   </script>
 </body>
 </html>
