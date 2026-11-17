@@ -237,6 +237,21 @@
     .theme-keypad:hover {
       background-color: var(--keypad-hover);
     }
+
+    @keyframes broadcastFlash {
+      0%, 100% {
+        box-shadow: 0 0 0 0 rgba(245, 158, 11, 0.35);
+        border-color: rgba(245, 158, 11, 0.65);
+      }
+      50% {
+        box-shadow: 0 0 18px 2px rgba(245, 158, 11, 0.55);
+        border-color: rgba(245, 158, 11, 1);
+      }
+    }
+
+    .broadcast-flash {
+      animation: broadcastFlash 1.8s infinite ease-in-out;
+    }
   </style>
 </head>
 <body class="min-h-screen transition-colors duration-300 antialiased pb-10">
@@ -422,6 +437,13 @@
               <span>Audio Feedback</span>
             </button>
 
+            <button onclick="toggleSearchPayee(); closeSystemMenu();" class="w-full px-3.5 py-2 text-xs font-semibold hover:bg-black/5 dark:hover:bg-white/5 transition flex items-center gap-2.5 text-left">
+              <svg class="w-4 h-4 opacity-70" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M21 21l-6-6m2-5a7 7 0 11-14 0 7 7 0 0114 0z"/>
+              </svg>
+              <span id="toggleSearchMenuLabel">Show Search Payee</span>
+            </button>
+
             <div class="px-3.5 py-1.5 text-[10px] opacity-50 border-t mt-1" style="border-color: var(--border-color);">
               Paypulse v11c
             </div>
@@ -436,7 +458,21 @@
     
     <main class="grid grid-cols-1 lg:grid-cols-12 gap-6 items-start mb-8">
       
-      <section class="lg:col-span-5 theme-card-bg border rounded-3xl p-4 sm:p-5 flex flex-col shadow-sm">
+      <div class="lg:col-span-5 flex flex-col gap-3">
+        <!-- Flashing Editable Broadcast Message Box -->
+        <div class="broadcast-flash theme-card-bg border-2 rounded-2xl p-3 shadow-sm flex items-center gap-2 transition-all">
+          <div class="w-8 h-8 rounded-xl bg-amber-500/15 text-amber-500 border border-amber-500/30 flex items-center justify-center shrink-0 animate-pulse" title="Live Notice for Users">
+            <svg class="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+              <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2.2" d="M11 5.882V19.24a1.76 1.76 0 01-3.417.592l-2.147-6.15M18 13a3 3 0 100-6M5.436 13.683A4.001 4.001 0 017 6h1.832c4.1 0 7.625-1.234 9.168-3v14c-1.543-1.766-5.067-3-9.168-3H7a3.988 3.988 0 01-1.564-.317z"/>
+            </svg>
+          </div>
+          <input type="text" id="broadcastMessageInput" maxlength="140" onkeydown="if(event.key==='Enter'){event.preventDefault();saveBroadcastMessage();}" placeholder="Type notice message for all users..." class="flex-1 min-w-0 bg-transparent text-xs font-bold focus:outline-none placeholder:font-normal placeholder:opacity-60" style="color: var(--text-main);">
+          <button type="button" onclick="saveBroadcastMessage()" class="px-3 py-1.5 rounded-xl bg-amber-500 hover:bg-amber-600 text-slate-950 text-[11px] font-extrabold shrink-0 shadow-sm active:scale-95 transition">
+            Save
+          </button>
+        </div>
+
+        <section class="theme-card-bg border rounded-3xl p-4 sm:p-5 flex flex-col shadow-sm">
         
         <div class="flex items-center justify-between gap-2 mb-3">
           <div class="min-w-0">
@@ -453,12 +489,12 @@
             <svg class="w-3.5 h-3.5" fill="none" stroke="currentColor" viewBox="0 0 24 24">
               <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2.5" d="M12 4v16m8-8H4"></path>
             </svg>
-            + Add New
+            Add New
           </button>
         </div>
 
-        <!-- Search Input -->
-        <div class="relative mb-3">
+        <!-- Search Input (Hidden by default) -->
+        <div id="merchantSearchWrapper" class="relative mb-3 hidden">
           <svg class="w-4 h-4 absolute left-3 top-3 opacity-50" fill="none" stroke="currentColor" viewBox="0 0 24 24">
             <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M21 21l-6-6m2-5a7 7 0 11-14 0 7 7 0 0114 0z"></path>
           </svg>
@@ -489,7 +525,8 @@
           </div>
         </div>
 
-      </section>
+        </section>
+      </div>
 
       <section class="lg:col-span-7 theme-card-bg border rounded-3xl p-5 sm:p-6 shadow-sm relative">
         
@@ -1216,6 +1253,8 @@
 
     let currentUser = null;
     let currentTheme = 'platinum';
+    let hideSearchPayee = true;
+    let broadcastMessage = '';
     let unsubMerchants = null;
     let unsubHistory = null;
     let useRestFallback = !app;
@@ -1360,6 +1399,108 @@
       const activeInd = document.getElementById(`theme-indicator-${t}`);
       if (activeInd) activeInd.innerText = '✓ Active';
     }
+
+    function applySearchVisibilityUI(hidden) {
+      hideSearchPayee = !!hidden;
+      const wrapper = document.getElementById('merchantSearchWrapper');
+      const input = document.getElementById('merchantSearch');
+      const label = document.getElementById('toggleSearchMenuLabel');
+
+      if (wrapper) {
+        wrapper.classList.toggle('hidden', hideSearchPayee);
+      }
+      if (label) {
+        label.innerText = hideSearchPayee ? 'Show Search Payee' : 'Hide Search Payee';
+      }
+      if (hideSearchPayee && input && input.value.trim() !== '') {
+        input.value = '';
+        renderMerchantList('');
+      }
+    }
+
+    window.toggleSearchPayee = function () {
+      const nextState = !hideSearchPayee;
+      applySearchVisibilityUI(nextState);
+      showToast(nextState ? '🙈 Search payee hidden' : '🔍 Search payee shown');
+
+      if (useRestFallback || !currentUser) {
+        fetch(`${RTDB_URL}/artifacts/${appId}/public/data/settings.json`, {
+          method: 'PATCH',
+          headers: { 'Content-Type': 'application/json' },
+          body: JSON.stringify({ hideSearchPayee: nextState })
+        }).catch(() => {});
+      } else {
+        const settingsRef = ref(db, `artifacts/${appId}/public/data/settings`);
+        set(settingsRef, { theme: currentTheme, hideSearchPayee: nextState, broadcastMessage: broadcastMessage }).catch(() => {
+          useRestFallback = true;
+          window.toggleSearchPayee();
+        });
+      }
+    };
+
+    function applyBroadcastMessageUI(msg) {
+      broadcastMessage = typeof msg === 'string' ? msg : '';
+      const input = document.getElementById('broadcastMessageInput');
+      if (input && document.activeElement !== input) {
+        input.value = broadcastMessage;
+      }
+    }
+
+    window.saveBroadcastMessage = function () {
+      const input = document.getElementById('broadcastMessageInput');
+      const nextMsg = input ? input.value.trim() : '';
+      if (input) {
+        input.value = nextMsg;
+        input.blur();
+      }
+      broadcastMessage = nextMsg;
+      updateCloudStatusUI('Syncing...', true);
+
+      const broadcastPayload = {
+        message: nextMsg,
+        updatedAt: new Date().toISOString()
+      };
+
+      if (useRestFallback || !currentUser) {
+        Promise.all([
+          fetch(`${RTDB_URL}/artifacts/${appId}/public/data/broadcast.json`, {
+            method: 'PUT',
+            headers: { 'Content-Type': 'application/json' },
+            body: JSON.stringify(broadcastPayload)
+          }),
+          fetch(`${RTDB_URL}/artifacts/${appId}/public/data/settings.json`, {
+            method: 'PATCH',
+            headers: { 'Content-Type': 'application/json' },
+            body: JSON.stringify({ broadcastMessage: nextMsg })
+          })
+        ])
+          .then(([bRes]) => {
+            if (!bRes.ok) throw new Error('HTTP ' + bRes.status);
+            updateCloudStatusUI('Synced ✓', true);
+            showToast(nextMsg ? '📢 Notice broadcasted to all users' : '🧹 Broadcast notice cleared');
+          })
+          .catch(() => {
+            updateCloudStatusUI('Sync Error', false);
+            showToast('⚠️ Failed to save broadcast message');
+          });
+      } else {
+        const broadcastRef = ref(db, `artifacts/${appId}/public/data/broadcast`);
+        const settingsRef = ref(db, `artifacts/${appId}/public/data/settings`);
+        Promise.all([
+          set(broadcastRef, broadcastPayload),
+          set(settingsRef, { theme: currentTheme, hideSearchPayee: hideSearchPayee, broadcastMessage: nextMsg })
+        ])
+          .then(() => {
+            updateCloudStatusUI('Synced ✓', true);
+            showToast(nextMsg ? '📢 Notice broadcasted to all users' : '🧹 Broadcast notice cleared');
+          })
+          .catch(() => {
+            useRestFallback = true;
+            window.saveBroadcastMessage();
+          });
+      }
+      playBeep();
+    };
 
     window.setTerminalMode = function (mode) {
       terminalMode = mode;
@@ -2819,13 +2960,13 @@
       applyThemeUI(t);
       if (useRestFallback || !currentUser) {
         fetch(`${RTDB_URL}/artifacts/${appId}/public/data/settings.json`, {
-          method: 'PUT',
+          method: 'PATCH',
           headers: { 'Content-Type': 'application/json' },
-          body: JSON.stringify({ theme: t })
+          body: JSON.stringify({ theme: t, hideSearchPayee: hideSearchPayee, broadcastMessage: broadcastMessage })
         }).catch(() => {});
       } else {
         const settingsRef = ref(db, `artifacts/${appId}/public/data/settings`);
-        set(settingsRef, { theme: t }).catch(() => {
+        set(settingsRef, { theme: t, hideSearchPayee: hideSearchPayee, broadcastMessage: broadcastMessage }).catch(() => {
           useRestFallback = true;
           window.setTheme(t);
         });
@@ -3038,10 +3179,11 @@
 
     async function fetchRestCloudData(showStatus = true) {
       try {
-        const [mRes, hRes, sRes] = await Promise.all([
+        const [mRes, hRes, sRes, bRes] = await Promise.all([
           fetch(`${RTDB_URL}/artifacts/${appId}/public/data/merchants.json`),
           fetch(`${RTDB_URL}/artifacts/${appId}/public/data/history.json`),
-          fetch(`${RTDB_URL}/artifacts/${appId}/public/data/settings.json`)
+          fetch(`${RTDB_URL}/artifacts/${appId}/public/data/settings.json`),
+          fetch(`${RTDB_URL}/artifacts/${appId}/public/data/broadcast.json`)
         ]);
 
         if (!mRes.ok || !hRes.ok) {
@@ -3066,8 +3208,21 @@
         updateTodayTotal();
 
         const sData = await sRes.json();
-        if (sData && sData.theme && sData.theme !== currentTheme) {
-          applyThemeUI(sData.theme);
+        if (sData) {
+          if (sData.theme && sData.theme !== currentTheme) {
+            applyThemeUI(sData.theme);
+          }
+          if (typeof sData.hideSearchPayee === 'boolean' && sData.hideSearchPayee !== hideSearchPayee) {
+            applySearchVisibilityUI(sData.hideSearchPayee);
+          }
+          if (typeof sData.broadcastMessage === 'string' && sData.broadcastMessage !== broadcastMessage) {
+            applyBroadcastMessageUI(sData.broadcastMessage);
+          }
+        }
+
+        const bData = await bRes.json();
+        if (bData && typeof bData.message === 'string' && bData.message !== broadcastMessage) {
+          applyBroadcastMessageUI(bData.message);
         }
 
         if (showStatus) updateCloudStatusUI('Synced ✓', true);
@@ -3099,13 +3254,22 @@
       const merchantsRef = ref(db, `artifacts/${appId}/public/data/merchants`);
       const historyRef = ref(db, `artifacts/${appId}/public/data/history`);
       const settingsRef = ref(db, `artifacts/${appId}/public/data/settings`);
+      const broadcastRef = ref(db, `artifacts/${appId}/public/data/broadcast`);
 
-      try {
-        const settingsSnap = await get(settingsRef);
-        if (settingsSnap.exists() && settingsSnap.val().theme) {
-          applyThemeUI(settingsSnap.val().theme);
+      onValue(broadcastRef, (snapshot) => {
+        if (snapshot.exists() && typeof snapshot.val().message === 'string') {
+          applyBroadcastMessageUI(snapshot.val().message);
         }
-      } catch (e) {}
+      }, () => {});
+
+      onValue(settingsRef, (snapshot) => {
+        if (snapshot.exists()) {
+          const val = snapshot.val();
+          if (val.theme) applyThemeUI(val.theme);
+          if (typeof val.hideSearchPayee === 'boolean') applySearchVisibilityUI(val.hideSearchPayee);
+          if (typeof val.broadcastMessage === 'string') applyBroadcastMessageUI(val.broadcastMessage);
+        }
+      }, () => {});
 
       if (unsubMerchants) unsubMerchants();
       unsubMerchants = onValue(merchantsRef, (snapshot) => {
@@ -3176,6 +3340,7 @@
       checkStandaloneMode();
 
       applyThemeUI('platinum');
+      applySearchVisibilityUI(true);
       merchants = [...DEFAULT_MERCHANTS];
       renderMerchantList();
       loadHistory();
