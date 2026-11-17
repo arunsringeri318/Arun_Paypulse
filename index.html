@@ -3,7 +3,7 @@
 <head>
   <meta charset="UTF-8">
   <meta name="viewport" content="width=device-width, initial-scale=1.0">
-  <title>Paypulse v10.01 | POS Terminal</title>
+  <title>Paypulse v11c | POS Terminal</title>
 
   <link rel="icon" type="image/png" href="https://cdn-icons-png.flaticon.com/512/2313/2313039.png">
   <link rel="apple-touch-icon" href="https://cdn-icons-png.flaticon.com/512/2313/2313039.png">
@@ -254,7 +254,7 @@
         <div>
           <div class="flex items-center gap-2">
             <h1 class="text-base sm:text-lg font-black tracking-tight leading-none text-white">
-              Paypulse <span class="text-xs font-bold px-1.5 py-0.5 rounded-md bg-white/20 text-white ml-1">v10.01</span>
+              Paypulse <span class="text-xs font-bold px-1.5 py-0.5 rounded-md bg-white/20 text-white ml-1">v11c</span>
             </h1>
           </div>
           <p class="text-[10px] sm:text-[11px] opacity-80 mt-0.5">Instant UPI Payment QR Terminal</p>
@@ -262,20 +262,19 @@
       </div>
 
       <!-- Controls Right Corner -->
-      <div class="flex items-center gap-2 shrink-0">
-        <!-- Cloud Sync Status Pill -->
-        <button onclick="openCloudBackupModal()" class="h-9 sm:h-10 px-2.5 sm:px-3 rounded-2xl flex items-center gap-1.5 transition shadow-sm border border-white/15" style="background-color: var(--dots-btn-bg); color: var(--dots-btn-icon);" title="Cloud Backup & Sync Status">
-          <span id="headerCloudDot" class="w-2 h-2 rounded-full bg-amber-400 animate-pulse shrink-0"></span>
-          <svg class="w-4 h-4 shrink-0 opacity-90" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+      <div class="flex items-center gap-1.5 shrink-0">
+        <!-- Cloud Sync Status Icon Button -->
+        <button onclick="openCloudBackupModal()" class="w-8 h-8 sm:w-9 sm:h-9 rounded-xl flex items-center justify-center relative transition shadow-sm border border-white/15" style="background-color: var(--dots-btn-bg); color: var(--dots-btn-icon);" title="Cloud Backup & Sync Status">
+          <span id="headerCloudDot" class="absolute top-1.5 right-1.5 w-1.5 h-1.5 rounded-full bg-amber-400 animate-pulse"></span>
+          <svg class="w-4 h-4 opacity-95" fill="none" stroke="currentColor" viewBox="0 0 24 24">
             <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M3 15a4 4 0 004 4h9a5 5 0 10-.1-9.999 5.002 5.002 0 10-9.78 2.096A4.001 4.001 0 003 15z"/>
           </svg>
-          <span id="headerCloudStatusText" class="text-[10px] sm:text-xs font-bold tracking-tight hidden xs:inline sm:inline">Syncing</span>
         </button>
 
         <!-- Palette Theme Dropdown Button -->
         <div class="relative" id="themeMenuWrapper">
-          <button onclick="toggleThemeMenu()" class="w-9 h-9 sm:w-10 sm:h-10 rounded-2xl flex items-center justify-center transition shadow-sm" style="background-color: var(--theme-btn-bg); color: var(--theme-btn-icon);" title="Select Theme">
-            <svg class="w-5 h-5" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
+          <button onclick="toggleThemeMenu()" class="w-8 h-8 sm:w-9 sm:h-9 rounded-xl flex items-center justify-center transition shadow-sm" style="background-color: var(--theme-btn-bg); color: var(--theme-btn-icon);" title="Select Theme">
+            <svg class="w-4 h-4" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
               <circle cx="13.5" cy="6.5" r=".5" fill="currentColor"/>
               <circle cx="17.5" cy="10.5" r=".5" fill="currentColor"/>
               <circle cx="8.5" cy="7.5" r=".5" fill="currentColor"/>
@@ -347,8 +346,8 @@
 
         <!-- 3-Dots System Menu Button -->
         <div class="relative" id="systemMenuWrapper">
-          <button onclick="toggleSystemMenu()" class="w-9 h-9 sm:w-10 sm:h-10 rounded-2xl flex items-center justify-center transition shadow-sm" style="background-color: var(--dots-btn-bg); color: var(--dots-btn-icon);" title="More Options">
-            <svg class="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+          <button onclick="toggleSystemMenu()" class="w-8 h-8 sm:w-9 sm:h-9 rounded-xl flex items-center justify-center transition shadow-sm" style="background-color: var(--dots-btn-bg); color: var(--dots-btn-icon);" title="More Options">
+            <svg class="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24">
               <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2.5" d="M12 5v.01M12 12v.01M12 19v.01M12 6a1 1 0 110-2 1 1 0 010 2zm0 7a1 1 0 110-2 1 1 0 010 2zm0 7a1 1 0 110-2 1 1 0 010 2z"/>
             </svg>
           </button>
@@ -424,7 +423,7 @@
             </button>
 
             <div class="px-3.5 py-1.5 text-[10px] opacity-50 border-t mt-1" style="border-color: var(--border-color);">
-              Paypulse v10.01
+              Paypulse v11c
             </div>
           </div>
         </div>
@@ -1049,7 +1048,7 @@
             <img src="https://cdn-icons-png.flaticon.com/512/2313/2313039.png" alt="Paypulse Logo" class="w-full h-full object-contain">
           </div>
           <div>
-            <h3 class="text-base font-bold leading-tight">Paypulse v10.01</h3>
+            <h3 class="text-base font-bold leading-tight">Paypulse v11c</h3>
             <p class="text-[10px] opacity-70">POS Terminal Edition</p>
           </div>
         </div>
@@ -1070,11 +1069,11 @@
         <div class="grid grid-cols-2 gap-2">
           <div class="theme-sub-bg p-2.5 rounded-xl border" style="border-color: var(--border-color);">
             <div class="text-[9px] uppercase font-bold opacity-60">App Version</div>
-            <div class="text-xs font-bold font-mono theme-accent-text mt-0.5">Paypulse v10.01</div>
+            <div class="text-xs font-bold font-mono theme-accent-text mt-0.5">Paypulse v11c</div>
           </div>
           <div class="theme-sub-bg p-2.5 rounded-xl border" style="border-color: var(--border-color);">
             <div class="text-[9px] uppercase font-bold opacity-60">Build ID</div>
-            <div class="text-xs font-bold font-mono opacity-80 mt-0.5">2026.09.26-v10.01</div>
+            <div class="text-xs font-bold font-mono opacity-80 mt-0.5">2026.11.18-v11c</div>
           </div>
         </div>
       </div>
@@ -1330,7 +1329,6 @@
 
     function updateCloudStatusUI(text, isOnline) {
       const headerDot = document.getElementById('headerCloudDot');
-      const headerText = document.getElementById('headerCloudStatusText');
       const menuStatus = document.getElementById('cloudSyncMenuStatus');
       const modalStatus = document.getElementById('cloudModalStatusText');
       const userIdDisplay = document.getElementById('cloudUserIdDisplay');
@@ -1338,9 +1336,8 @@
       const logsCountEl = document.getElementById('cloudLogsCount');
 
       if (headerDot) {
-        headerDot.className = `w-2 h-2 rounded-full shrink-0 ${isOnline ? 'bg-emerald-400' : 'bg-amber-400 animate-pulse'}`;
+        headerDot.className = `absolute top-1.5 right-1.5 w-1.5 h-1.5 rounded-full ${isOnline ? 'bg-emerald-400' : 'bg-amber-400 animate-pulse'}`;
       }
-      if (headerText) headerText.innerText = text;
       if (menuStatus) {
         menuStatus.innerText = text;
         menuStatus.className = `text-[9px] font-bold ${isOnline ? 'text-emerald-500' : 'text-amber-500'}`;
@@ -2169,7 +2166,7 @@
 
         ctx.fillStyle = '#475569';
         ctx.font = '14px Inter, sans-serif';
-        ctx.fillText('Generated via Paypulse v10.01 POS Terminal', 360, 950);
+        ctx.fillText('Generated via Paypulse v11c POS Terminal', 360, 950);
 
         canvas.toBlob((blob) => {
           callback(blob, canvas.toDataURL('image/png'));
@@ -2937,8 +2934,8 @@
       let manifestLink = document.getElementById('appManifestLink');
       const baseUrl = window.location.href.split('#')[0].split('?')[0];
       const manifestData = {
-        id: "paypulse-pos-v10.01",
-        name: "Paypulse v10.01 POS",
+        id: "paypulse-pos-v11c",
+        name: "Paypulse v11c POS",
         short_name: "Paypulse",
         description: "Instant UPI Payment QR Terminal",
         start_url: baseUrl,
@@ -2972,7 +2969,7 @@
       if ('serviceWorker' in navigator && (window.location.protocol === 'https:' || window.location.hostname === 'localhost')) {
         try {
           const swCode = `
-            const CACHE_NAME = 'paypulse-v10.01-sw';
+            const CACHE_NAME = 'paypulse-v11c-sw';
             self.addEventListener('install', (e) => self.skipWaiting());
             self.addEventListener('activate', (e) => e.waitUntil(self.clients.claim()));
             self.addEventListener('fetch', (e) => {
