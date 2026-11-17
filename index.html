@@ -517,7 +517,7 @@
         </section>
       </div>
 
-      <section class="lg:col-span-7 theme-card-bg border rounded-3xl p-5 sm:p-6 shadow-sm relative">
+      <section id="terminalSection" tabindex="-1" class="lg:col-span-7 theme-card-bg border rounded-3xl p-5 sm:p-6 shadow-sm relative focus:outline-none">
         
         <!-- Terminal Mode Switcher Tabs -->
         <div class="flex items-center theme-sub-bg p-1 rounded-2xl border mb-4" style="border-color: var(--border-color);">
@@ -1713,6 +1713,13 @@
 
       renderMerchantList(document.getElementById('merchantSearch')?.value || '');
       playBeep();
+
+      // Scroll smoothly down to the numpad section and focus on the terminal
+      const terminalEl = document.getElementById('terminalSection');
+      if (terminalEl) {
+        terminalEl.scrollIntoView({ behavior: 'smooth', block: 'center' });
+        terminalEl.focus({ preventScroll: true });
+      }
     };
 
     window.moveMerchantOrder = function (e, id, direction) {
@@ -2166,7 +2173,10 @@
       playBeep();
     };
 
-    window.closeQrModal = () => closeModalById('qrModal', 'qrModalCard');
+    window.closeQrModal = () => {
+      closeModalById('qrModal', 'qrModalCard');
+      window.scrollTo({ top: 0, behavior: 'smooth' });
+    };
 
     function buildReceiptCanvas() {
       return new Promise((resolve) => {
